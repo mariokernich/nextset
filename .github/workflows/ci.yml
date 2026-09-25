@@ -10,9 +10,10 @@ on:
   workflow_dispatch:
     inputs:
       screenshots:
-        description: Take simulator screenshots of the iPhone and Apple Watch app
-        type: boolean
-        default: true
+        description: Simulator screenshots
+        type: choice
+        options: [all, iphone, watch, none]
+        default: all
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
@@ -20,7 +21,8 @@ concurrency:
 
 env:
   # Screenshots need extra simulator time, so they only run on demand.
-  SCREENSHOTS: ${{ github.event_name == 'workflow_dispatch' && inputs.screenshots }}
+  SCREENSHOTS: ${{ github.event_name == 'workflow_dispatch' && inputs.screenshots != 'none' }}
+  SCREENSHOTS_ONLY: ${{ inputs.screenshots || 'all' }}
 
 jobs:
   build-test:

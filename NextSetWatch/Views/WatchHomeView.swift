@@ -58,8 +58,11 @@ struct WatchHomeView: View {
                 NavigationLink {
                     WatchSettingsView()
                 } label: {
-                    Label("Settings", systemImage: "gearshape")
+                    Image(systemName: "gearshape.fill")
+                        .foregroundStyle(.white)
+                        .accessibilityLabel(Text("Settings"))
                 }
+                .tint(Theme.accentStrong)
             }
         }
     }

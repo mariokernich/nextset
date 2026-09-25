@@ -64,6 +64,8 @@ fi
 
 DERIVED=${1:-build}
 OUT=${2:-screenshots}
+# Which devices to capture: all, iphone or watch.
+ONLY=${SCREENSHOTS_ONLY:-all}
 PHONE_APP="$DERIVED/Build/Products/Debug-iphonesimulator/NextSet.app"
 WATCH_APP="$DERIVED/Build/Products/Debug-watchsimulator/NextSetWatch.app"
 mkdir -p "$OUT"
@@ -71,16 +73,18 @@ mkdir -p "$OUT"
 bundle_id() { /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$1/Info.plist"; }
 
 # shoot <device> <bundle-id> <file> <launch arguments…>
+# SETTLE (seconds) gives the app time to launch before the screenshot.
 shoot() {
   local device=$1 bundle=$2 file=$3
   shift 3
   xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true
   xcrun simctl launch "$device" "$bundle" "$@" >/dev/null
-  sleep 5
+  sleep "${SETTLE:-5}"
   xcrun simctl io "$device" screenshot "$file" >/dev/null
   echo "  $file"
 }
 
+if [[ "$ONLY" != "watch" ]]; then
 PHONE=$(find_device "$PHONE_NAME")
 wait_for_boot "$PHONE" 420
 xcrun simctl status_bar "$PHONE" override --time "9:41" --batteryState charged --batteryLevel 100 \
@@ -97,13 +101,18 @@ xcrun simctl ui "$PHONE" appearance dark
 for state in running settings; do
   shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state-dark.png" -demo "$state"
 done
+fi
+
+if [[ "$ONLY" == "iphone" ]]; then
+  exit 0
+fi
 
 if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   xcrun simctl install "$WATCH" "$WATCH_APP"
   WATCH_BUNDLE=$(bundle_id "$WATCH_APP")
   echo "Apple Watch screenshots:"
-  for state in idle running; do
-    shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
+  for state in idle running finished; do
+    SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
   done
 else
   echo "Skipping Apple Watch screenshots"

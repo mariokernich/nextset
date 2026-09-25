@@ -16,6 +16,18 @@ Das **Logo** ist eine Kettlebell, deren Körper gleichzeitig ein Timer-Zifferbla
 
 Die Icons werden aus `Branding/build-icons.mjs` erzeugt (siehe unten).
 
+## Screenshots
+
+| Start | Satzpause | Letzte Sekunden | Los! | Dunkelmodus |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="Branding/screenshots/iphone-start.png" width="170"> | <img src="Branding/screenshots/iphone-rest.png" width="170"> | <img src="Branding/screenshots/iphone-countdown-de.png" width="170"> | <img src="Branding/screenshots/iphone-go.png" width="170"> | <img src="Branding/screenshots/iphone-rest-dark.png" width="170"> |
+
+| Einstellungen | Apple Watch |
+|:---:|:---:|
+| <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="170"> |
+
+Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten).
+
 ## Funktionen
 
 **Schnell starten**
@@ -78,4 +90,4 @@ Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem m
 - **Tests:** `xcodebuild test -project NextSet.xcodeproj -scheme NextSet -destination 'platform=iOS Simulator,name=iPhone 17'`
 - **Screenshots:** nach dem Testlauf mit `-derivedDataPath build` einfach `scripts/screenshots.sh build screenshots` ausführen. Die Zustände lassen sich per Startargument wählen, z. B. `-demo running`.
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
-- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main`/`claude/**` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Reine Doku-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow*, sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
+- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main`/`claude/**` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Reine Doku-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
