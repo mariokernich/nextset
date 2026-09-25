@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths-ignore: ["**.md", "Branding/**"]
+  pull_request:
+    branches: [main]
+    paths-ignore: ["**.md", "Branding/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: Build, test & screenshots
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+
+      - name: Build & unit tests (iPhone app, Apple Watch app, widget)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project NextSet.xcodeproj \
+            -scheme NextSet \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            -derivedDataPath build \
+            -resultBundlePath build/NextSet.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee build.log | grep -E "(error|warning):|Test (Suite|Case)|✔|✘|\*\* (BUILD|TEST)" || true
+          grep -q "\*\* TEST SUCCEEDED \*\*" build.log
+
+      - name: Screenshots
+        run: scripts/screenshots.sh build screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+          if-no-files-found: ignore
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log

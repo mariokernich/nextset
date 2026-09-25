@@ -1,0 +1,7 @@
+// Signing and identifiers for all NextSet targets.
+//
+// Set your Apple Developer Team ID below (or pick a team in Xcode under
+// Signing & Capabilities). Change the prefix if you want different bundle IDs.
+
+DEVELOPMENT_TEAM =
+BUNDLE_ID_PREFIX = com.mariokernich
