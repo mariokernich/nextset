@@ -18,8 +18,5 @@ final class AppModel {
         sync = LibrarySync()
         store.sideEffects = services
         sync.start(with: store)
-        #if DEBUG
-        DemoMode.apply(to: store)
-        #endif
     }
 }

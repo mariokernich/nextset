@@ -10,6 +10,8 @@ final class WatchServices: NSObject, TimerSideEffects {
     private let notifications = RestNotifications()
     private var session: WKExtendedRuntimeSession?
     private var sessionIsExpiring = false
+    /// A session can only be started from the foreground; remembered until then.
+    private var wantsSession = false
     private var state = RestTimerState()
     private var settings = FeedbackSettings()
 
@@ -23,11 +25,13 @@ final class WatchServices: NSObject, TimerSideEffects {
         self.settings = settings
         switch state.phase {
         case .running:
+            wantsSession = true
             startSessionIfNeeded()
         case .idle, .paused:
+            wantsSession = false
             stopSession()
         case .finished:
-            break
+            wantsSession = false
         }
         updateNotification()
     }
@@ -51,6 +55,10 @@ final class WatchServices: NSObject, TimerSideEffects {
 
     func appDidBecomeActive() {
         notifications.clearDelivered()
+        if wantsSession, state.phase == .running {
+            startSessionIfNeeded()
+            updateNotification()
+        }
     }
 
     // MARK: Session
@@ -60,6 +68,7 @@ final class WatchServices: NSObject, TimerSideEffects {
     }
 
     private func startSessionIfNeeded() {
+        guard WKApplication.shared().applicationState == .active else { return }
         if let session, session.state == .running || session.state == .notStarted || session.state == .scheduled {
             return
         }

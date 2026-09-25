@@ -11,8 +11,11 @@ struct NextSetWatchApp: App {
                 .environment(model.store)
                 .tint(Theme.accent)
         }
-        .onChange(of: scenePhase) { _, phase in
+        .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
+            #if DEBUG
+            DemoMode.applyOnce(to: model.store)
+            #endif
             model.store.refresh()
             model.services.appDidBecomeActive()
         }
@@ -34,9 +37,6 @@ final class WatchModel {
         sync = LibrarySync()
         store.sideEffects = services
         sync.start(with: store)
-        #if DEBUG
-        DemoMode.apply(to: store)
-        #endif
     }
 }
 

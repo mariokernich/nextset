@@ -111,7 +111,7 @@ if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   xcrun simctl install "$WATCH" "$WATCH_APP"
   WATCH_BUNDLE=$(bundle_id "$WATCH_APP")
   echo "Apple Watch screenshots:"
-  for state in idle running finished; do
+  for state in idle running finished keep; do
     SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
   done
 else

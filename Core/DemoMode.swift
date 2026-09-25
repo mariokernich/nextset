@@ -12,7 +12,16 @@ enum DemoMode {
         value == "settings"
     }
 
-    static func apply(to store: TimerStore) {
+    private static var applied = false
+
+    /// Applies the demo state once, when the app first becomes active.
+    static func applyOnce(to store: TimerStore) {
+        guard !applied else { return }
+        applied = true
+        apply(to: store)
+    }
+
+    private static func apply(to store: TimerStore) {
         guard let value else { return }
         // Avoid the notification permission prompt in screenshots.
         store.updateSettings { $0.notificationsEnabled = false }
@@ -25,6 +34,9 @@ enum DemoMode {
         case "finished":
             store.start(seconds: 30)
             store.adjust(by: -30)
+        case "keep":
+            // Keep whatever the last launch left behind (tests restoring).
+            break
         default:
             store.stop()
         }
