@@ -14,10 +14,8 @@ enum DemoMode {
 
     static func apply(to store: TimerStore) {
         guard let value else { return }
-        store.updateSettings {
-            $0.soundEnabled = false
-            $0.notificationsEnabled = false
-        }
+        // Avoid the notification permission prompt in screenshots.
+        store.updateSettings { $0.notificationsEnabled = false }
         switch value {
         case "running":
             store.start(store.library.visibleQuickTimers[0])

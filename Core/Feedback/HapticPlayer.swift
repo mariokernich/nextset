@@ -34,22 +34,17 @@ final class HapticPlayer {
 
 #else
 import CoreHaptics
-import UIKit
 
+/// Custom Core Haptics patterns: much stronger than the standard feedback
+/// generators, so they are noticeable even with the phone on a bench.
 @MainActor
 final class HapticPlayer {
-    private let supportsCoreHaptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics
+    private let supportsHaptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics
     private var engine: CHHapticEngine?
 
     func play(_ pattern: HapticPattern) {
-        if supportsCoreHaptics, playCoreHaptics(events(for: pattern)) {
-            return
-        }
-        switch pattern {
-        case .start: UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        case .tick: UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-        case .finish: UINotificationFeedbackGenerator().notificationOccurred(.success)
-        }
+        guard supportsHaptics else { return }
+        playCoreHaptics(events(for: pattern))
     }
 
     private func events(for pattern: HapticPattern) -> [CHHapticEvent] {
@@ -88,15 +83,14 @@ final class HapticPlayer {
         )
     }
 
-    private func playCoreHaptics(_ events: [CHHapticEvent]) -> Bool {
+    private func playCoreHaptics(_ events: [CHHapticEvent]) {
         do {
             let engine = try runningEngine()
             let player = try engine.makePlayer(with: CHHapticPattern(events: events, parameters: []))
             try player.start(atTime: CHHapticTimeImmediate)
-            return true
         } catch {
+            // Recreate the engine on the next attempt.
             self.engine = nil
-            return false
         }
     }
 

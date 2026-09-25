@@ -74,7 +74,7 @@ struct PresetsSection: View {
     @Environment(TimerStore.self) private var store
     @Binding var editor: TimerEditorTarget?
 
-    private let columns = [GridItem(.adaptive(minimum: 84), spacing: 10)]
+    private let columns = [GridItem(.adaptive(minimum: 76), spacing: 10)]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

@@ -22,7 +22,7 @@ enum QuickTimerSlot: String, AppEnum {
 struct StartQuickTimerIntent: AppIntent {
     static let title: LocalizedStringResource = "Start Quick Timer"
     static let description = IntentDescription("Starts one of your quick rest timers.")
-    static let openAppWhenRun = true
+    static let supportedModes: IntentModes = .foreground
 
     @Parameter(title: "Quick Timer", default: .first)
     var slot: QuickTimerSlot
@@ -38,7 +38,7 @@ struct StartQuickTimerIntent: AppIntent {
 struct StartRestIntent: AppIntent {
     static let title: LocalizedStringResource = "Start Rest Timer"
     static let description = IntentDescription("Starts a rest timer with any duration.")
-    static let openAppWhenRun = true
+    static let supportedModes: IntentModes = .foreground
 
     @Parameter(title: "Seconds", default: 90)
     var seconds: Int
@@ -53,7 +53,7 @@ struct StartRestIntent: AppIntent {
 struct EndRestIntent: AppIntent {
     static let title: LocalizedStringResource = "End Rest"
     static let description = IntentDescription("Ends the running rest timer.")
-    static let openAppWhenRun = false
+    static let supportedModes: IntentModes = .background
 
     @MainActor
     func perform() async throws -> some IntentResult {

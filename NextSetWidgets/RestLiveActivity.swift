@@ -61,7 +61,7 @@ struct RestLockScreenView: View {
             HStack(spacing: 10) {
                 RestRing(state: state, isOver: isOver, lineWidth: 5)
                     .frame(width: 44, height: 44)
-                RestTime(state: state, isOver: isOver)
+                RestTime(state: state, isOver: isOver, alignment: .leading)
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -78,7 +78,7 @@ struct RestLockScreenView: View {
                             .font(.caption.weight(.heavy))
                     }
                     .foregroundStyle(.secondary)
-                    RestTime(state: state, isOver: isOver)
+                    RestTime(state: state, isOver: isOver, alignment: .leading)
                         .font(.system(size: 44, weight: .bold, design: .rounded))
                     RestCaption(state: state, isOver: isOver)
                         .font(.footnote.weight(.medium))
@@ -95,6 +95,7 @@ struct RestLockScreenView: View {
 struct RestTime: View {
     let state: RestActivityAttributes.ContentState
     let isOver: Bool
+    var alignment: TextAlignment = .trailing
 
     var body: some View {
         Group {
@@ -109,7 +110,7 @@ struct RestTime: View {
             }
         }
         .monospacedDigit()
-        .multilineTextAlignment(.trailing)
+        .multilineTextAlignment(alignment)
         .lineLimit(1)
         .minimumScaleFactor(0.6)
     }

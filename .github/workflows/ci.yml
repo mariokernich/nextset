@@ -8,23 +8,34 @@ on:
     branches: [main]
     paths-ignore: ["**.md", "Branding/**"]
   workflow_dispatch:
+    inputs:
+      screenshots:
+        description: Take simulator screenshots of the iPhone and Apple Watch app
+        type: boolean
+        default: true
 
 concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  # Screenshots need extra simulator time, so they only run on demand.
+  SCREENSHOTS: ${{ github.event_name == 'workflow_dispatch' && inputs.screenshots }}
+
 jobs:
   build-test:
-    name: Build, test & screenshots
+    name: Build & test
     runs-on: macos-26
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
       - name: Xcode
-        run: |
-          xcodebuild -version
-          xcrun simctl list runtimes
+        run: xcodebuild -version
+
+      - name: Boot simulators early
+        if: env.SCREENSHOTS == 'true'
+        run: scripts/screenshots.sh --boot
 
       - name: Build & unit tests (iPhone app, Apple Watch app, widget)
         run: |
@@ -36,21 +47,29 @@ jobs:
             -derivedDataPath build \
             -resultBundlePath build/NextSet.xcresult \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee build.log | grep -E "(error|warning):|Test (Suite|Case)|✔|✘|\*\* (BUILD|TEST)" || true
+            2>&1 | tee build.log | grep -E "(error|warning):|\*\* (BUILD|TEST)" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build.log
 
+      - name: Test summary
+        if: always()
+        run: |
+          [ -d build/NextSet.xcresult ] || exit 0
+          xcrun xcresulttool get test-results summary --path build/NextSet.xcresult --compact \
+            | python3 -c 'import json, sys; s = json.load(sys.stdin); print("Tests: %s passed, %s failed, %s skipped (%s total)" % (s.get("passedTests"), s.get("failedTests"), s.get("skippedTests"), s.get("totalTestCount")))'
+
       - name: Screenshots
+        if: env.SCREENSHOTS == 'true'
         run: scripts/screenshots.sh build screenshots
 
       - name: Upload screenshots
-        if: always()
+        if: always() && env.SCREENSHOTS == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: screenshots
           if-no-files-found: ignore
 
-      - name: Upload logs
+      - name: Upload build log
         if: failure()
         uses: actions/upload-artifact@v4
         with:

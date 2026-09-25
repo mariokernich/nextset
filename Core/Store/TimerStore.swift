@@ -25,7 +25,7 @@ final class TimerStore {
     @ObservationIgnored let feedback: FeedbackCoordinator
     @ObservationIgnored weak var sideEffects: TimerSideEffects?
     /// Set by the sync service to forward local edits to the other device.
-    @ObservationIgnored var libraryDidChangeLocally: ((TimerLibrary) -> Void)?
+    @ObservationIgnored var libraryDidChangeLocally: (@MainActor (TimerLibrary) -> Void)?
 
     @ObservationIgnored private let storage: Storage
     @ObservationIgnored private var eventTask: Task<Void, Never>?

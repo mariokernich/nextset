@@ -661,16 +661,6 @@
         }
       }
     },
-    "Timer" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Timer"
-          }
-        }
-      }
-    },
     "Timers" : {
       "localizations" : {
         "de" : {

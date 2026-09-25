@@ -51,10 +51,7 @@ struct WatchHomeView: View {
                 }
             }
         }
-        .navigationTitle {
-            Text(verbatim: "NextSet")
-                .foregroundStyle(Theme.volt)
-        }
+        .navigationTitle(Text(verbatim: "NextSet"))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {

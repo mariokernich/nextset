@@ -33,19 +33,21 @@ struct SettingsView: View {
 
     private var quickTimersSection: some View {
         Section {
-            Picker("Number of quick timers", selection: librarySetting(\.quickTimerCount)) {
-                Text(verbatim: "1").tag(1)
-                Text(verbatim: "2").tag(2)
+            LabeledContent("Number of quick timers") {
+                Picker("Number of quick timers", selection: librarySetting(\.quickTimerCount)) {
+                    Text(verbatim: "1").tag(1)
+                    Text(verbatim: "2").tag(2)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 110)
             }
-            .pickerStyle(.segmented)
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets())
 
             ForEach(Array(store.library.visibleQuickTimers.enumerated()), id: \.element.id) { index, preset in
                 Button {
                     editor = .quick(index)
                 } label: {
-                    TimerRow(title: preset.trimmedName.isEmpty ? nil : preset.trimmedName, fallbackIndex: index, seconds: preset.seconds)
+                    TimerRow(preset: preset, quickIndex: index)
                 }
             }
         } header: {
@@ -61,7 +63,7 @@ struct SettingsView: View {
                 Button {
                     editor = .preset(preset.id)
                 } label: {
-                    TimerRow(title: preset.trimmedName.isEmpty ? nil : preset.trimmedName, fallbackIndex: nil, seconds: preset.seconds)
+                    TimerRow(preset: preset, quickIndex: nil)
                 }
             }
             .onDelete { offsets in
@@ -165,24 +167,40 @@ struct SettingsView: View {
 }
 
 private struct TimerRow: View {
-    let title: String?
-    let fallbackIndex: Int?
-    let seconds: Int
+    let preset: RestPreset
+    /// Set for quick timers, which are labelled "Quick timer 1/2".
+    let quickIndex: Int?
 
     var body: some View {
-        HStack {
-            if let title {
-                Text(verbatim: title)
-            } else if let fallbackIndex {
-                Text("Quick timer \(fallbackIndex + 1)")
+        HStack(spacing: 12) {
+            if let quickIndex {
+                Group {
+                    if preset.trimmedName.isEmpty {
+                        Text("Quick timer \(quickIndex + 1)")
+                    } else {
+                        Text(verbatim: preset.trimmedName)
+                    }
+                }
+                .foregroundStyle(Color.primary)
+                .lineLimit(1)
+                Spacer()
+                Text(verbatim: DurationFormat.clock(preset.seconds))
+                    .font(.body.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(Theme.volt)
             } else {
-                Text("Timer")
+                Text(verbatim: DurationFormat.clock(preset.seconds))
+                    .font(.body.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(Theme.volt)
+                Spacer()
             }
-            Spacer()
-            Text(verbatim: DurationFormat.clock(seconds))
-                .font(.body.weight(.semibold).monospacedDigit())
-                .foregroundStyle(Theme.volt)
+            if !preset.trimmedName.isEmpty && quickIndex == nil {
+                Text(verbatim: preset.trimmedName)
+                    .foregroundStyle(Color.secondary)
+                    .lineLimit(1)
+            }
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Color.secondary.opacity(0.6))
         }
-        .foregroundStyle(.primary)
     }
 }
