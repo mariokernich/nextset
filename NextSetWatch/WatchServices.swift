@@ -69,6 +69,9 @@ final class WatchServices: NSObject, TimerSideEffects {
 
     private func startSessionIfNeeded() {
         guard WKApplication.shared().applicationState == .active else { return }
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "noSession") { return }
+        #endif
         if let session, session.state == .running || session.state == .notStarted || session.state == .scheduled {
             return
         }
