@@ -4,8 +4,8 @@ import SwiftUI
 ///
 /// Mirrors the geometry in `Branding/build-icons.mjs` (1024 pt artboard).
 struct KettlebellMark: View {
-    var bell: Color = .white
-    var ring: Color = Theme.volt
+    var bell: Color = .primary
+    var ring: Color = Theme.accent
 
     var body: some View {
         GeometryReader { proxy in

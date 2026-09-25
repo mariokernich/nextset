@@ -29,7 +29,7 @@ struct WatchTimerView: View {
                     Button("Repeat rest", systemImage: "arrow.clockwise") {
                         store.primaryAction()
                     }
-                    .tint(Theme.volt)
+                    .tint(Theme.accent)
                     Spacer()
                 } else {
                     Button {
@@ -44,7 +44,7 @@ struct WatchTimerView: View {
                     } label: {
                         Image(systemName: timer.phase == .running ? "pause.fill" : "play.fill")
                     }
-                    .tint(Theme.volt)
+                    .tint(Theme.accent)
                     .accessibilityLabel(timer.phase == .running ? Text("Pause") : Text("Resume"))
 
                     Button {
@@ -68,7 +68,7 @@ private struct WatchDial: View {
     var body: some View {
         let seconds = timer.displayedSeconds(at: now)
         let inCountdown = timer.phase == .running && seconds > 0 && seconds <= countdownSeconds
-        let tint = inCountdown ? Theme.countdown : Theme.volt
+        let tint = inCountdown ? Theme.countdown : Theme.accent
 
         GeometryReader { proxy in
             let diameter = min(proxy.size.width, proxy.size.height)
@@ -85,11 +85,11 @@ private struct WatchDial: View {
                     Text(caption)
                         .font(.system(size: max(10, diameter * 0.075), weight: .bold))
                         .textCase(.uppercase)
-                        .foregroundStyle(timer.phase == .finished ? Theme.volt : .secondary)
+                        .foregroundStyle(timer.phase == .finished ? Theme.accent : .secondary)
                     Group {
                         if timer.phase == .finished {
                             Text("GO!")
-                                .foregroundStyle(Theme.volt)
+                                .foregroundStyle(Theme.accent)
                         } else {
                             Text(verbatim: DurationFormat.clock(seconds))
                                 .foregroundStyle(inCountdown ? Theme.countdown : .primary)
@@ -97,7 +97,7 @@ private struct WatchDial: View {
                                 .animation(isDimmed ? nil : .snappy, value: seconds)
                         }
                     }
-                    .font(.system(size: diameter * 0.27, weight: .bold, design: .rounded))
+                    .font(.system(size: diameter * 0.27, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)

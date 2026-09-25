@@ -13,14 +13,14 @@ struct ControlBar: View {
                     store.primaryAction()
                 } label: {
                     Image(systemName: primarySymbol)
-                        .font(.system(size: 30, weight: .bold))
-                        .foregroundStyle(Theme.ink)
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(.white)
                         .frame(width: 76, height: 76)
                         .contentTransition(.symbolEffect(.replace))
                 }
                 .buttonStyle(.glassProminent)
                 .buttonBorderShape(.circle)
-                .tint(Theme.volt)
+                .tint(Theme.accentStrong)
                 .accessibilityLabel(primaryLabel)
 
                 adjustButton(by: TimerStore.adjustStep)
@@ -33,7 +33,7 @@ struct ControlBar: View {
             store.adjust(by: delta)
         } label: {
             Text(verbatim: delta > 0 ? "+\(delta)" : "−\(-delta)")
-                .font(.system(size: 19, weight: .semibold, design: .rounded))
+                .font(.system(size: 19, weight: .medium, design: .rounded))
                 .monospacedDigit()
                 .frame(width: 58, height: 58)
         }

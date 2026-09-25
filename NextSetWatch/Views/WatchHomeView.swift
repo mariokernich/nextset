@@ -15,20 +15,21 @@ struct WatchHomeView: View {
                     } label: {
                         VStack(spacing: 0) {
                             Text(verbatim: DurationFormat.clock(preset.seconds))
-                                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                                .font(.system(size: 36, weight: .semibold, design: .rounded))
                                 .monospacedDigit()
                                 .minimumScaleFactor(0.7)
                             if !preset.trimmedName.isEmpty {
                                 Text(verbatim: preset.trimmedName)
-                                    .font(.footnote.weight(.semibold))
+                                    .font(.footnote.weight(.medium))
+                                    .foregroundStyle(.secondary)
                                     .lineLimit(1)
                             }
                         }
-                        .foregroundStyle(Theme.ink)
-                        .frame(maxWidth: .infinity, minHeight: 54)
+                        .frame(maxWidth: .infinity, minHeight: 58)
+                        .contentShape(.rect(cornerRadius: 22))
                     }
-                    .buttonStyle(.glassProminent)
-                    .tint(Theme.volt)
+                    .buttonStyle(.plain)
+                    .glassEffect(.regular.tint(Theme.accent.opacity(0.35)).interactive(), in: .rect(cornerRadius: 22))
                     .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
                 }
 

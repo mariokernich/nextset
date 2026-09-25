@@ -142,7 +142,7 @@ struct SettingsView: View {
                         .font(.headline)
                     Text(verbatim: "Rest. Set. Go.")
                         .font(.subheadline)
-                        .foregroundStyle(Theme.volt)
+                        .foregroundStyle(Theme.accentText)
                 }
             }
             .padding(.vertical, 4)
@@ -186,11 +186,11 @@ private struct TimerRow: View {
                 Spacer()
                 Text(verbatim: DurationFormat.clock(preset.seconds))
                     .font(.body.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(Theme.volt)
+                    .foregroundStyle(Theme.accentText)
             } else {
                 Text(verbatim: DurationFormat.clock(preset.seconds))
                     .font(.body.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(Theme.volt)
+                    .foregroundStyle(Theme.accentText)
                 Spacer()
             }
             if !preset.trimmedName.isEmpty && quickIndex == nil {

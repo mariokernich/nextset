@@ -79,7 +79,7 @@ private struct WatchTimerRow: View {
         HStack {
             if isQuick {
                 Image(systemName: "bolt.fill")
-                    .foregroundStyle(Theme.volt)
+                    .foregroundStyle(Theme.accent)
             }
             Text(verbatim: DurationFormat.clock(preset.seconds))
                 .font(.body.weight(.semibold).monospacedDigit())

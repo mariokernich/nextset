@@ -33,10 +33,6 @@ jobs:
       - name: Xcode
         run: xcodebuild -version
 
-      - name: Boot simulators early
-        if: env.SCREENSHOTS == 'true'
-        run: scripts/screenshots.sh --boot
-
       - name: Build & unit tests (iPhone app, Apple Watch app, widget)
         run: |
           set -o pipefail

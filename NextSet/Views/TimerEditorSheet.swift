@@ -18,9 +18,9 @@ struct TimerEditorSheet: View {
                         .frame(height: 170)
                 } header: {
                     Text(verbatim: DurationFormat.clock(seconds))
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                        .font(.system(size: 40, weight: .semibold, design: .rounded))
                         .monospacedDigit()
-                        .foregroundStyle(Theme.volt)
+                        .foregroundStyle(Theme.accentText)
                         .frame(maxWidth: .infinity)
                         .textCase(nil)
                         .contentTransition(.numericText())

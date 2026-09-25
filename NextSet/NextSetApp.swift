@@ -9,8 +9,7 @@ struct NextSetApp: App {
         WindowGroup {
             HomeView()
                 .environment(model.store)
-                .preferredColorScheme(.dark)
-                .tint(Theme.volt)
+                .tint(Theme.accent)
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }

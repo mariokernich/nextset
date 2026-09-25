@@ -9,7 +9,7 @@ struct NextSetWatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environment(model.store)
-                .tint(Theme.volt)
+                .tint(Theme.accent)
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }

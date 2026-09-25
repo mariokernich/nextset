@@ -9,14 +9,17 @@ struct QuickTimersSection: View {
         GlassEffectContainer(spacing: 14) {
             HStack(spacing: 14) {
                 ForEach(Array(store.library.visibleQuickTimers.enumerated()), id: \.element.id) { index, preset in
+                    let isCurrent = store.timer.isActive && store.timer.presetID == preset.id
                     Button {
                         store.start(preset)
                     } label: {
-                        QuickTimerLabel(preset: preset, index: index, isCurrent: isCurrent(preset))
+                        QuickTimerLabel(preset: preset, index: index, isCurrent: isCurrent)
                     }
-                    .buttonStyle(.glassProminent)
-                    .buttonBorderShape(.roundedRectangle(radius: 28))
-                    .tint(Theme.volt)
+                    .buttonStyle(.plain)
+                    .glassEffect(
+                        .regular.tint(Theme.accent.opacity(isCurrent ? 0.35 : 0.16)).interactive(),
+                        in: .rect(cornerRadius: 28)
+                    )
                     .contextMenu {
                         Button("Edit", systemImage: "pencil") {
                             editor = .quick(index)
@@ -27,10 +30,6 @@ struct QuickTimersSection: View {
                 }
             }
         }
-    }
-
-    private func isCurrent(_ preset: RestPreset) -> Bool {
-        store.timer.isActive && store.timer.presetID == preset.id
     }
 }
 
@@ -43,6 +42,7 @@ private struct QuickTimerLabel: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 5) {
                 Image(systemName: isCurrent ? "timer" : "bolt.fill")
+                    .foregroundStyle(Theme.accent)
                     .symbolEffect(.pulse, isActive: isCurrent)
                 Group {
                     if preset.trimmedName.isEmpty {
@@ -51,21 +51,22 @@ private struct QuickTimerLabel: View {
                         Text(verbatim: preset.trimmedName)
                     }
                 }
+                .foregroundStyle(.secondary)
                 .lineLimit(1)
             }
-            .font(.footnote.weight(.bold))
-            .opacity(0.75)
+            .font(.footnote.weight(.semibold))
 
             Text(verbatim: DurationFormat.clock(preset.seconds))
-                .font(.system(size: 44, weight: .heavy, design: .rounded))
+                .font(.system(size: 42, weight: .semibold, design: .rounded))
                 .monospacedDigit()
+                .foregroundStyle(.primary)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
         }
-        .foregroundStyle(Theme.ink)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 10)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 18)
+        .contentShape(.rect(cornerRadius: 28))
     }
 }
 
@@ -80,7 +81,7 @@ struct PresetsSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("More timers")
-                    .font(.title3.weight(.bold))
+                    .font(.title3.weight(.semibold))
                 Spacer()
                 Button("Add timer", systemImage: "plus") {
                     editor = .newPreset
@@ -116,8 +117,9 @@ struct PresetsSection: View {
         } label: {
             VStack(spacing: 0) {
                 Text(verbatim: DurationFormat.clock(preset.seconds))
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 19, weight: .medium, design: .rounded))
                     .monospacedDigit()
+                    .foregroundStyle(isCurrent ? Theme.accentText : .primary)
                 if !preset.trimmedName.isEmpty {
                     Text(verbatim: preset.trimmedName)
                         .font(.caption2.weight(.medium))
@@ -125,11 +127,14 @@ struct PresetsSection: View {
                         .lineLimit(1)
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: 44)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .contentShape(.rect(cornerRadius: 18))
         }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.roundedRectangle(radius: 18))
-        .tint(isCurrent ? Theme.volt : nil)
+        .buttonStyle(.plain)
+        .glassEffect(
+            isCurrent ? .regular.tint(Theme.accent.opacity(0.3)).interactive() : .regular.interactive(),
+            in: .rect(cornerRadius: 18)
+        )
         .contextMenu {
             Button("Edit", systemImage: "pencil") {
                 editor = .preset(preset.id)

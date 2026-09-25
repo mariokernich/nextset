@@ -85,27 +85,38 @@ private struct SoundToggle: View {
     }
 }
 
-/// Dark backdrop with a faint volt glow behind the dial.
+/// Soft mesh gradient behind the Liquid Glass surfaces: calm colours that the
+/// glass can pick up and refract, in light and dark mode.
 struct Backdrop: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color(red: 0.10, green: 0.11, blue: 0.13), Color(red: 0.02, green: 0.02, blue: 0.03)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            RadialGradient(
-                colors: [Theme.volt.opacity(0.16), .clear],
-                center: UnitPoint(x: 0.5, y: 0.2),
-                startRadius: 0,
-                endRadius: 380
-            )
-        }
+        MeshGradient(
+            width: 3,
+            height: 3,
+            points: [
+                [0, 0], [0.5, 0], [1, 0],
+                [0, 0.45], [0.6, 0.4], [1, 0.5],
+                [0, 1], [0.5, 1], [1, 1],
+            ],
+            colors: (colorScheme == .dark ? Self.dark : Self.light).map(Color.init(hex:))
+        )
     }
+
+    private static let light: [UInt32] = [
+        0xDDF3EA, 0xF1F7F8, 0xDDEBFA,
+        0xEAF3FC, 0xCFEFE2, 0xEAE6FB,
+        0xF7FAF9, 0xE6F2EF, 0xF1EEF9,
+    ]
+
+    private static let dark: [UInt32] = [
+        0x0F2220, 0x0C1316, 0x111A2C,
+        0x0D1B20, 0x103028, 0x16182E,
+        0x07090B, 0x0A1012, 0x0D0C15,
+    ]
 }
 
 #Preview {
     HomeView()
         .environment(TimerStore(storage: Storage(defaults: UserDefaults(suiteName: "preview")!)))
-        .preferredColorScheme(.dark)
 }

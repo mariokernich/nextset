@@ -15,6 +15,12 @@ struct TimerDial: View {
                 now: context.date
             )
         }
+        // The dial is a Liquid Glass disc; the ring runs along its rim.
+        .background {
+            Circle()
+                .fill(.clear)
+                .glassEffect(.regular, in: .circle)
+        }
         .overlay(alignment: .topTrailing) {
             if timer.phase != .idle {
                 Button("End rest", systemImage: "xmark") {
@@ -42,18 +48,20 @@ private struct DialFace: View {
         let remaining = timer.remaining(at: now)
         let seconds = timer.displayedSeconds(at: now)
         let inCountdown = timer.phase == .running && seconds > 0 && seconds <= countdownSeconds
-        let tint = inCountdown ? Theme.countdown : Theme.volt
+        let tint = inCountdown ? Theme.countdown : Theme.accent
         // A short "beat" on every countdown second.
         let beat = inCountdown ? 1 + 0.07 * pow(remaining - remaining.rounded(.down), 4) : 1
 
         GeometryReader { proxy in
             let diameter = min(proxy.size.width, proxy.size.height)
+            let lineWidth = max(10, diameter * 0.05)
             ZStack {
                 TimerRing(
                     progress: timer.phase == .finished ? 1 : timer.fractionRemaining(at: now),
                     tint: tint,
-                    lineWidth: max(12, diameter * 0.06)
+                    lineWidth: lineWidth
                 )
+                .padding(lineWidth * 0.6)
                 .opacity(ringOpacity)
 
                 VStack(spacing: diameter * 0.015) {
@@ -61,10 +69,10 @@ private struct DialFace: View {
                         .font(.system(size: max(11, diameter * 0.045), weight: .bold))
                         .tracking(1.6)
                         .textCase(.uppercase)
-                        .foregroundStyle(timer.phase == .finished ? Theme.volt : .secondary)
+                        .foregroundStyle(timer.phase == .finished ? Theme.accentText : .secondary)
 
                     mainText(seconds: seconds, diameter: diameter)
-                        .foregroundStyle(timer.phase == .finished ? Theme.volt : (inCountdown ? Theme.countdown : .primary))
+                        .foregroundStyle(timer.phase == .finished ? Theme.accent : (inCountdown ? Theme.countdown : .primary))
                         .scaleEffect(beat)
 
                     detail
@@ -83,7 +91,7 @@ private struct DialFace: View {
 
     @ViewBuilder
     private func mainText(seconds: Int, diameter: CGFloat) -> some View {
-        let font = Font.system(size: diameter * 0.25, weight: .bold, design: .rounded)
+        let font = Font.system(size: diameter * 0.24, weight: .semibold, design: .rounded)
         switch timer.phase {
         case .finished:
             Text("GO!")
@@ -107,7 +115,7 @@ private struct DialFace: View {
 
     private var ringOpacity: Double {
         switch timer.phase {
-        case .idle: 0.55
+        case .idle: 0.6
         case .paused: 0.45
         case .running, .finished: 1
         }

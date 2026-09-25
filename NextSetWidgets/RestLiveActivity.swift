@@ -6,8 +6,7 @@ struct RestLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RestActivityAttributes.self) { context in
             RestLockScreenView(state: context.state, isStale: context.isStale)
-                .activityBackgroundTint(Color.black.opacity(0.82))
-                .activitySystemActionForegroundColor(Theme.volt)
+                .activitySystemActionForegroundColor(Theme.accent)
         } dynamicIsland: { context in
             let state = context.state
             let isOver = state.isFinished || context.isStale
@@ -41,7 +40,7 @@ struct RestLiveActivity: Widget {
                 RestRing(state: state, isOver: isOver, lineWidth: 3.5)
                     .frame(width: 20, height: 20)
             }
-            .keylineTint(Theme.volt)
+            .keylineTint(Theme.accent)
         }
         .supplementalActivityFamilies([.small])
     }
@@ -75,11 +74,11 @@ struct RestLockScreenView: View {
                         KettlebellMark()
                             .frame(width: 12, height: 14)
                         Text(verbatim: "NextSet")
-                            .font(.caption.weight(.heavy))
+                            .font(.caption.weight(.bold))
                     }
                     .foregroundStyle(.secondary)
                     RestTime(state: state, isOver: isOver, alignment: .leading)
-                        .font(.system(size: 44, weight: .bold, design: .rounded))
+                        .font(.system(size: 44, weight: .semibold, design: .rounded))
                     RestCaption(state: state, isOver: isOver)
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(.secondary)
@@ -101,7 +100,7 @@ struct RestTime: View {
         Group {
             if isOver {
                 Text("GO!")
-                    .foregroundStyle(Theme.volt)
+                    .foregroundStyle(Theme.accent)
             } else if let paused = state.pausedRemaining {
                 Text(verbatim: DurationFormat.clock(Int(paused.rounded(.up))))
                     .foregroundStyle(.secondary)
@@ -125,14 +124,14 @@ struct RestRing: View {
         ZStack {
             if isOver {
                 Circle()
-                    .stroke(Theme.volt, lineWidth: lineWidth)
+                    .stroke(Theme.accent, lineWidth: lineWidth)
                 Image(systemName: "figure.strengthtraining.traditional")
-                    .font(.system(size: lineWidth * 3.2, weight: .bold))
-                    .foregroundStyle(Theme.volt)
+                    .font(.system(size: lineWidth * 3.2, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
             } else if let paused = state.pausedRemaining {
                 TimerRing(
                     progress: state.duration > 0 ? paused / state.duration : 0,
-                    tint: Theme.volt.opacity(0.6),
+                    tint: Theme.accent.opacity(0.6),
                     lineWidth: lineWidth,
                     glow: false
                 )
@@ -146,7 +145,7 @@ struct RestRing: View {
                     EmptyView()
                 }
                 .progressViewStyle(.circular)
-                .tint(Theme.volt)
+                .tint(Theme.accent)
             }
         }
     }

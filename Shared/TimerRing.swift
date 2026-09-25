@@ -4,7 +4,7 @@ import SwiftUI
 struct TimerRing: View {
     /// Remaining fraction, 1 = full.
     var progress: Double
-    var tint: Color = Theme.volt
+    var tint: Color = Theme.accent
     var lineWidth: CGFloat = 16
     var glow: Bool = true
 
@@ -19,7 +19,7 @@ struct TimerRing: View {
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .shadow(color: glow ? tint.opacity(0.45) : .clear, radius: lineWidth * 0.7)
+                .shadow(color: glow ? tint.opacity(0.3) : .clear, radius: lineWidth * 0.5)
         }
         .padding(lineWidth / 2)
     }
@@ -29,5 +29,4 @@ struct TimerRing: View {
     TimerRing(progress: 0.66)
         .frame(width: 240, height: 240)
         .padding()
-        .background(.black)
 }

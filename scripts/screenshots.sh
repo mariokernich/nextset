@@ -88,18 +88,21 @@ xcrun simctl status_bar "$PHONE" override --time "9:41" --batteryState charged -
 xcrun simctl install "$PHONE" "$PHONE_APP"
 PHONE_BUNDLE=$(bundle_id "$PHONE_APP")
 echo "iPhone screenshots:"
-for state in idle running paused finished settings; do
+xcrun simctl ui "$PHONE" appearance light
+for state in idle running finished settings; do
   shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state.png" -demo "$state"
 done
+shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-running-de.png" -demo running -AppleLanguages "(de)" -AppleLocale de_DE
+xcrun simctl ui "$PHONE" appearance dark
 for state in running settings; do
-  shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state-de.png" -demo "$state" -AppleLanguages "(de)" -AppleLocale de_DE
+  shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state-dark.png" -demo "$state"
 done
 
 if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   xcrun simctl install "$WATCH" "$WATCH_APP"
   WATCH_BUNDLE=$(bundle_id "$WATCH_APP")
   echo "Apple Watch screenshots:"
-  for state in idle running finished; do
+  for state in idle running; do
     shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
   done
 else
