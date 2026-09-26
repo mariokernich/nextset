@@ -28,6 +28,11 @@ enum DemoMode {
         switch value {
         case "running":
             store.start(store.library.visibleQuickTimers[0])
+        case "countdown":
+            // In its last seconds when the screenshot is taken: `-demoEnd`
+            // is the Unix time at which the rest should end.
+            let end = UserDefaults.standard.double(forKey: "demoEnd")
+            store.start(seconds: end > 0 ? Int(end - Date.now.timeIntervalSince1970) : 7)
         case "paused":
             store.start(seconds: 150)
             store.primaryAction()

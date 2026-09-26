@@ -84,6 +84,12 @@ shoot() {
   echo "  $file"
 }
 
+# Launch arguments for a rest that is in its last seconds when the screenshot
+# is taken, however long the app takes to start up.
+countdown() {
+  echo -demo countdown -demoEnd $(($(date +%s) + ${SETTLE:-5} + 4))
+}
+
 if [[ "$ONLY" != "watch" ]]; then
 PHONE=$(find_device "$PHONE_NAME")
 wait_for_boot "$PHONE" 420
@@ -96,7 +102,8 @@ xcrun simctl ui "$PHONE" appearance light
 for state in idle running finished settings; do
   shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state.png" -demo "$state"
 done
-shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-running-de.png" -demo running -AppleLanguages "(de)" -AppleLocale de_DE
+shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-countdown.png" $(countdown)
+shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-countdown-de.png" $(countdown) -AppleLanguages "(de)" -AppleLocale de_DE
 xcrun simctl ui "$PHONE" appearance dark
 for state in running settings; do
   shoot "$PHONE" "$PHONE_BUNDLE" "$OUT/iphone-$state-dark.png" -demo "$state"
@@ -114,6 +121,7 @@ if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   for state in idle running finished keep; do
     SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
   done
+  SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-countdown.png" $(SETTLE=15 countdown)
 else
   echo "Skipping Apple Watch screenshots"
 fi
