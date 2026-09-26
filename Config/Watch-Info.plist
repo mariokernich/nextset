@@ -6,5 +6,7 @@
 	<array>
 		<string>physical-therapy</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
