@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "claude/**"]
+    branches: [main]
     paths-ignore: ["**.md", "Branding/**"]
   pull_request:
     branches: [main]
@@ -15,8 +15,10 @@ on:
         options: [all, iphone, watch, none]
         default: all
 
+# One run per branch: a newer push, pull request update or manual run
+# replaces the one in progress.
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
+  group: ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 env:
