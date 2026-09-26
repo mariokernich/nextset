@@ -28,6 +28,17 @@ struct RestTimerStateTests {
         #expect(state.displayedSeconds(at: t0 + 60) == 0)
     }
 
+    @Test func updatesOnASecondBoundaryShowTheNewSecond() {
+        var state = RestTimerState()
+        state.start(seconds: 60, now: t0)
+
+        // Once-per-second updates may land a hair before or after the boundary.
+        #expect(state.displayedSeconds(at: t0 + 30 - 0.001) == 30)
+        #expect(state.displayedSeconds(at: t0 + 30 + 0.001) == 30)
+        #expect(state.displayedSeconds(at: t0 + 59.9) == 1)
+        #expect(state.displayedSeconds(at: t0 + 59.999) == 0)
+    }
+
     @Test func pauseFreezesTheRemainingTime() {
         var state = RestTimerState()
         state.start(seconds: 60, now: t0)

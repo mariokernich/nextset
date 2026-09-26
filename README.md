@@ -67,7 +67,7 @@ Voraussetzungen: **Xcode 26** oder neuer, **iOS 26** / **watchOS 26**.
 2. In `Config/Signing.xcconfig` deine Team-ID bei `DEVELOPMENT_TEAM` eintragen, alternativ in Xcode unter *Signing & Capabilities* ein Team wählen. Mit `BUNDLE_ID_PREFIX` passt du die Bundle-IDs an.
 3. Scheme **NextSet** auf dem iPhone starten. Die Watch-App wird mitinstalliert. Für die Watch allein gibt es das Scheme **NextSetWatch**.
 
-> Hinweis: Auf der Watch nutzt die App eine Extended Runtime Session vom Typ *Physical Therapy* (`WKBackgroundModes`). So laufen die Haptik-Signale auch bei gesenktem Handgelenk.
+> Hinweis: Auf der Watch nutzt die App eine Extended Runtime Session vom Typ *Physical Therapy* (`WKBackgroundModes`). So laufen die Haptik-Signale auch bei gesenktem Handgelenk. Die Session braucht einen signierten Build, also mit gesetztem Team. Unsignierte Builds, etwa im CI, lehnt watchOS ab. Dann springt die Mitteilung am Pausenende ein.
 
 ## Projektstruktur
 

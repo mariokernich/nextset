@@ -5,10 +5,19 @@ struct WatchTimerView: View {
     @Environment(TimerStore.self) private var store
     @Environment(\.isLuminanceReduced) private var isLuminanceReduced
 
+    /// Tint for secondary toolbar buttons, so their white labels stay readable.
+    private static let neutral = Color(white: 0.32)
+
+    /// A date on the countdown's second grid, a day back so every tick is ahead of it.
+    private static func tickAnchor(for timer: RestTimerState) -> Date {
+        (timer.endDate ?? timer.finishedAt ?? .now).addingTimeInterval(-86_400)
+    }
+
     var body: some View {
         let timer = store.timer
-        let interval = isLuminanceReduced || timer.phase == .finished ? 1.0 : 1.0 / 15.0
-        TimelineView(.animation(minimumInterval: interval, paused: timer.phase == .paused || timer.phase == .idle)) { context in
+        // One update per second, aligned with the countdown's seconds. The ring
+        // glides between the updates, which keeps the watch efficient.
+        TimelineView(.periodic(from: Self.tickAnchor(for: timer), by: 1)) { context in
             WatchDial(
                 timer: timer,
                 countdownSeconds: store.settings.countdownSeconds,
@@ -19,39 +28,53 @@ struct WatchTimerView: View {
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("End rest", systemImage: "xmark") {
+                Button {
                     store.stop()
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.white)
                 }
+                .tint(Self.neutral)
+                .accessibilityLabel(Text("End rest"))
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 if timer.phase == .finished {
                     Spacer()
-                    Button("Repeat rest", systemImage: "arrow.clockwise") {
+                    Button {
                         store.primaryAction()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(.white)
                     }
-                    .tint(Theme.accent)
+                    .tint(Theme.accentStrong)
+                    .accessibilityLabel(Text("Repeat rest"))
                     Spacer()
                 } else {
                     Button {
                         store.adjust(by: -TimerStore.adjustStep)
                     } label: {
                         Text(verbatim: "−15")
+                            .foregroundStyle(.white)
                     }
+                    .tint(Self.neutral)
                     .accessibilityLabel(Text("Remove 15 seconds"))
 
                     Button {
                         store.primaryAction()
                     } label: {
                         Image(systemName: timer.phase == .running ? "pause.fill" : "play.fill")
+                            .foregroundStyle(.white)
                     }
-                    .tint(Theme.accent)
+                    .tint(Theme.accentStrong)
                     .accessibilityLabel(timer.phase == .running ? Text("Pause") : Text("Resume"))
 
                     Button {
                         store.adjust(by: TimerStore.adjustStep)
                     } label: {
                         Text(verbatim: "+15")
+                            .foregroundStyle(.white)
                     }
+                    .tint(Self.neutral)
                     .accessibilityLabel(Text("Add 15 seconds"))
                 }
             }
@@ -70,15 +93,23 @@ private struct WatchDial: View {
         let inCountdown = timer.phase == .running && seconds > 0 && seconds <= countdownSeconds
         let tint = inCountdown ? Theme.countdown : Theme.accent
 
+        // While running, aim for where the ring will be at the next tick and
+        // animate there linearly, so it moves smoothly with 1 Hz updates.
+        let glides = timer.phase == .running && !isDimmed
+        let progress = timer.phase == .finished
+            ? 1
+            : timer.fractionRemaining(at: glides ? now.addingTimeInterval(1) : now)
+
         GeometryReader { proxy in
             let diameter = min(proxy.size.width, proxy.size.height)
             ZStack {
                 TimerRing(
-                    progress: timer.phase == .finished ? 1 : timer.fractionRemaining(at: now),
+                    progress: progress,
                     tint: tint,
                     lineWidth: max(8, diameter * 0.08),
                     glow: !isDimmed
                 )
+                .animation(glides ? .linear(duration: 1) : nil, value: progress)
                 .opacity(isDimmed || timer.phase == .paused ? 0.5 : 1)
 
                 VStack(spacing: 0) {

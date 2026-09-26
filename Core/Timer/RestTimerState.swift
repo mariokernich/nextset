@@ -100,8 +100,11 @@ struct RestTimerState: Codable, Equatable, Sendable {
     }
 
     /// Whole seconds as shown on a countdown: 0:01 during the last second.
+    ///
+    /// A few milliseconds of tolerance keep once-per-second updates that land
+    /// exactly on a second boundary from showing the previous second.
     func displayedSeconds(at now: Date) -> Int {
-        Int(remaining(at: now).rounded(.up))
+        max(0, Int((remaining(at: now) - 0.005).rounded(.up)))
     }
 
     /// 1 at the start of a rest, 0 at its end.
