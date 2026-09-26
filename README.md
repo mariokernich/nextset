@@ -28,7 +28,7 @@ Die Icons werden aus `Branding/build-icons.mjs` erzeugt (siehe unten).
 |:---:|:---:|:---:|:---:|
 | <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="150"> | <img src="Branding/screenshots/watch-rest.png" width="150"> | <img src="Branding/screenshots/watch-go.png" width="150"> |
 
-Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten).
+Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten). Die Watch-Bilder zeigen noch das vorige Farbschema und werden mit dem nächsten Watch-Lauf ersetzt.
 
 ## Funktionen
 
