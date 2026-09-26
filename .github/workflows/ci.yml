@@ -12,7 +12,7 @@ on:
       screenshots:
         description: Simulator screenshots
         type: choice
-        options: [all, iphone, watch, watch-diagnostics, none]
+        options: [all, iphone, watch, none]
         default: all
 
 concurrency:
@@ -22,8 +22,7 @@ concurrency:
 env:
   # Screenshots need extra simulator time, so they only run on demand.
   SCREENSHOTS: ${{ github.event_name == 'workflow_dispatch' && inputs.screenshots != 'none' }}
-  SCREENSHOTS_ONLY: ${{ inputs.screenshots == 'watch-diagnostics' && 'watch' || inputs.screenshots || 'all' }}
-  WATCH_DIAGNOSTICS: ${{ inputs.screenshots == 'watch-diagnostics' && '1' || '' }}
+  SCREENSHOTS_ONLY: ${{ inputs.screenshots || 'all' }}
 
 jobs:
   build-test:

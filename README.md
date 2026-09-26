@@ -22,9 +22,9 @@ Die Icons werden aus `Branding/build-icons.mjs` erzeugt (siehe unten).
 |:---:|:---:|:---:|:---:|:---:|
 | <img src="Branding/screenshots/iphone-start.png" width="170"> | <img src="Branding/screenshots/iphone-rest.png" width="170"> | <img src="Branding/screenshots/iphone-countdown-de.png" width="170"> | <img src="Branding/screenshots/iphone-go.png" width="170"> | <img src="Branding/screenshots/iphone-rest-dark.png" width="170"> |
 
-| Einstellungen | Apple Watch |
-|:---:|:---:|
-| <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="170"> |
+| Einstellungen | Watch: Start | Watch: Satzpause | Watch: Los! |
+|:---:|:---:|:---:|:---:|
+| <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="150"> | <img src="Branding/screenshots/watch-rest.png" width="150"> | <img src="Branding/screenshots/watch-go.png" width="150"> |
 
 Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten).
 

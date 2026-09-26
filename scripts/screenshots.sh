@@ -114,17 +114,6 @@ if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   for state in idle running finished keep; do
     SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
   done
-  if [[ -n "${WATCH_DIAGNOSTICS:-}" ]]; then
-    echo "Diagnostics: running rest with and without the extended runtime session"
-    SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-running-session.png" -demo running
-    sleep 30
-    xcrun simctl io "$WATCH" screenshot "$OUT/watch-running-session-late.png" >/dev/null
-    xcrun simctl spawn "$WATCH" log show --last 2m --style compact \
-      --predicate 'process == "NextSetWatch" OR eventMessage CONTAINS[c] "extendedruntime" OR eventMessage CONTAINS[c] "NextSetWatch"' \
-      2>/dev/null | tail -120 || true
-    SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-running-nosession.png" -demo running -noSession YES
-    find ~/Library/Logs/DiagnosticReports -iname "*NextSet*" -mmin -30 -print -exec head -60 {} \; 2>/dev/null || true
-  fi
 else
   echo "Skipping Apple Watch screenshots"
 fi
