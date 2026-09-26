@@ -2,26 +2,48 @@
   "sourceLanguage" : "en",
   "strings" : {
     "End rest in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Beende die Pause in ${applicationName}"
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "End rest in ${applicationName}",
+              "Stop ${applicationName}"
+            ]
           }
         }
       }
     },
     "Start ${slot} in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Starte ${slot} in ${applicationName}"
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Start ${slot} in ${applicationName}",
+              "Start rest in ${applicationName}",
+              "Start a rest with ${applicationName}"
+            ]
           }
         }
       }
     },
     "Start a rest with ${applicationName}" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32,6 +54,7 @@
       }
     },
     "Start rest in ${applicationName}" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -42,6 +65,7 @@
       }
     },
     "Stop ${applicationName}" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

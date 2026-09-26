@@ -219,8 +219,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				AEBA2F88920679550F15FBC0 /* NextSetWidgets */,
 				06DDF94E71BB4DA9B656EFDC /* Shared */,
+				AEBA2F88920679550F15FBC0 /* NextSetWidgets */,
 			);
 			name = NextSetWidgets;
 			packageProductDependencies = (
@@ -242,9 +242,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				06DDF94E71BB4DA9B656EFDC /* Shared */,
 				70B2F5C1D6392903E2167A37 /* NextSetWatch */,
 				88829DA6C6CADE9ECD5F46CB /* Core */,
-				06DDF94E71BB4DA9B656EFDC /* Shared */,
 			);
 			name = NextSetWatch;
 			packageProductDependencies = (
@@ -270,9 +270,9 @@
 				CBD06926F8D0F45349E9F228 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8CCFF9A5CB05DC72D92ED02C /* NextSet */,
-				88829DA6C6CADE9ECD5F46CB /* Core */,
 				06DDF94E71BB4DA9B656EFDC /* Shared */,
+				88829DA6C6CADE9ECD5F46CB /* Core */,
+				8CCFF9A5CB05DC72D92ED02C /* NextSet */,
 			);
 			name = NextSet;
 			packageProductDependencies = (
@@ -289,7 +289,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					137F1590332C3129C1EB827C = {
 						CreatedOnToolsVersion = 26.0;
@@ -574,6 +574,7 @@
 				INFOPLIST_FILE = "Config/NextSet-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = NextSet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -601,6 +602,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -631,6 +633,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 34JNW2E282;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -647,6 +650,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
@@ -659,6 +663,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -689,6 +694,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 34JNW2E282;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -712,6 +718,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WATCHOS_DEPLOYMENT_TARGET = 26.0;
@@ -730,6 +737,7 @@
 				INFOPLIST_FILE = "Config/NextSet-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = NextSet;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

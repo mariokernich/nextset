@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2600"
+   LastUpgradeVersion = "2700"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -46,7 +46,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D9CD95987FF328DF06DC0EE6"
             BuildableName = "NextSetWatch.app"
-            BlueprintName = "NextSetWatch"
             ReferencedContainer = "container:NextSet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -63,7 +62,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D9CD95987FF328DF06DC0EE6"
             BuildableName = "NextSetWatch.app"
-            BlueprintName = "NextSetWatch"
             ReferencedContainer = "container:NextSet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
