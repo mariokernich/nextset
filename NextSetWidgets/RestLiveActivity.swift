@@ -40,7 +40,7 @@ struct RestLiveActivity: Widget {
                 RestRing(state: state, isOver: isOver, lineWidth: 3.5)
                     .frame(width: 20, height: 20)
             }
-            .keylineTint(Theme.accent)
+            .keylineTint(Theme.coral)
         }
         .supplementalActivityFamilies([.small])
     }

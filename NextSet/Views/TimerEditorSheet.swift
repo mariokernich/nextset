@@ -56,6 +56,7 @@ struct TimerEditorSheet: View {
                         save()
                         dismiss()
                     }
+                    .tint(Theme.controlTint)
                 }
             }
             .onAppear(perform: load)

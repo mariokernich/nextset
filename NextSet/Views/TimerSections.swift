@@ -17,7 +17,7 @@ struct QuickTimersSection: View {
                     }
                     .buttonStyle(.plain)
                     .glassEffect(
-                        .regular.tint(Theme.accent.opacity(isCurrent ? 0.35 : 0.16)).interactive(),
+                        .regular.tint(Theme.accent.opacity(isCurrent ? 0.22 : 0.1)).interactive(),
                         in: .rect(cornerRadius: 28)
                     )
                     .contextMenu {
@@ -132,7 +132,7 @@ struct PresetsSection: View {
         }
         .buttonStyle(.plain)
         .glassEffect(
-            isCurrent ? .regular.tint(Theme.accent.opacity(0.3)).interactive() : .regular.interactive(),
+            isCurrent ? .regular.tint(Theme.accent.opacity(0.2)).interactive() : .regular.interactive(),
             in: .rect(cornerRadius: 18)
         )
         .contextMenu {

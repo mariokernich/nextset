@@ -8,7 +8,9 @@
 
 **NextSet** sagt, worum es geht: Die App sagt dir, wann dein *nächster Satz* startet. Der Claim **„Rest. Set. Go.“** ist ein Wortspiel auf „Ready, Set, Go“.
 
-Das **Logo** ist eine Kettlebell, deren Körper gleichzeitig ein Timer-Zifferblatt ist. Griff und Kugel ergeben die Silhouette einer Stoppuhr, der mintgrüne Ring zeigt die ablaufende Pause. So steht das Logo zugleich für Gym und Timer. Mint steht für Erholung und ist die Akzentfarbe der ganzen App, für die letzten Sekunden kommt ein sanftes Pfirsich dazu.
+Das **Logo** ist eine Kettlebell, deren Körper gleichzeitig ein Timer-Zifferblatt ist. Griff und Kugel ergeben die Silhouette einer Stoppuhr, der Ring in Koralle zeigt die ablaufende Pause. So steht das Logo zugleich für Gym und Timer.
+
+**Farben:** Graphit, Weiß und Glas prägen die App, sie bleibt dadurch ruhig und schlicht. Farbe gibt es nur, wenn es drauf ankommt: In den letzten Sekunden leuchten Ring und Ziffern in Koralle. Koralle ist außerdem die Farbe des Logos und der Schalter, auf der Watch auch die Akzentfarbe.
 
 | iPhone | iPhone (dunkel) | iPhone (getönt) | Apple Watch |
 |:---:|:---:|:---:|:---:|
@@ -44,7 +46,7 @@ Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow m
 
 **iPhone**
 - Liquid-Glass-Design (iOS 26): Zifferblatt als Glasscheibe, Schnell-Timer als getönte Glas-Kacheln, Glas-Buttons und -Toolbar über einem weichen Mesh-Gradient, der sich im Glas bricht
-- Folgt Hell- und Dunkelmodus des Systems; ruhiges Mint als Akzent, große Ziffern in SF Rounded
+- Folgt Hell- und Dunkelmodus des Systems; Graphit als Akzent, Koralle für die letzten Sekunden, große Ziffern in SF Rounded
 - **Live-Aktivität** auf dem Sperrbildschirm, in der Dynamic Island und im Smart Stack der Apple Watch
 - **Mitteilung** zum Pausenende, falls die App im Hintergrund ist
 - **Display bleibt an**, solange eine Pause läuft (abschaltbar)

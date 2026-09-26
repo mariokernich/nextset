@@ -38,7 +38,7 @@ struct WatchTimerView: View {
                         store.primaryAction()
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.onAccentStrong)
                     }
                     .tint(Theme.accentStrong)
                     .accessibilityLabel(Text("Repeat rest"))
@@ -57,7 +57,7 @@ struct WatchTimerView: View {
                         store.primaryAction()
                     } label: {
                         Image(systemName: timer.phase == .running ? "pause.fill" : "play.fill")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.onAccentStrong)
                     }
                     .tint(Theme.accentStrong)
                     .accessibilityLabel(timer.phase == .running ? Text("Pause") : Text("Resume"))

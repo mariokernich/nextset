@@ -21,6 +21,7 @@ struct SettingsView: View {
                     Button("Done", systemImage: "checkmark", role: .confirm) {
                         dismiss()
                     }
+                    .tint(Theme.controlTint)
                 }
             }
             .sheet(item: $editor) { target in
@@ -98,8 +99,11 @@ struct SettingsView: View {
                     Text("\(value) seconds").tag(value)
                 }
             }
-            Toggle("Haptics", systemImage: "iphone.radiowaves.left.and.right", isOn: setting(\.hapticsEnabled))
-            Toggle("Sounds", systemImage: "speaker.wave.2", isOn: setting(\.soundEnabled))
+            Group {
+                Toggle("Haptics", systemImage: "iphone.radiowaves.left.and.right", isOn: setting(\.hapticsEnabled))
+                Toggle("Sounds", systemImage: "speaker.wave.2", isOn: setting(\.soundEnabled))
+            }
+            .tint(Theme.controlTint)
             if store.settings.soundEnabled {
                 Picker("Sound", systemImage: "music.note", selection: setting(\.soundStyle)) {
                     ForEach(SoundStyle.allCases) { style in
@@ -122,9 +126,12 @@ struct SettingsView: View {
 
     private var duringRestSection: some View {
         Section {
-            Toggle("Keep display on", systemImage: "sun.max", isOn: setting(\.keepScreenOn))
-            Toggle("Notify when rest is over", systemImage: "bell.badge", isOn: setting(\.notificationsEnabled))
-            Toggle("Live Activity", systemImage: "lock.iphone", isOn: setting(\.liveActivityEnabled))
+            Group {
+                Toggle("Keep display on", systemImage: "sun.max", isOn: setting(\.keepScreenOn))
+                Toggle("Notify when rest is over", systemImage: "bell.badge", isOn: setting(\.notificationsEnabled))
+                Toggle("Live Activity", systemImage: "lock.iphone", isOn: setting(\.liveActivityEnabled))
+            }
+            .tint(Theme.controlTint)
         } header: {
             Text("During a rest")
         } footer: {

@@ -29,7 +29,7 @@ struct WatchHomeView: View {
                         .contentShape(.rect(cornerRadius: 22))
                     }
                     .buttonStyle(.plain)
-                    .glassEffect(.regular.tint(Theme.accent.opacity(0.35)).interactive(), in: .rect(cornerRadius: 22))
+                    .glassEffect(.regular.tint(Theme.accent.opacity(0.24)).interactive(), in: .rect(cornerRadius: 22))
                     .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
                 }
 
@@ -59,7 +59,7 @@ struct WatchHomeView: View {
                     WatchSettingsView()
                 } label: {
                     Image(systemName: "gearshape.fill")
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onAccentStrong)
                         .accessibilityLabel(Text("Settings"))
                 }
                 .tint(Theme.accentStrong)

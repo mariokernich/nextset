@@ -3,18 +3,26 @@ import SwiftUI
 import UIKit
 #endif
 
-/// NextSet's colours: a calm mint for rest and recovery, a soft peach for
-/// the last seconds. Everything else comes from the system so the Liquid
-/// Glass surfaces can do the work.
+/// NextSet's colours: graphite, white and glass for everything, coral only
+/// where it counts – the last seconds of a rest, plus the ring in the logo.
+/// Everything else comes from the system so the Liquid Glass surfaces can do
+/// the work.
 enum Theme {
     /// Rings, icons and highlights.
-    static let accent = Color.adaptive(light: 0x22A884, dark: 0x74DDB9)
-    /// Fill for prominent buttons with white symbols on top.
-    static let accentStrong = Color.adaptive(light: 0x1F9E7B, dark: 0x2FAE88)
+    static let accent = Color.adaptive(light: 0x2E2E2C, dark: 0xEFEEEB)
+    /// Fill for prominent buttons.
+    static let accentStrong = Color.adaptive(light: 0x1E1D1B, dark: 0xEFEEEB)
+    /// Symbols on top of `accentStrong`.
+    static let onAccentStrong = Color.adaptive(light: 0xFFFFFF, dark: 0x171614)
     /// Accent for small text, with enough contrast on light backgrounds.
-    static let accentText = Color.adaptive(light: 0x157A5E, dark: 0x86E3C3)
+    static let accentText = Color.adaptive(light: 0x393836, dark: 0xE9E8E5)
+    /// The brand colour: the ring in the logo and the watch app's tint.
+    static let coral = Color.adaptive(light: 0xE0643C, dark: 0xFA8C58)
     /// The last seconds of a rest.
-    static let countdown = Color.adaptive(light: 0xE0773F, dark: 0xFFB380)
+    static let countdown = coral
+    /// Switches and confirm buttons put white on the tint, which a graphite
+    /// accent (near-white in dark mode) cannot carry.
+    static let controlTint = coral
     static let track = Color.primary.opacity(0.08)
 }
 

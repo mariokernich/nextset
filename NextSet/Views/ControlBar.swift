@@ -14,7 +14,7 @@ struct ControlBar: View {
                 } label: {
                     Image(systemName: primarySymbol)
                         .font(.system(size: 28, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onAccentStrong)
                         .frame(width: 76, height: 76)
                         .contentTransition(.symbolEffect(.replace))
                 }

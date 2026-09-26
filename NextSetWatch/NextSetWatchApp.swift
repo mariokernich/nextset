@@ -9,7 +9,9 @@ struct NextSetWatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environment(model.store)
-                .tint(Theme.accent)
+                // Coral for the title and controls: the graphite accent is
+                // white on the watch and would not stand out from the text.
+                .tint(Theme.coral)
         }
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }

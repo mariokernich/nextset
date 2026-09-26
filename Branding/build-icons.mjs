@@ -24,9 +24,9 @@ try {
 // ---------------------------------------------------------------------------
 // Geometry (1024 × 1024 canvas)
 
-// Calm mint for rest and recovery.
-const MINT_LIGHT = '#6CD9B3';
-const MINT = '#22A884';
+// Coral: the brand colour, which also marks the last seconds of a rest.
+const CORAL_LIGHT = '#F49665';
+const CORAL = '#DF5F35';
 
 const polar = (cx, cy, r, deg) => {
   const a = (deg * Math.PI) / 180;
@@ -75,16 +75,16 @@ function glyph(palette, { id = 'g' } = {}) {
 const palettes = {
   // Light icon: graphite kettlebell with a bright dial.
   standard: {
-    bellTop: '#3A4846', bellBottom: '#18211F',
-    ringTop: MINT_LIGHT, ringBottom: MINT,
-    faceTop: '#FFFFFF', faceBottom: '#EAF5F0',
-    track: 'rgba(24,60,50,0.10)',
+    bellTop: '#434240', bellBottom: '#171614',
+    ringTop: CORAL_LIGHT, ringBottom: CORAL,
+    faceTop: '#FFFFFF', faceBottom: '#F2F2F0',
+    track: 'rgba(0,0,0,0.09)',
   },
   // Dark icon: light kettlebell with a dark dial.
   dark: {
-    bellTop: '#F4F8F6', bellBottom: '#C7D3CF',
-    ringTop: '#A8EFD5', ringBottom: '#4FC9A0',
-    faceTop: '#1F2A2C', faceBottom: '#0D1416',
+    bellTop: '#F6F5F4', bellBottom: '#C5C4C2',
+    ringTop: '#FCB17E', ringBottom: '#F57E4D',
+    faceTop: '#252422', faceBottom: '#0C0B0A',
     track: 'rgba(255,255,255,0.12)',
   },
   tinted: {
@@ -110,10 +110,10 @@ const placed = (palette, scale = 1) =>
 
 const sources = {
   'logo.svg': svg(placed(palettes.standard)),
-  'AppIcon.svg': svg(background('#F7FCFA', '#CFEEE1') + placed(palettes.standard)),
-  'AppIcon-Dark.svg': svg(background('#1E2A2B', '#070B0C') + placed(palettes.dark)),
+  'AppIcon.svg': svg(background('#FBFBFA', '#DFDEDB') + placed(palettes.standard)),
+  'AppIcon-Dark.svg': svg(background('#272625', '#060605') + placed(palettes.dark)),
   'AppIcon-Tinted.svg': svg(background('#0A0A0A', '#000000') + placed(palettes.tinted)),
-  'AppIcon-Watch.svg': svg(background('#F7FCFA', '#CFEEE1') + placed(palettes.standard, 0.86)),
+  'AppIcon-Watch.svg': svg(background('#FBFBFA', '#DFDEDB') + placed(palettes.standard, 0.86)),
 };
 
 for (const [name, content] of Object.entries(sources)) {
@@ -147,17 +147,17 @@ const banner = `<!doctype html><html><head><style>
   ${fontFace(800)}${fontFace(500)}
   html,body{margin:0}
   body{width:1600px;height:600px;display:flex;align-items:center;gap:72px;padding:0 120px;box-sizing:border-box;
-       background:radial-gradient(circle at 20% 45%, rgba(108,217,179,0.35), transparent 45%),
-                  radial-gradient(circle at 85% 20%, rgba(170,200,250,0.35), transparent 40%),
-                  linear-gradient(160deg,#F5FBF8,#E2F2EC 60%,#EEEAFB);
-       font-family:Inter,-apple-system,'Helvetica Neue',sans-serif;color:#17211F}
+       background:radial-gradient(circle at 20% 45%, rgba(224,100,60,0.12), transparent 45%),
+                  radial-gradient(circle at 85% 20%, rgba(210,204,196,0.45), transparent 40%),
+                  linear-gradient(160deg,#FAFAF9,#EDECEA 60%,#F3F1EE);
+       font-family:Inter,-apple-system,'Helvetica Neue',sans-serif;color:#1A1918}
   .icon{width:340px;height:340px;border-radius:78px;overflow:hidden;flex:none;
-        box-shadow:0 30px 70px rgba(20,70,55,.18),0 0 0 1px rgba(255,255,255,.7)}
+        box-shadow:0 30px 70px rgba(30,25,20,.18),0 0 0 1px rgba(255,255,255,.7)}
   .icon svg{width:100%;height:100%;display:block}
   h1{font-size:164px;font-weight:800;letter-spacing:-6px;margin:0;line-height:1}
   .tag{font-size:54px;font-weight:800;letter-spacing:-1px;margin:22px 0 0;
-       background:linear-gradient(90deg,${MINT_LIGHT},${MINT});-webkit-background-clip:text;color:transparent}
-  .sub{font-size:32px;font-weight:500;color:#5D6B67;margin:18px 0 0}
+       background:linear-gradient(90deg,${CORAL_LIGHT},${CORAL});-webkit-background-clip:text;color:transparent}
+  .sub{font-size:32px;font-weight:500;color:#67645F;margin:18px 0 0}
 </style></head><body>
   <div class="icon">${sources['AppIcon.svg']}</div>
   <div><h1>NextSet</h1><p class="tag">Rest. Set. Go.</p><p class="sub">Satzpausen-Timer für iPhone &amp; Apple&nbsp;Watch</p></div>

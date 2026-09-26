@@ -85,7 +85,7 @@ private struct SoundToggle: View {
     }
 }
 
-/// Soft mesh gradient behind the Liquid Glass surfaces: calm colours that the
+/// Soft mesh gradient behind the Liquid Glass surfaces: warm greys that the
 /// glass can pick up and refract, in light and dark mode.
 struct Backdrop: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -104,15 +104,15 @@ struct Backdrop: View {
     }
 
     private static let light: [UInt32] = [
-        0xDDF3EA, 0xF1F7F8, 0xDDEBFA,
-        0xEAF3FC, 0xCFEFE2, 0xEAE6FB,
-        0xF7FAF9, 0xE6F2EF, 0xF1EEF9,
+        0xF0EEEB, 0xF7F7F5, 0xEFECE9,
+        0xF4F3F1, 0xE8E6E3, 0xF1EEEC,
+        0xFAFAF9, 0xF1F0EE, 0xF4F2F0,
     ]
 
     private static let dark: [UInt32] = [
-        0x0F2220, 0x0C1316, 0x111A2C,
-        0x0D1B20, 0x103028, 0x16182E,
-        0x07090B, 0x0A1012, 0x0D0C15,
+        0x191817, 0x0E0D0C, 0x171615,
+        0x121111, 0x201F1D, 0x151312,
+        0x040404, 0x070707, 0x060605,
     ]
 }
 
