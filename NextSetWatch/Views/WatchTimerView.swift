@@ -1,6 +1,10 @@
 import SwiftUI
 
 /// Full-screen ring while resting.
+///
+/// Deliberately free of a `TimelineView`: the digits are system-rendered timer
+/// text and the ring runs one linear animation per rest. That keeps the view
+/// idle between state changes, which is good for the battery and Always On.
 struct WatchTimerView: View {
     @Environment(TimerStore.self) private var store
     @Environment(\.isLuminanceReduced) private var isLuminanceReduced
@@ -8,23 +12,13 @@ struct WatchTimerView: View {
     /// Tint for secondary toolbar buttons, so their white labels stay readable.
     private static let neutral = Color(white: 0.32)
 
-    /// A date on the countdown's second grid, a day back so every tick is ahead of it.
-    private static func tickAnchor(for timer: RestTimerState) -> Date {
-        (timer.endDate ?? timer.finishedAt ?? .now).addingTimeInterval(-86_400)
-    }
-
     var body: some View {
         let timer = store.timer
-        // One update per second, aligned with the countdown's seconds. The ring
-        // glides between the updates, which keeps the watch efficient.
-        TimelineView(.periodic(from: Self.tickAnchor(for: timer), by: 1)) { context in
-            WatchDial(
-                timer: timer,
-                countdownSeconds: store.settings.countdownSeconds,
-                now: context.date,
-                isDimmed: isLuminanceReduced
-            )
-        }
+        WatchDial(
+            timer: timer,
+            countdownSecondsLeft: store.countdownSecondsLeft,
+            isDimmed: isLuminanceReduced
+        )
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -84,32 +78,25 @@ struct WatchTimerView: View {
 
 private struct WatchDial: View {
     let timer: RestTimerState
-    let countdownSeconds: Int
-    let now: Date
+    let countdownSecondsLeft: Int?
     let isDimmed: Bool
 
-    var body: some View {
-        let seconds = timer.displayedSeconds(at: now)
-        let inCountdown = timer.phase == .running && seconds > 0 && seconds <= countdownSeconds
-        let tint = inCountdown ? Theme.countdown : Theme.accent
+    /// Ring position; animated linearly to zero while a rest runs.
+    @State private var progress: Double = 1
 
-        // While running, aim for where the ring will be at the next tick and
-        // animate there linearly, so it moves smoothly with 1 Hz updates.
-        let glides = timer.phase == .running && !isDimmed
-        let progress = timer.phase == .finished
-            ? 1
-            : timer.fractionRemaining(at: glides ? now.addingTimeInterval(1) : now)
+    var body: some View {
+        let inCountdown = timer.phase == .running && countdownSecondsLeft != nil
+        let tint = inCountdown ? Theme.countdown : Theme.accent
 
         GeometryReader { proxy in
             let diameter = min(proxy.size.width, proxy.size.height)
             ZStack {
                 TimerRing(
-                    progress: progress,
+                    progress: timer.phase == .finished ? 1 : progress,
                     tint: tint,
                     lineWidth: max(8, diameter * 0.08),
                     glow: !isDimmed
                 )
-                .animation(glides ? .linear(duration: 1) : nil, value: progress)
                 .opacity(isDimmed || timer.phase == .paused ? 0.5 : 1)
 
                 VStack(spacing: 0) {
@@ -117,36 +104,50 @@ private struct WatchDial: View {
                         .font(.system(size: max(10, diameter * 0.075), weight: .bold))
                         .textCase(.uppercase)
                         .foregroundStyle(timer.phase == .finished ? Theme.accent : .secondary)
-                    Group {
-                        if timer.phase == .finished {
-                            Text("GO!")
-                                .foregroundStyle(Theme.accent)
-                        } else {
-                            Text(verbatim: DurationFormat.clock(seconds))
-                                .foregroundStyle(inCountdown ? Theme.countdown : .primary)
-                                .contentTransition(.numericText(countsDown: true))
-                                .animation(isDimmed ? nil : .snappy, value: seconds)
-                        }
-                    }
-                    .font(.system(size: diameter * 0.27, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
-                    .minimumScaleFactor(0.5)
-                    .lineLimit(1)
 
-                    if timer.phase == .finished {
-                        Text(verbatim: "+" + DurationFormat.clock(Int(timer.overtime(at: now))))
-                            .font(.system(size: max(11, diameter * 0.09), weight: .semibold, design: .rounded))
-                            .monospacedDigit()
-                            .foregroundStyle(Theme.countdown)
+                    time(inCountdown: inCountdown)
+                        .font(.system(size: diameter * 0.27, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .multilineTextAlignment(.center)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+
+                    if timer.phase == .finished, let finishedAt = timer.finishedAt {
+                        HStack(spacing: 0) {
+                            Text(verbatim: "+")
+                            Text(timerInterval: finishedAt...Date.distantFuture, countsDown: false)
+                        }
+                        .font(.system(size: max(11, diameter * 0.09), weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(Theme.countdown)
                     }
                 }
                 .padding(.horizontal, diameter * 0.14)
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(caption)
-        .accessibilityValue(timer.phase == .finished ? String(localized: "Rest is over") : DurationFormat.spoken(seconds))
+        .onAppear(perform: syncRing)
+        .onChange(of: timer) { syncRing() }
+        .onChange(of: isDimmed) { syncRing() }
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private func time(inCountdown: Bool) -> some View {
+        switch timer.phase {
+        case .finished:
+            Text("GO!")
+                .foregroundStyle(Theme.accent)
+        case .running:
+            if let end = timer.endDate {
+                // Rendered and updated by the system, also in Always On.
+                Text(timerInterval: min(Date.now, end)...end, countsDown: true)
+                    .foregroundStyle(inCountdown ? Theme.countdown : .primary)
+            }
+        case .paused, .idle:
+            Text(verbatim: DurationFormat.clock(timer.displayedSeconds(at: .now)))
+                .foregroundStyle(.primary)
+        }
     }
 
     private var caption: LocalizedStringKey {
@@ -155,6 +156,24 @@ private struct WatchDial: View {
         case .running: "Rest"
         case .paused: "Paused"
         case .finished: "Next set"
+        }
+    }
+
+    /// Jumps the ring to the current value, then lets it run down to zero in
+    /// a single linear animation that ends exactly when the rest ends.
+    private func syncRing() {
+        let now = Date.now
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            progress = timer.fractionRemaining(at: now)
+        }
+        guard timer.phase == .running, !isDimmed else { return }
+        let remaining = timer.remaining(at: now)
+        Task { @MainActor in
+            withAnimation(.linear(duration: remaining)) {
+                progress = 0
+            }
         }
     }
 }

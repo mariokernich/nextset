@@ -21,6 +21,9 @@ final class TimerStore {
     private(set) var timer: RestTimerState
     /// Duration shown while no rest is running; adjustable with ±15 s.
     private(set) var idleSeconds: Int
+    /// Seconds left while the final countdown runs, otherwise `nil`. Driven by
+    /// the same events as the countdown haptics and sounds.
+    private(set) var countdownSecondsLeft: Int?
 
     @ObservationIgnored let feedback: FeedbackCoordinator
     @ObservationIgnored weak var sideEffects: TimerSideEffects?
@@ -113,6 +116,7 @@ final class TimerStore {
         case .idle, .paused:
             break
         }
+        updateCountdown(now: now)
         scheduleEvents()
         sideEffects?.timerStateDidChange(timer, settings: settings)
     }
@@ -144,7 +148,10 @@ final class TimerStore {
         let countdownChanged = copy.countdownSeconds != settings.countdownSeconds
         settings = copy
         storage.save(copy, key: .settings)
-        if countdownChanged { scheduleEvents() }
+        if countdownChanged {
+            updateCountdown()
+            scheduleEvents()
+        }
         sideEffects?.timerStateDidChange(timer, settings: settings)
     }
 
@@ -152,13 +159,21 @@ final class TimerStore {
 
     private func timerChanged() {
         autoResetTask?.cancel()
+        updateCountdown()
         save()
         scheduleEvents()
         sideEffects?.timerStateDidChange(timer, settings: settings)
     }
 
+    private func updateCountdown(now: Date = .now) {
+        let seconds = timer.displayedSeconds(at: now)
+        let inCountdown = timer.phase == .running && seconds > 0 && seconds <= settings.countdownSeconds
+        countdownSecondsLeft = inCountdown ? seconds : nil
+    }
+
     private func didFinish(inTime: Bool) {
         eventTask?.cancel()
+        countdownSecondsLeft = nil
         if inTime { feedback.finished(settings) }
         save()
         sideEffects?.timerDidFinish(timer, settings: settings, inTime: inTime)
@@ -195,6 +210,7 @@ final class TimerStore {
         let lateness = -event.date.timeIntervalSinceNow
         switch event {
         case .tick(let secondsLeft, _):
+            countdownSecondsLeft = secondsLeft
             if lateness < 0.5 {
                 feedback.countdownTick(secondsLeft: secondsLeft, settings: settings)
             }

@@ -55,6 +55,23 @@ struct TimerStoreTests {
         #expect(store.timer.phase == .finished)
     }
 
+    @Test func reportsWhenTheFinalCountdownRuns() {
+        let store = makeStore()
+        store.updateSettings { $0.countdownSeconds = 10 }
+
+        store.start(seconds: 90)
+        #expect(store.countdownSecondsLeft == nil)
+
+        store.start(seconds: 8)
+        #expect(store.countdownSecondsLeft == 8)
+
+        store.adjust(by: 15)
+        #expect(store.countdownSecondsLeft == nil)
+
+        store.stop()
+        #expect(store.countdownSecondsLeft == nil)
+    }
+
     @Test func stopReturnsToIdle() {
         let store = makeStore()
         store.start(seconds: 60)
