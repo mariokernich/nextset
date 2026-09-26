@@ -114,13 +114,35 @@ if [[ "$ONLY" == "iphone" ]]; then
   exit 0
 fi
 
+# Give the watch simulator the machine to itself (the tests leave the iPhone booted).
+xcrun simctl shutdown "${PHONE:-$(find_device "$PHONE_NAME" 2>/dev/null || true)}" >/dev/null 2>&1 || true
+
+# watch_shoot <file> <launch arguments…>: like shoot, but takes the screenshot
+# again while the watch still shows its launch screen (a nearly black image,
+# far smaller as PNG than any app screen).
+watch_shoot() {
+  local file=$1
+  shift
+  SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$file" "$@"
+  for _ in 1 2 3; do
+    (($(wc -c <"$file") > 30000)) && return 0
+    echo "  still launching, trying again in 20 s"
+    sleep 20
+    xcrun simctl io "$WATCH" screenshot "$file" >/dev/null
+  done
+  echo "  $file still shows the launch screen. Recent log of the app:"
+  xcrun simctl spawn "$WATCH" log show --last 3m --style compact \
+    --predicate 'process == "NextSetWatch"' 2>/dev/null | tail -60 || true
+}
+
 if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   xcrun simctl install "$WATCH" "$WATCH_APP"
   WATCH_BUNDLE=$(bundle_id "$WATCH_APP")
   echo "Apple Watch screenshots:"
   for state in idle running finished keep; do
-    SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-$state.png" -demo "$state"
+    watch_shoot "$OUT/watch-$state.png" -demo "$state"
   done
+  # No second tries here: the last seconds would be over by then.
   SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-countdown.png" $(SETTLE=15 countdown)
 else
   echo "Skipping Apple Watch screenshots"

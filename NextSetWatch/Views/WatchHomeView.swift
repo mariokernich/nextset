@@ -42,9 +42,12 @@ struct WatchHomeView: View {
                                 Text(verbatim: DurationFormat.clock(preset.seconds))
                                     .font(.system(.title3, design: .rounded).weight(.semibold))
                                     .monospacedDigit()
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, minHeight: 48)
+                                    .contentShape(.capsule)
                             }
-                            .buttonStyle(.glass)
+                            // Neutral glass: the glass button style would take on the coral tint.
+                            .buttonStyle(.plain)
+                            .glassEffect(.regular.tint(Theme.accent.opacity(0.12)).interactive(), in: .capsule)
                             .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
                         }
                     }
