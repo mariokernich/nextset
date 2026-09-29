@@ -51,7 +51,10 @@ fun HomeScreen(state: TimerSnapshot, onStart: (RestPreset) -> Unit, onOpenSettin
             }
             state.library.visibleQuickTimers.forEach { preset ->
                 item(key = preset.id) {
-                    val label = stringResource(CoreR.string.start_rest_for, DurationFormat.spoken(resources, preset.seconds))
+                    // With the name, so two timers of 1:30 stay apart.
+                    val label = listOf(stringResource(CoreR.string.start_rest_for, DurationFormat.spoken(resources, preset.seconds)), preset.trimmedName)
+                        .filter { it.isNotEmpty() }
+                        .joinToString(", ")
                     Button(
                         onClick = { onStart(preset) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 60.dp).semantics { contentDescription = label },
@@ -83,7 +86,10 @@ fun HomeScreen(state: TimerSnapshot, onStart: (RestPreset) -> Unit, onOpenSettin
                 item(key = row.first().id) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                         row.forEach { preset ->
-                            val label = stringResource(CoreR.string.start_rest_for, DurationFormat.spoken(resources, preset.seconds))
+                            // With the name, so two timers of 1:30 stay apart.
+                            val label = listOf(stringResource(CoreR.string.start_rest_for, DurationFormat.spoken(resources, preset.seconds)), preset.trimmedName)
+                                .filter { it.isNotEmpty() }
+                                .joinToString(", ")
                             Button(
                                 onClick = { onStart(preset) },
                                 modifier = Modifier.weight(1f).heightIn(min = 48.dp).semantics { contentDescription = label },

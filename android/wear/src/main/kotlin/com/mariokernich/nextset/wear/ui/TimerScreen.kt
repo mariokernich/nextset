@@ -41,6 +41,7 @@ import androidx.wear.compose.material3.TextButtonDefaults
 import com.mariokernich.nextset.core.format.DurationFormat
 import com.mariokernich.nextset.core.store.TimerSnapshot
 import com.mariokernich.nextset.core.store.TimerStore
+import com.mariokernich.nextset.core.timer.RestTimerState
 import com.mariokernich.nextset.core.timer.RestTimerState.Phase
 import com.mariokernich.nextset.core.ui.drawTimerRing
 import kotlinx.coroutines.delay
@@ -48,9 +49,9 @@ import com.mariokernich.nextset.core.R as CoreR
 
 /** Full-screen ring while resting. */
 @Composable
-fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean) {
+fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean, ambientUpdate: Long) {
     val timer = state.timer
-    val now by rememberNow(timer.phase, isAmbient)
+    val now by rememberNow(timer, isAmbient, ambientUpdate)
     val density = LocalDensity.current
     val inCountdown = timer.phase == Phase.RUNNING && state.countdownSecondsLeft != null
     val tint = if (inCountdown) WearColors.coral else WearColors.accent
@@ -106,7 +107,8 @@ fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean) {
                     },
                     maxLines = 1,
                 )
-                if (timer.phase == Phase.FINISHED) {
+                // Not in Always On: once the rest's service ends, the watch sleeps and it would stand still.
+                if (timer.phase == Phase.FINISHED && !isAmbient) {
                     Text(
                         text = "+" + DurationFormat.clock((timer.overtime(now) / 1000).toInt()),
                         fontSize = with(density) { maxOf(11.dp, diameter * 0.09f).toSp() },
@@ -178,17 +180,20 @@ private fun AdjustButton(delta: Int, label: String, onAdjust: (Int) -> Unit) {
     }
 }
 
-/** The current time: every frame while a rest runs on screen, every second otherwise. */
+/**
+ * The current time: every frame while a rest runs on screen, otherwise just
+ * when the shown seconds change, in step with the countdown vibrations.
+ */
 @Composable
-private fun rememberNow(phase: Phase, isAmbient: Boolean): State<Long> {
-    val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(phase, isAmbient) {
-        now.longValue = System.currentTimeMillis()
-        if (phase == Phase.RUNNING && !isAmbient) {
+private fun rememberNow(timer: RestTimerState, isAmbient: Boolean, ambientUpdate: Long): State<Long> {
+    // Keyed, so a changed rest never shows for a frame with the time of before.
+    val now = remember(timer, isAmbient, ambientUpdate) { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(timer, isAmbient, ambientUpdate) {
+        if (timer.phase == Phase.RUNNING && !isAmbient) {
             while (true) withFrameMillis { now.longValue = System.currentTimeMillis() }
-        } else if (phase == Phase.RUNNING || phase == Phase.FINISHED) {
+        } else if (timer.phase == Phase.RUNNING || timer.phase == Phase.FINISHED) {
             while (true) {
-                delay(1000 - System.currentTimeMillis() % 1000)
+                delay(timer.millisUntilNextSecond(System.currentTimeMillis()))
                 now.longValue = System.currentTimeMillis()
             }
         }

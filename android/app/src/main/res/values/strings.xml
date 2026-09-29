@@ -20,7 +20,8 @@
     <string name="during_rest">During a rest</string>
     <string name="keep_display_on">Keep display on</string>
     <string name="live_notification">Live notification</string>
-    <string name="during_rest_footer">While the phone is locked, the lock screen and the status bar show the countdown, and a notification tells you when the rest is over.</string>
+    <string name="during_rest_footer">While the phone is locked, the lock screen and the status bar show the countdown, and a notification tells you when the rest is over. The live notification also keeps the countdown and the end of the rest audible while NextSet is in the background.</string>
+    <string name="allow_notifications">Allow notifications in the system settings</string>
 
     <!-- Timer editor -->
     <string name="name_optional">Name (optional)</string>

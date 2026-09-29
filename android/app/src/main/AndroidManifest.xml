@@ -3,6 +3,10 @@
 
     <!-- Android 16+: the countdown notification may show as a Live Update in the status bar. -->
     <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <!-- While a rest runs, a foreground service keeps the countdown and the end
+         audible when NextSet is in the background (Android 15+ audio rules). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:name=".NextSetApplication"
@@ -28,5 +32,14 @@
         <receiver
             android:name=".RestActionReceiver"
             android:exported="false" />
+
+        <service
+            android:name=".RestService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Rest timer between sets of strength exercises: keeps the countdown sounds and the end-of-rest sound audible while the app is in the background, as Android only lets foreground apps and services play audio." />
+        </service>
     </application>
 </manifest>

@@ -11,6 +11,9 @@ import com.mariokernich.nextset.core.timer.RestTimerState.Phase
 class RestActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val store = (context.applicationContext as NextSetHost).store
+        // A rest whose end went unnoticed (e.g. a late alarm) ends first; then +15 s
+        // or Pause no longer apply to it.
+        store.refresh()
         when (intent.action) {
             ACTION_PAUSE -> if (store.timer.phase == Phase.RUNNING) store.primaryAction()
             ACTION_RESUME -> if (store.timer.phase == Phase.PAUSED) store.primaryAction()

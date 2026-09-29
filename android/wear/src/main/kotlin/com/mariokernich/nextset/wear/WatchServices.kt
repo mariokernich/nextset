@@ -40,8 +40,9 @@ class WatchServices(private val context: Context, private val store: TimerStore)
             Phase.RUNNING -> {
                 handler.removeCallbacks(stopAfterFinish)
                 RestService.start(context)
-                val end = state.endAt
-                if (settings.notificationsEnabled && end != null) RestAlarm.schedule(context, end) else RestAlarm.cancel(context)
+                // Also without the notification: if the service isn't running, the
+                // alarm still ends the rest on time with its vibration.
+                state.endAt?.let { RestAlarm.schedule(context, it) } ?: RestAlarm.cancel(context)
             }
             Phase.IDLE, Phase.PAUSED -> {
                 RestService.stop(context)
@@ -49,7 +50,8 @@ class WatchServices(private val context: Context, private val store: TimerStore)
             }
             Phase.FINISHED -> Unit
         }
-        if (state.isActive) FinishedNotification.cancel(context)
+        // Out of date once the next rest starts or the finished one is reset.
+        if (state.phase != Phase.FINISHED) FinishedNotification.cancel(context)
     }
 
     override fun timerDidFinish(state: RestTimerState, settings: FeedbackSettings, inTime: Boolean) {

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Bolt
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -90,12 +92,8 @@ private fun QuickTimerCard(
     val startLabel = stringResource(CoreR.string.start_rest_for, spoken)
     var menu by remember { mutableStateOf(false) }
     val shape = RoundedCornerShape(28.dp)
-    val pulse by rememberInfiniteTransition(label = "pulse").animateFloat(
-        initialValue = 1f,
-        targetValue = if (isCurrent) 0.35f else 1f,
-        animationSpec = infiniteRepeatable(tween(700), RepeatMode.Reverse),
-        label = "pulse",
-    )
+    // Only while running: an infinite transition asks for every frame, even when its value doesn't change.
+    val pulse = if (isCurrent) pulseAlpha() else 1f
 
     Box(modifier) {
         Column(
@@ -104,7 +102,10 @@ private fun QuickTimerCard(
                 .clip(shape)
                 .background(colors.accent.copy(alpha = if (isCurrent) 0.16f else 0.07f).compositeOver(scheme.surfaceContainerLow))
                 .combinedClickable(onClick = onStart, onLongClick = { menu = true })
-                .semantics { contentDescription = listOf(startLabel, preset.trimmedName).filter { it.isNotEmpty() }.joinToString(", ") }
+                .semantics {
+                    contentDescription = listOf(startLabel, preset.trimmedName).filter { it.isNotEmpty() }.joinToString(", ")
+                    selected = isCurrent
+                }
                 .padding(vertical = 16.dp, horizontal = 18.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -126,11 +127,12 @@ private fun QuickTimerCard(
             }
             Text(
                 text = DurationFormat.clock(preset.seconds),
-                fontSize = 42.sp,
                 lineHeight = 46.sp,
                 fontWeight = FontWeight.SemiBold,
                 style = TabularNumbers,
                 maxLines = 1,
+                // "10:00" still fits with a large font or display size.
+                autoSize = TextAutoSize.StepBased(minFontSize = 24.sp, maxFontSize = 42.sp),
             )
         }
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
@@ -144,6 +146,17 @@ private fun QuickTimerCard(
             )
         }
     }
+}
+
+@Composable
+private fun pulseAlpha(): Float {
+    val alpha by rememberInfiniteTransition(label = "pulse").animateFloat(
+        initialValue = 1f,
+        targetValue = 0.35f,
+        animationSpec = infiniteRepeatable(tween(700), RepeatMode.Reverse),
+        label = "pulse",
+    )
+    return alpha
 }
 
 /** Further presets, one tap away. */
@@ -229,7 +242,11 @@ private fun PresetButton(
                 .clip(shape)
                 .background(if (isCurrent) colors.accent.copy(alpha = 0.16f).compositeOver(scheme.surfaceContainerLow) else scheme.surfaceContainerLow.copy(alpha = 0.9f))
                 .combinedClickable(onClick = onStart, onLongClick = { menu = true })
-                .semantics { contentDescription = startLabel }
+                .semantics {
+                    // With the name, so two timers of 1:30 stay apart.
+                    contentDescription = listOf(startLabel, preset.trimmedName).filter { it.isNotEmpty() }.joinToString(", ")
+                    selected = isCurrent
+                }
                 .padding(vertical = 6.dp, horizontal = 4.dp),
         ) {
             Text(

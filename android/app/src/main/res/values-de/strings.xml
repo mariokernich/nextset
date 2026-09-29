@@ -18,7 +18,8 @@
     <string name="during_rest">Während der Pause</string>
     <string name="keep_display_on">Display anlassen</string>
     <string name="live_notification">Live-Benachrichtigung</string>
-    <string name="during_rest_footer">Bei gesperrtem Smartphone zeigen Sperrbildschirm und Statusleiste den Countdown, eine Benachrichtigung meldet das Ende der Pause.</string>
+    <string name="during_rest_footer">Bei gesperrtem Smartphone zeigen Sperrbildschirm und Statusleiste den Countdown, eine Benachrichtigung meldet das Ende der Pause. Die Live-Benachrichtigung sorgt außerdem dafür, dass Countdown und Pausenende auch im Hintergrund zu hören sind.</string>
+    <string name="allow_notifications">Benachrichtigungen in den Einstellungen erlauben</string>
 
     <!-- Timer editor -->
     <string name="name_optional">Name (optional)</string>

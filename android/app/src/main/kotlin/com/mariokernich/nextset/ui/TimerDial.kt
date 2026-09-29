@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mariokernich.nextset.core.format.DurationFormat
 import com.mariokernich.nextset.core.store.TimerSnapshot
+import com.mariokernich.nextset.core.timer.RestTimerState
 import com.mariokernich.nextset.core.timer.RestTimerState.Phase
 import com.mariokernich.nextset.core.ui.drawTimerRing
 import java.util.Date
@@ -51,7 +52,7 @@ import com.mariokernich.nextset.core.R as CoreR
 @Composable
 fun TimerDial(state: TimerSnapshot, onStop: () -> Unit, modifier: Modifier = Modifier) {
     val timer = state.timer
-    val now by rememberNow(timer.phase)
+    val now by rememberNow(timer)
     val colors = NextSetTheme.colors
     val scheme = MaterialTheme.colorScheme
     val resources = LocalResources.current
@@ -170,18 +171,18 @@ private fun detail(state: TimerSnapshot, now: Long): String {
     }
 }
 
-/** The current time: every frame while a rest runs, every second while showing the overtime. */
+/** The current time: every frame while a rest runs, on the second of the overtime once it ended. */
 @Composable
-private fun rememberNow(phase: Phase): State<Long> {
-    val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(phase) {
-        now.longValue = System.currentTimeMillis()
-        when (phase) {
+private fun rememberNow(timer: RestTimerState): State<Long> {
+    // Keyed, so a changed rest never shows for a frame with the time of before.
+    val now = remember(timer) { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(timer) {
+        when (timer.phase) {
             Phase.RUNNING -> while (true) {
                 withFrameMillis { now.longValue = System.currentTimeMillis() }
             }
             Phase.FINISHED -> while (true) {
-                delay(1000 - System.currentTimeMillis() % 1000)
+                delay(timer.millisUntilNextSecond(System.currentTimeMillis()))
                 now.longValue = System.currentTimeMillis()
             }
             Phase.IDLE, Phase.PAUSED -> Unit

@@ -47,3 +47,14 @@ class RestAlarmReceiver : BroadcastReceiver() {
         Handler(Looper.getMainLooper()).postDelayed({ pending.finish() }, 3_000)
     }
 }
+
+/**
+ * A restart of the device clears the alarm and the notifications. Afterwards a
+ * running rest gets them back, and one that ended in the meantime is reported.
+ */
+class BootReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        (context.applicationContext as? NextSetHost)?.store?.refresh()
+    }
+}

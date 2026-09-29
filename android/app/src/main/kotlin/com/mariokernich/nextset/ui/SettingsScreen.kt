@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -39,6 +40,7 @@ import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.icons.rounded.ScreenLockPortrait
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.Vibration
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,6 +59,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,6 +94,7 @@ import com.mariokernich.nextset.core.R as CoreR
 fun SettingsScreen(
     state: TimerSnapshot,
     store: TimerStore,
+    notificationsBlocked: Boolean,
     onClose: () -> Unit,
     onEdit: (TimerEditorTarget) -> Unit,
     onNotificationsWanted: () -> Unit,
@@ -142,6 +146,15 @@ fun SettingsScreen(
                             updateSettings { it.copy(liveNotificationEnabled = on) }
                             if (on) onNotificationsWanted()
                         }
+                        // The switches are on, but the system doesn't show NextSet's notifications.
+                        if (notificationsBlocked && (settings.notificationsEnabled || settings.liveNotificationEnabled)) {
+                            RowDivider()
+                            SettingsRow(onClick = onNotificationsWanted) {
+                                Icon(Icons.Rounded.Warning, contentDescription = null, tint = NextSetTheme.colors.coral)
+                                Spacer(Modifier.width(16.dp))
+                                Text(stringResource(R.string.allow_notifications), color = NextSetTheme.colors.coral)
+                            }
+                        }
                     }
                 }
                 item { AboutSection() }
@@ -184,6 +197,10 @@ private fun QuickTimersSection(library: TimerLibrary, store: TimerStore, onEdit:
 private fun PresetsSection(library: TimerLibrary, store: TimerStore, onEdit: (TimerEditorTarget) -> Unit) {
     var editing by rememberSaveable { mutableStateOf(false) }
     val presets = library.presets
+    // The Done button disappears with the last timer, so leave the edit mode with it.
+    LaunchedEffect(presets.isEmpty()) {
+        if (presets.isEmpty()) editing = false
+    }
     Section(
         title = stringResource(CoreR.string.more_timers),
         footer = stringResource(R.string.more_timers_footer),
@@ -322,22 +339,20 @@ private fun Section(
 }
 
 @Composable
-private fun SettingsRow(
-    onClick: (() -> Unit)? = null,
-    enabled: Boolean = true,
-    role: Role = Role.Button,
-    content: @Composable RowScope.() -> Unit,
-) {
+private fun SettingsRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .then(if (onClick != null) Modifier.clickable(enabled = enabled, role = role, onClick = onClick) else Modifier)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         content = content,
     )
 }
+
+@Composable
+private fun SettingsRow(onClick: () -> Unit, enabled: Boolean = true, content: @Composable RowScope.() -> Unit) =
+    SettingsRow(Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick), content)
 
 @Composable
 private fun RowDivider() {
@@ -346,7 +361,8 @@ private fun RowDivider() {
 
 @Composable
 private fun SwitchRow(icon: ImageVector, title: String, checked: Boolean, onChange: (Boolean) -> Unit) {
-    SettingsRow(onClick = { onChange(!checked) }, role = Role.Switch) {
+    // Toggleable rather than clickable, so TalkBack also reads whether it's on.
+    SettingsRow(Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onChange)) {
         Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.width(16.dp))
         Text(title, modifier = Modifier.weight(1f))
@@ -376,15 +392,18 @@ private fun <T> ChoiceRow(
             Text(title, modifier = Modifier.weight(1f))
             Text(label(selected), color = NextSetTheme.colors.accentText, fontWeight = FontWeight.SemiBold)
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.align(Alignment.TopEnd)) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(label(option), fontWeight = if (option == selected) FontWeight.Bold else FontWeight.Normal) },
-                    onClick = {
-                        expanded = false
-                        if (option != selected) onSelect(option)
-                    },
-                )
+        // Anchored at the end of the row, so the menu opens below the current value.
+        Box(Modifier.align(Alignment.BottomEnd)) {
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(label(option), fontWeight = if (option == selected) FontWeight.Bold else FontWeight.Normal) },
+                        onClick = {
+                            expanded = false
+                            if (option != selected) onSelect(option)
+                        },
+                    )
+                }
             }
         }
     }

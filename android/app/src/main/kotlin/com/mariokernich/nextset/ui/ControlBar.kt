@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -81,9 +82,11 @@ private fun AdjustButton(delta: Int, onAdjust: (Int) -> Unit) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = if (delta > 0) "+$delta" else "−${-delta}",
-                fontSize = 19.sp,
                 fontWeight = FontWeight.Medium,
                 style = TabularNumbers,
+                maxLines = 1,
+                // One line in the round button, also with the largest font size.
+                autoSize = TextAutoSize.StepBased(minFontSize = 12.sp, maxFontSize = 19.sp),
             )
         }
     }

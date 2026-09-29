@@ -70,7 +70,13 @@ fun DurationPicker(seconds: Int, onChange: (Int) -> Unit, modifier: Modifier = M
                     displayedValues = secondLabels
                     wrapSelectorWheel = false
                     descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-                    setOnValueChangedListener { _, _, step -> change(RestPreset.clamp(current / 60 * 60 + step * 5)) }
+                    setOnValueChangedListener { picker, _, step ->
+                        val clamped = RestPreset.clamp(current / 60 * 60 + step * 5)
+                        change(clamped)
+                        // 0:00 becomes 0:05 and 60:30 becomes 60:00. If that leaves the value
+                        // as it was, nothing redraws the wheel, so put it right here.
+                        picker.value = (clamped % 60) / 5
+                    }
                 }
             },
             update = {

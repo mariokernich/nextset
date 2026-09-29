@@ -32,7 +32,9 @@ class MainActivity : ComponentActivity() {
 
     /** Launcher shortcuts and, in debug builds, the screenshot states. */
     private fun handle(intent: Intent?) {
-        when (intent?.action) {
+        // Reopened from the recent apps (e.g. after a restart), the shortcut's intent comes again.
+        if (intent == null || intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return
+        when (intent.action) {
             Shortcuts.ACTION_START_QUICK -> {
                 val slot = intent.getIntExtra(Shortcuts.EXTRA_SLOT, 0)
                 store.library.quickTimers.getOrNull(slot)?.let(store::start)
@@ -43,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 Shortcuts.reportUsed(this, Shortcuts.END_REST_ID)
             }
         }
-        if (BuildConfig.DEBUG && intent != null) {
+        if (BuildConfig.DEBUG) {
             DemoMode.apply(store, intent.getStringExtra(DemoMode.EXTRA), intent.getLongExtra(DemoMode.EXTRA_END, 0))
         }
     }

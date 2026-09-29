@@ -33,11 +33,6 @@ class RestService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    override fun onCreate() {
-        super.onCreate()
-        isRunning = true
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val timer = (application as NextSetHost).store.timer
         val end = timer.endAt
@@ -45,6 +40,7 @@ class RestService : Service() {
         // Watches before Android 14 don't know the "special use" type yet.
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
         ServiceCompat.startForeground(this, NOTIFICATION_ID, notification(end), type)
+        isRunning = true
         if (timer.phase != Phase.RUNNING || end == null) {
             stopSelf()
         } else {
@@ -109,7 +105,7 @@ class RestService : Service() {
         private const val CHANNEL = "rest_running"
         private const val NOTIFICATION_ID = 1
 
-        /** Whether the service currently keeps the app running. */
+        /** Whether the service is in the foreground and keeps the app running. */
         var isRunning = false
             private set
 
@@ -131,8 +127,12 @@ class RestService : Service() {
             runCatching { ContextCompat.startForegroundService(context, Intent(context, RestService::class.java)) }
         }
 
+        /**
+         * Stopping the service before it called `startForeground` would crash the app.
+         * Until then it stops itself as soon as it sees that the rest isn't running.
+         */
         fun stop(context: Context) {
-            context.stopService(Intent(context, RestService::class.java))
+            if (isRunning) context.stopService(Intent(context, RestService::class.java))
         }
     }
 }

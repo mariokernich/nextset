@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.mariokernich.nextset.R
 import com.mariokernich.nextset.core.format.DurationFormat
 import com.mariokernich.nextset.core.model.TimerEditorTarget
+import com.mariokernich.nextset.core.model.TimerLibrary
 import com.mariokernich.nextset.core.store.TimerStore
 import kotlinx.coroutines.launch
 import com.mariokernich.nextset.core.R as CoreR
@@ -49,8 +52,13 @@ fun TimerEditorSheet(target: TimerEditorTarget, store: TimerStore, onDismiss: ()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     val colors = NextSetTheme.colors
+    // The buttons stay tappable while the sheet slides away: save only once.
+    var isClosing by remember { mutableStateOf(false) }
 
-    fun close() {
+    fun close(change: ((TimerLibrary) -> TimerLibrary)? = null) {
+        if (isClosing) return
+        isClosing = true
+        change?.let(store::updateLibrary)
         scope.launch { sheetState.hide() }.invokeOnCompletion { onDismiss() }
     }
 
@@ -62,12 +70,13 @@ fun TimerEditorSheet(target: TimerEditorTarget, store: TimerStore, onDismiss: ()
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp),
+            // Scrolls in landscape, where the name field would be cut off.
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = ::close) { Text(stringResource(CoreR.string.cancel)) }
+                TextButton(onClick = { close() }) { Text(stringResource(CoreR.string.cancel)) }
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -75,10 +84,7 @@ fun TimerEditorSheet(target: TimerEditorTarget, store: TimerStore, onDismiss: ()
                     modifier = Modifier.weight(1f),
                 )
                 Button(
-                    onClick = {
-                        store.updateLibrary { it.saving(seconds, name, target) }
-                        close()
-                    },
+                    onClick = { close { it.saving(seconds, name, target) } },
                     colors = ButtonDefaults.buttonColors(containerColor = colors.coral, contentColor = MaterialTheme.colorScheme.onSecondary),
                 ) { Text(stringResource(CoreR.string.save)) }
             }
@@ -105,10 +111,7 @@ fun TimerEditorSheet(target: TimerEditorTarget, store: TimerStore, onDismiss: ()
 
             if (target is TimerEditorTarget.Preset) {
                 TextButton(
-                    onClick = {
-                        store.updateLibrary { it.deleting(target) }
-                        close()
-                    },
+                    onClick = { close { it.deleting(target) } },
                     colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 ) { Text(stringResource(CoreR.string.delete_timer)) }
             }

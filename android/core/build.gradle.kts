@@ -29,6 +29,7 @@ dependencies {
     api(libs.compose.ui)
     api(libs.compose.foundation)
     api(libs.androidx.core.ktx)
+    api(libs.androidx.activity.compose)
     api(libs.androidx.lifecycle.process)
     api(libs.kotlinx.coroutines.android)
     api(libs.kotlinx.serialization.json)

@@ -5,11 +5,15 @@ import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.mariokernich.nextset.core.format.DurationFormat
 import com.mariokernich.nextset.core.model.RestPreset
 import com.mariokernich.nextset.core.store.TimerStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import com.mariokernich.nextset.core.R as CoreR
@@ -32,11 +36,21 @@ object Shortcuts {
         ShortcutManagerCompat.reportShortcutUsed(context, id)
     }
 
-    /** Keeps the shortcut labels in line with the quick timers. */
+    /**
+     * Keeps the shortcut labels in line with the quick timers, while the app is
+     * in the foreground: in the background (alarm, notification buttons, sync)
+     * Android limits how often shortcuts may change.
+     */
     fun follow(context: Context, store: TimerStore, scope: CoroutineScope) {
+        val foreground = ProcessLifecycleOwner.get().lifecycle
         scope.launch {
-            store.state
-                .map { it.library.visibleQuickTimers.map(RestPreset::seconds) }
+            combine(
+                store.state.map { it.library.visibleQuickTimers.map(RestPreset::seconds) },
+                foreground.currentStateFlow.map { it.isAtLeast(Lifecycle.State.STARTED) },
+                ::Pair,
+            )
+                .filter { (_, isInForeground) -> isInForeground }
+                .map { (seconds, _) -> seconds }
                 .distinctUntilChanged()
                 .collect { update(context, it) }
         }

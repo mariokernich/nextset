@@ -35,7 +35,12 @@ import com.mariokernich.nextset.wear.R
 import com.mariokernich.nextset.core.R as CoreR
 
 @Composable
-fun SettingsScreen(state: TimerSnapshot, store: TimerStore, onEdit: (TimerEditorTarget) -> Unit) {
+fun SettingsScreen(
+    state: TimerSnapshot,
+    store: TimerStore,
+    onEdit: (TimerEditorTarget) -> Unit,
+    onNotificationsWanted: () -> Unit,
+) {
     val listState = rememberTransformingLazyColumnState()
     val settings = state.settings
     val library = state.library
@@ -129,7 +134,10 @@ fun SettingsScreen(state: TimerSnapshot, store: TimerStore, onEdit: (TimerEditor
             item {
                 SwitchButton(
                     checked = settings.notificationsEnabled,
-                    onCheckedChange = { on -> update { it.copy(notificationsEnabled = on) } },
+                    onCheckedChange = { on ->
+                        update { it.copy(notificationsEnabled = on) }
+                        if (on) onNotificationsWanted()
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(CoreR.string.notify_when_rest_over)) },
                 )

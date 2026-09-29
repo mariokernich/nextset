@@ -60,9 +60,16 @@ class SoundPlayer(context: Context, private val device: FeedbackDevice) {
                 .setBufferSizeInBytes(pcm.size * 2)
                 .build()
         }.getOrNull() ?: return
-        track.write(pcm, 0, pcm.size)
-        requestFocus()
-        track.play()
+        // A static track only plays once all of its data is written.
+        val started = runCatching {
+            check(track.write(pcm, 0, pcm.size) == pcm.size)
+            requestFocus()
+            track.play()
+        }
+        if (started.isFailure) {
+            track.release()
+            return
+        }
 
         val durationMs = pcm.size * 1000L / ToneSynth.SAMPLE_RATE
         handler.postDelayed({ track.release() }, durationMs + 200)

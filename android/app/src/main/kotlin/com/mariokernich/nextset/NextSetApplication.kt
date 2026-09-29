@@ -24,7 +24,7 @@ class NextSetApplication : Application(), NextSetHost {
     override fun onCreate() {
         super.onCreate()
         store = TimerStore(PreferencesStorage(this), FeedbackCoordinator(this, FeedbackDevice.PHONE), scope)
-        services = PhoneServices(this)
+        services = PhoneServices(this, store)
         store.sideEffects = services
         LibrarySync(this, store, scope).start()
         Shortcuts.follow(this, store, scope)
