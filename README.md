@@ -24,11 +24,11 @@ Die Icons werden aus `Branding/build-icons.mjs` erzeugt (siehe unten).
 |:---:|:---:|:---:|:---:|:---:|
 | <img src="Branding/screenshots/iphone-start.png" width="170"> | <img src="Branding/screenshots/iphone-rest.png" width="170"> | <img src="Branding/screenshots/iphone-countdown-de.png" width="170"> | <img src="Branding/screenshots/iphone-go.png" width="170"> | <img src="Branding/screenshots/iphone-rest-dark.png" width="170"> |
 
-| Einstellungen | Watch: Start | Watch: Satzpause | Watch: Los! |
-|:---:|:---:|:---:|:---:|
-| <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="150"> | <img src="Branding/screenshots/watch-rest.png" width="150"> | <img src="Branding/screenshots/watch-go.png" width="150"> |
+| Einstellungen | Watch: Start | Watch: Satzpause | Watch: Letzte Sekunden | Watch: Los! |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="Branding/screenshots/iphone-settings.png" width="170"> | <img src="Branding/screenshots/watch-start.png" width="150"> | <img src="Branding/screenshots/watch-rest.png" width="150"> | <img src="Branding/screenshots/watch-countdown.png" width="150"> | <img src="Branding/screenshots/watch-go.png" width="150"> |
 
-Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten). Die Watch-Bilder zeigen noch das vorige Farbschema und werden mit dem nächsten Watch-Lauf ersetzt.
+Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow mit `-demo`-Startargumenten).
 
 ## Funktionen
 
@@ -66,7 +66,7 @@ Die App ist auf Englisch und Deutsch lokalisiert.
 Voraussetzungen: **Xcode 26** oder neuer, **iOS 26** / **watchOS 26**.
 
 1. `NextSet.xcodeproj` öffnen
-2. In `Config/Signing.xcconfig` deine Team-ID bei `DEVELOPMENT_TEAM` eintragen, alternativ in Xcode unter *Signing & Capabilities* ein Team wählen. Mit `BUNDLE_ID_PREFIX` passt du die Bundle-IDs an.
+2. Das Team ist im Projekt hinterlegt. Wer mit einem anderen Developer-Account baut, wählt in Xcode unter *Signing & Capabilities* sein Team. Mit `BUNDLE_ID_PREFIX` in `Config/Signing.xcconfig` passt du die Bundle-IDs an (aktuell `com.mariokernich.nextset`).
 3. Scheme **NextSet** auf dem iPhone starten. Die Watch-App wird mitinstalliert. Für die Watch allein gibt es das Scheme **NextSetWatch**.
 
 > Hinweis: Auf der Watch nutzt die App eine Extended Runtime Session vom Typ *Physical Therapy* (`WKBackgroundModes`). So laufen die Haptik-Signale auch bei gesenktem Handgelenk. Die Session braucht einen signierten Build, also mit gesetztem Team. Unsignierte Builds, etwa im CI, lehnt watchOS ab. Dann springt die Mitteilung am Pausenende ein.
@@ -92,4 +92,4 @@ Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem m
 - **Tests:** `xcodebuild test -project NextSet.xcodeproj -scheme NextSet -destination 'platform=iOS Simulator,name=iPhone 17'`
 - **Screenshots:** nach dem Testlauf mit `-derivedDataPath build` einfach `scripts/screenshots.sh build screenshots` ausführen. Die Zustände lassen sich per Startargument wählen, z. B. `-demo running`.
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
-- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Reine Doku-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
+- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Reine Doku-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.

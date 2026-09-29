@@ -34,8 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The project is maintained in Xcode 27 (its string catalogs use the
-      # Xcode 27 format), so build with the newest Xcode 27 on the image.
+      # The project is maintained in Xcode 27: use the newest Xcode 27 on the
+      # image once it has one, until then the image's default Xcode.
       - name: Xcode
         run: |
           ls -d /Applications/Xcode*.app
