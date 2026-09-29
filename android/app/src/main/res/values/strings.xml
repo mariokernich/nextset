@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">NextSet</string>
+
+    <!-- Start screen -->
+    <string name="sounds_on">Sounds on</string>
+    <string name="sounds_off">Sounds off</string>
+    <string name="presets_empty">Add your usual rest times with +.</string>
+
+    <!-- Settings -->
+    <string name="back">Back</string>
+    <string name="done">Done</string>
+    <string name="number_of_quick_timers">Number of quick timers</string>
+    <string name="quick_timers_footer">Quick timers are the big buttons on the start screen.</string>
+    <string name="more_timers_footer">Timers you edit here also appear on your watch.</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="play_sound">Play sound</string>
+    <string name="countdown_footer">The last seconds of every rest are marked with a vibration and a beep. Sounds play over your music, even when the phone is on silent.</string>
+    <string name="during_rest">During a rest</string>
+    <string name="keep_display_on">Keep display on</string>
+    <string name="live_notification">Live notification</string>
+    <string name="during_rest_footer">While the phone is locked, the lock screen and the status bar show the countdown, and a notification tells you when the rest is over.</string>
+
+    <!-- Timer editor -->
+    <string name="name_optional">Name (optional)</string>
+    <string name="name_hint">For example the exercise, like “Squats”.</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+
+    <!-- Notification while resting -->
+    <string name="paused_detail">%1$s of %2$s</string>
+    <string name="add_15_short" translatable="false">+15 s</string>
+
+    <!-- Launcher shortcuts -->
+    <string name="shortcut_start">Start %1$s</string>
+</resources>

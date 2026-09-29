@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The screens are drawn with Compose; the platform theme only covers the
+         window and the duration wheels, which follow light and dark mode. -->
+    <style name="Theme.NextSet" parent="android:Theme.DeviceDefault.DayNight">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:colorAccent">@color/coral</item>
+    </style>
+</resources>

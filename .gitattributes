@@ -1,0 +1,3 @@
+# Gradle wrapper scripts keep the line endings their platforms expect.
+android/gradlew text eol=lf
+android/gradlew.bat text eol=crlf

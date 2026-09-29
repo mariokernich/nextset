@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background of the app icon, as in Branding/AppIcon.svg. -->
+    <color name="launcher_background_top">#FFFBFBFA</color>
+    <color name="launcher_background_bottom">#FFDFDEDB</color>
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Timer -->
+    <string name="caption_ready">Bereit</string>
+    <string name="caption_rest">Satzpause</string>
+    <string name="caption_paused">Pausiert</string>
+    <string name="caption_next_set">Nächster Satz</string>
+    <string name="go">LOS!</string>
+    <string name="tap_timer_to_start">Timer antippen zum Starten</string>
+    <string name="next_set_at">Nächster Satz um %1$s</string>
+    <string name="of_duration">von %1$s</string>
+    <string name="rest_is_over">Pause vorbei</string>
+    <string name="time_for_next_set">Zeit für deinen nächsten Satz.</string>
+
+    <!-- Controls -->
+    <string name="start_rest">Pause starten</string>
+    <string name="start_rest_for">%1$s Pause starten</string>
+    <string name="pause">Pausieren</string>
+    <string name="resume">Fortsetzen</string>
+    <string name="repeat_rest">Pause wiederholen</string>
+    <string name="end_rest">Pause beenden</string>
+    <string name="add_15_seconds">15 Sekunden hinzufügen</string>
+    <string name="remove_15_seconds">15 Sekunden abziehen</string>
+
+    <!-- Timers -->
+    <string name="quick_timer_n">Schnell-Timer %1$d</string>
+    <string name="quick_timers">Schnell-Timer</string>
+    <string name="more_timers">Weitere Timer</string>
+    <string name="timers">Timer</string>
+    <string name="add_timer">Timer hinzufügen</string>
+    <string name="new_timer">Neuer Timer</string>
+    <string name="edit_timer">Timer bearbeiten</string>
+    <string name="delete_timer">Timer löschen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="delete">Löschen</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+
+    <!-- Settings -->
+    <string name="settings">Einstellungen</string>
+    <string name="countdown">Countdown</string>
+    <string name="signal_during_last">Signal in den letzten</string>
+    <string name="off">Aus</string>
+    <plurals name="countdown_seconds">
+        <item quantity="one">%d Sekunde</item>
+        <item quantity="other">%d Sekunden</item>
+    </plurals>
+    <string name="haptics">Vibration</string>
+    <string name="sounds">Töne</string>
+    <string name="sound">Klang</string>
+    <string name="sound_beep">Piep</string>
+    <string name="sound_chime">Glocke</string>
+    <string name="sound_digital">Digital</string>
+    <string name="notify_when_rest_over">Benachrichtigung bei Pausenende</string>
+
+    <!-- Spoken durations for TalkBack -->
+    <plurals name="duration_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <plurals name="duration_seconds">
+        <item quantity="one">%d Sekunde</item>
+        <item quantity="other">%d Sekunden</item>
+    </plurals>
+
+    <!-- Notifications -->
+    <string name="channel_running">Laufende Pause</string>
+    <string name="channel_running_description">Zeigt den Countdown der laufenden Pause.</string>
+    <string name="channel_finished">Pausenende</string>
+    <string name="channel_finished_description">Meldet, wenn eine Pause vorbei ist.</string>
+</resources>

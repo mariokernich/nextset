@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="timers_sync_phone">Timer werden mit deinem Smartphone synchronisiert.</string>
+    <string name="minutes">Minuten</string>
+    <string name="seconds">Sekunden</string>
+</resources>

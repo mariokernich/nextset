@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status bar icon: the kettlebell as a white silhouette with the dial cut out. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="800"
+    android:viewportHeight="800">
+    <group
+        android:translateX="-112"
+        android:translateY="-128">
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M276,592 L300,370 Q300,220 450,220 L574,220 Q724,220 724,370 L748,592"
+            android:strokeWidth="96"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M364.49,884 A292,292 0 1,1 659.51,884 Z M308,632 A204,204 0 1,0 716,632 A204,204 0 1,0 308,632 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M512,496 A136,136 0 1,1 376,632"
+            android:strokeWidth="66"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineCap="round" />
+    </group>
+</vector>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- NextSet is a timer: the end of a rest has to arrive on the second. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+
+    <application>
+        <receiver
+            android:name=".alarm.RestAlarmReceiver"
+            android:exported="false" />
+
+        <service
+            android:name=".sync.LibraryListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/library"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

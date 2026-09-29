@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start screen -->
+    <string name="sounds_on">Töne an</string>
+    <string name="sounds_off">Töne aus</string>
+    <string name="presets_empty">Füge deine üblichen Pausenzeiten mit + hinzu.</string>
+
+    <!-- Settings -->
+    <string name="back">Zurück</string>
+    <string name="done">Fertig</string>
+    <string name="number_of_quick_timers">Anzahl Schnell-Timer</string>
+    <string name="quick_timers_footer">Schnell-Timer sind die großen Tasten auf dem Startbildschirm.</string>
+    <string name="more_timers_footer">Timer, die du hier bearbeitest, erscheinen auch auf deiner Uhr.</string>
+    <string name="move_up">Nach oben</string>
+    <string name="move_down">Nach unten</string>
+    <string name="play_sound">Klang abspielen</string>
+    <string name="countdown_footer">Die letzten Sekunden jeder Pause werden mit Vibration und Ton markiert. Die Töne sind über deiner Musik und auch im Lautlos-Modus zu hören.</string>
+    <string name="during_rest">Während der Pause</string>
+    <string name="keep_display_on">Display anlassen</string>
+    <string name="live_notification">Live-Benachrichtigung</string>
+    <string name="during_rest_footer">Bei gesperrtem Smartphone zeigen Sperrbildschirm und Statusleiste den Countdown, eine Benachrichtigung meldet das Ende der Pause.</string>
+
+    <!-- Timer editor -->
+    <string name="name_optional">Name (optional)</string>
+    <string name="name_hint">Zum Beispiel die Übung, etwa „Kniebeugen“.</string>
+    <string name="minutes">Minuten</string>
+    <string name="seconds">Sekunden</string>
+
+    <!-- Notification while resting -->
+    <string name="paused_detail">%1$s von %2$s</string>
+
+    <!-- Launcher shortcuts -->
+    <string name="shortcut_start">%1$s starten</string>
+</resources>

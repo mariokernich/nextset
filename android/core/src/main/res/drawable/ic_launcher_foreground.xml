@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The kettlebell of Branding/AppIcon.svg, shifted by (257, 241) so that it sits in
+  the middle of a 1538-unit viewport: about 50 of the 108 dp, inside the safe zone.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1538"
+    android:viewportHeight="1538">
+    <!-- Handle -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M533,833 L557,611 Q557,461 707,461 L831,461 Q981,461 981,611 L1005,833"
+        android:strokeWidth="96"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:endX="910.6"
+                android:endY="833"
+                android:startX="627.4"
+                android:startY="461"
+                android:type="linear">
+                <item
+                    android:color="#FF434240"
+                    android:offset="0" />
+                <item
+                    android:color="#FF171614"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Body with its flat base -->
+    <path android:pathData="M621.49,1125 A292,292 0 1,1 916.51,1125 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="944.2"
+                android:endY="1125"
+                android:startX="593.8"
+                android:startY="581"
+                android:type="linear">
+                <item
+                    android:color="#FF434240"
+                    android:offset="0" />
+                <item
+                    android:color="#FF171614"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Dial face -->
+    <path android:pathData="M565,873 A204,204 0 1,0 973,873 A204,204 0 1,0 565,873 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="769"
+                android:centerY="824.04"
+                android:gradientRadius="285.6"
+                android:type="radial">
+                <item
+                    android:color="#FFFFFFFF"
+                    android:offset="0" />
+                <item
+                    android:color="#FFF2F2F0"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Ring track -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M633,873 A136,136 0 1,0 905,873 A136,136 0 1,0 633,873 Z"
+        android:strokeWidth="66"
+        android:strokeColor="#17000000" />
+    <!-- Coral ring: three quarters of a turn -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M769,737 A136,136 0 1,1 633,873"
+        android:strokeWidth="66"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:endX="864.2"
+                android:endY="1009"
+                android:startX="673.8"
+                android:startY="737"
+                android:type="linear">
+                <item
+                    android:color="#FFF49665"
+                    android:offset="0" />
+                <item
+                    android:color="#FFDF5F35"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
