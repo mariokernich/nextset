@@ -19,8 +19,8 @@ xcuserdata/
 .DS_Store
 
 # CI output
-screenshots/
-build.log
+/screenshots/
+/build.log
 
 # Branding tooling
 Branding/fonts/

@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
+  pull_request:
+    branches: [main]
+    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
+  workflow_dispatch:
+    inputs:
+      screenshots:
+        description: Simulator screenshots
+        type: choice
+        options: [all, iphone, watch, none]
+        default: all
+
+# One run per branch: a newer push, pull request update or manual run
+# replaces the one in progress.
+concurrency:
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  # Screenshots need extra simulator time, so they only run on demand.
+  SCREENSHOTS: ${{ github.event_name == 'workflow_dispatch' && inputs.screenshots != 'none' }}
+  SCREENSHOTS_ONLY: ${{ inputs.screenshots || 'all' }}
+
+jobs:
+  build-test:
+    name: Build & test
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      # The project is maintained in Xcode 27: use the newest Xcode 27 on the
+      # image once it has one, until then the image's default Xcode.
+      - name: Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | grep -vi beta | sort -V | tail -n 1)
+          [ -n "$xcode" ] || xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
+          xcodebuild -version
+
+      - name: Build & unit tests (iPhone app, Apple Watch app, widget)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project NextSet.xcodeproj \
+            -scheme NextSet \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            -derivedDataPath build \
+            -resultBundlePath build/NextSet.xcresult \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee build.log | grep -E "(error|warning):|\*\* (BUILD|TEST)" || true
+          grep -q "\*\* TEST SUCCEEDED \*\*" build.log
+
+      - name: Test summary
+        if: always()
+        run: |
+          [ -d build/NextSet.xcresult ] || exit 0
+          xcrun xcresulttool get test-results summary --path build/NextSet.xcresult --compact \
+            | python3 -c 'import json, sys; s = json.load(sys.stdin); print("Tests: %s passed, %s failed, %s skipped (%s total)" % (s.get("passedTests"), s.get("failedTests"), s.get("skippedTests"), s.get("totalTestCount")))'
+
+      - name: Screenshots
+        if: env.SCREENSHOTS == 'true'
+        run: scripts/screenshots.sh build screenshots
+
+      - name: Upload screenshots
+        if: always() && env.SCREENSHOTS == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+          if-no-files-found: ignore
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log

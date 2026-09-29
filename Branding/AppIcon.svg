@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FBFBFA"/><stop offset="1" stop-color="#DFDEDB"/>
+  </linearGradient></defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/><g transform="translate(512 512) scale(1) translate(-512 -536)">
+  <defs>
+    <linearGradient id="g-bell" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#434240"/><stop offset="1" stop-color="#171614"/>
+    </linearGradient>
+    <linearGradient id="g-ring" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#F49665"/><stop offset="1" stop-color="#DF5F35"/>
+    </linearGradient>
+    <radialGradient id="g-face" cx="0.5" cy="0.38" r="0.7">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F2F2F0"/>
+    </radialGradient>
+    <clipPath id="g-base"><rect x="0" y="0" width="1024" height="884"/></clipPath>
+  </defs>
+  <path d="M 276 592 L 300 370 Q 300 220, 450 220 L 574 220 Q 724 220, 724 370 L 748 592" fill="none" stroke="url(#g-bell)" stroke-width="96" stroke-linejoin="round"/>
+  <circle cx="512" cy="632" r="292" fill="url(#g-bell)" clip-path="url(#g-base)"/>
+  <circle cx="512" cy="632" r="204" fill="url(#g-face)"/>
+  <circle cx="512" cy="632" r="136" fill="none" stroke="rgba(0,0,0,0.09)" stroke-width="66"/>
+  <path d="M 512.0 496.0 A 136 136 0 1 1 376.0 632.0" fill="none" stroke="url(#g-ring)" stroke-width="66" stroke-linecap="round"/></g></svg>

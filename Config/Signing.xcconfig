@@ -1,0 +1,6 @@
+// Identifiers for all NextSet targets.
+//
+// The team is set in the project (Xcode: Signing & Capabilities). Change the
+// prefix if you want different bundle IDs.
+
+BUNDLE_ID_PREFIX = com.mariokernich
