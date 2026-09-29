@@ -39,7 +39,7 @@ Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow m
 - **Weitere Timer** als Raster darunter, ebenfalls mit einem Tipp startbar (Standard: 0:30 bis 5:00, bis zu 12 Stück)
 - Bei laufender Pause einfach einen anderen Timer antippen, um direkt zu wechseln
 - **±15 s** während der Pause, Pausieren/Fortsetzen, Pause vorzeitig beenden
-- Nach dem Ende zeigt die App „LOS!“ und zählt die überzogene Zeit hoch (`+0:12`). „Wiederholen“ startet dieselbe Pause erneut.
+- Nach dem Ende zeigt die App „LOS!“ und zählt die überzogene Zeit hoch (`+0:12`). „Wiederholen“ startet dieselbe Pause erneut; ±15 s stellt vorher eine andere Dauer ein.
 
 **Countdown mit Haptik & Ton** (in den Einstellungen anpassbar)
 - Signal in den letzten **3, 5 oder 10 Sekunden** oder aus
@@ -50,7 +50,7 @@ Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow m
 - Liquid-Glass-Design (iOS 26): Zifferblatt als Glasscheibe, Schnell-Timer als getönte Glas-Kacheln, Glas-Buttons und -Toolbar über einem weichen Mesh-Gradient, der sich im Glas bricht
 - Folgt Hell- und Dunkelmodus des Systems; Graphit als Akzent, Koralle für die letzten Sekunden, große Ziffern in SF Rounded
 - **Live-Aktivität** auf dem Sperrbildschirm, in der Dynamic Island und im Smart Stack der Apple Watch
-- **Mitteilung** zum Pausenende, falls die App im Hintergrund ist
+- **Mitteilung** zum Pausenende, falls die App im Hintergrund ist; als zeitkritische Mitteilung kommt sie auch bei aktivem Fokus durch
 - **Display bleibt an**, solange eine Pause läuft (abschaltbar)
 - **Siri, Kurzbefehle & Action-Button**: „Schnell-Timer starten“, „Pausen-Timer starten“ (beliebige Sekunden), „Pause beenden“. Per Sprache z. B. „Siri, starte eine Pause in NextSet“, „Starte Schnell-Timer 2 in NextSet“ oder „NextSet stoppen“.
 - Timer umbenennen (z. B. „Kniebeugen“), Reihenfolge ändern, löschen. Lange drücken auf einen Timer öffnet das Kontextmenü.
@@ -59,12 +59,12 @@ Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow m
 - Große Schnell-Timer direkt auf dem Startbildschirm, weitere Timer darunter
 - Vollbild-Ring mit Countdown, ±15 s, Pause und „Wiederholen“; Always-On-Darstellung
 - Läuft dank *Extended Runtime Session* auch bei gesenktem Arm weiter: Countdown-Taps und Ende-Signal kommen zuverlässig am Handgelenk an. Endet die Session, springt eine Mitteilung ein.
-- Timer werden per WatchConnectivity mit dem iPhone **synchronisiert** und lassen sich auf beiden Geräten bearbeiten
+- Timer werden per WatchConnectivity mit dem iPhone **synchronisiert** und lassen sich auf beiden Geräten bearbeiten. Eine neue Uhr holt sich zuerst die Timer vom iPhone, damit ihre Standard-Timer sie nicht überschreiben.
 
 **Android & Wear OS** (gleiche Funktionen, Android-typisch umgesetzt)
 - Material 3 in Graphit & Koralle, Hell- und Dunkelmodus, Themed Icon ab Android 13
-- **Live-Benachrichtigung** mit Countdown auf dem Sperrbildschirm und in der Statusleiste (ab Android 16 als Live Update), mit Pausieren, +15 s und Beenden – das Gegenstück zur Live-Aktivität
-- **Benachrichtigung** zum Pausenende, auch wenn die App im Hintergrund ist oder beendet wurde (exakter Wecker)
+- **Live-Benachrichtigung** mit Countdown auf dem Sperrbildschirm und in der Statusleiste (ab Android 16 als Live Update), mit Pausieren, +15 s und Beenden – das Gegenstück zur Live-Aktivität. Solange eine Pause läuft, gehört sie zu einem Vordergrunddienst: Nur so darf die App ab Android 17 Countdown und Ende auch im Hintergrund abspielen.
+- **Benachrichtigung** zum Pausenende, auch wenn die App im Hintergrund ist oder beendet wurde (exakter Wecker, auch nach einem Neustart des Geräts)
 - **App-Verknüpfungen** statt Siri: langes Drücken aufs App-Icon startet die Schnell-Timer oder beendet die Pause; die Verknüpfungen lassen sich auch auf den Startbildschirm legen
 - **Wear OS:** Schnell-Timer und weitere Timer auf der Uhr, Vollbild-Ring, Always-On; ein Vordergrunddienst mit *Ongoing Activity* hält den Countdown bei gesenktem Arm am Laufen, die Pause erscheint auch auf dem Zifferblatt. Wegwischen beendet die Pause.
 - Timer werden über den *Wearable Data Layer* zwischen Smartphone und Uhr synchronisiert
@@ -133,6 +133,8 @@ Dafür braucht der Workflow einmalig einen API-Schlüssel für App Store Connect
 1. In App Store Connect unter *Benutzer und Zugriff → Integrationen → App Store Connect API → Team-Schlüssel* einen Schlüssel mit der Rolle **Admin** erzeugen, damit Xcode Zertifikate und Profile anlegen darf, und die `.p8`-Datei herunterladen. Sie lässt sich nur einmal laden.
 2. Im Repo unter *Settings → Secrets and variables → Actions* drei Secrets anlegen: `ASC_KEY_ID` (Schlüssel-ID), `ASC_ISSUER_ID` (Aussteller-ID über der Schlüsselliste) und `ASC_KEY_P8` (der komplette Inhalt der `.p8`-Datei).
 
+iPhone- und Watch-App nutzen zeitkritische Mitteilungen (Capability *Time Sensitive Notifications*, siehe `ios/Config/*.entitlements`). Die automatische Signierung trägt sie beim Archivieren in die App-IDs ein; lehnt der Workflow das Profil ab, lässt sie sich im Developer-Portal unter *Identifiers* für beide App-IDs einschalten.
+
 Einreichen klappt erst, wenn in App Store Connect alles Übrige erledigt ist: Verträge, Steuer- und Bankdaten, Händlerstatus nach dem Digital Services Act, App-Datenschutz, Altersfreigabe, Texte und Screenshots. Fehlt etwas, listet der Workflow es im Log auf.
 
 ## Google Play
@@ -158,6 +160,6 @@ keyPassword=…
 
 In der Play Console abzugeben:
 - **Exakte Wecker:** Die App nutzt `USE_EXACT_ALARM` als Timer-App (Pausenende auf die Sekunde).
-- **Vordergrunddienst (Wear OS):** Typ *special use* – hält Countdown-Vibration und Ende-Signal während einer Pause am Handgelenk; am besten mit kurzem Video.
+- **Vordergrunddienst (Smartphone und Wear OS):** Typ *special use* – hält während einer Pause Countdown und Ende-Signal hörbar (Smartphone, ab Android 17 nötig) bzw. am Handgelenk spürbar (Uhr); am besten mit kurzem Video.
 - **Datensicherheit:** Es werden keine Daten erhoben oder geteilt. Datenschutzerklärung: [apps.kernich.de/nextset/privacy](https://apps.kernich.de/nextset/privacy/).
 - **Zielgruppe & Inhalt, Einstufung:** wie im App Store (keine Werbung, kein Login, Altersfreigabe für alle).
