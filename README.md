@@ -83,6 +83,7 @@ NextSetTests/       Unit-Tests (Swift Testing)
 Config/             Info.plist-Ergänzungen und Signing.xcconfig
 Branding/           Logo, Icons und Banner samt Generator
 scripts/            Screenshot-Skript für den Simulator
+website/            Support-Seite und Datenschutzerklärung (apps.kernich.de/nextset)
 ```
 
 Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem mitlaufenden Zähler. Dadurch stimmt er auch dann, wenn die App im Hintergrund pausiert oder neu gestartet wird. Die Countdown-Ereignisse plant `CountdownPlan`, `TimerStore` spielt sie ab.
@@ -92,4 +93,5 @@ Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem m
 - **Tests:** `xcodebuild test -project NextSet.xcodeproj -scheme NextSet -destination 'platform=iOS Simulator,name=iPhone 17'`
 - **Screenshots:** nach dem Testlauf mit `-derivedDataPath build` einfach `scripts/screenshots.sh build screenshots` ausführen. Die Zustände lassen sich per Startargument wählen, z. B. `-demo running`.
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
-- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Reine Doku-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
+- **Webseite:** `website/` enthält die Support-Seite und die Datenschutzerklärung, auf Englisch und unter `de/` auf Deutsch. `.github/workflows/website.yml` lädt sie bei Pushes auf `main` per FTPS nach [apps.kernich.de/nextset](https://apps.kernich.de/nextset/) hoch, manuell geht es über *Actions → Website → Run workflow*. Nötig sind die Repository-Secrets `FTP_USERNAME` und `FTP_PASSWORD`.
+- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Reine Doku- und Webseiten-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.

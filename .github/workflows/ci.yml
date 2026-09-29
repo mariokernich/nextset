@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore: ["**.md", "Branding/**"]
+    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
   pull_request:
     branches: [main]
-    paths-ignore: ["**.md", "Branding/**"]
+    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
   workflow_dispatch:
     inputs:
       screenshots:
