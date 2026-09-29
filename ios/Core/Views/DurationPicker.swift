@@ -5,7 +5,16 @@ struct DurationPicker: View {
     @Binding var seconds: Int
 
     private static let minuteValues = Array(0...60)
-    private static let secondValues = Array(stride(from: 0, through: 55, by: 5))
+
+    /// Only what can be saved (5 s … 60 min), so the wheels never show a
+    /// value that clamping silently changed.
+    private var secondValues: [Int] {
+        switch seconds / 60 {
+        case 0: Array(stride(from: 5, through: 55, by: 5))
+        case 60: [0]
+        default: Array(stride(from: 0, through: 55, by: 5))
+        }
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -15,7 +24,7 @@ struct DurationPicker: View {
                 }
             }
             Picker("Seconds", selection: remainder) {
-                ForEach(Self.secondValues, id: \.self) { value in
+                ForEach(secondValues, id: \.self) { value in
                     Text(verbatim: "\(value) s").tag(value)
                 }
             }

@@ -1,5 +1,8 @@
 import Foundation
 import UserNotifications
+#if os(watchOS)
+import WatchKit
+#endif
 
 /// Schedules the "rest is over" notification for when the app is not in the
 /// foreground. While the app is visible it plays the end of a rest itself.
@@ -14,16 +17,22 @@ final class RestNotifications: NSObject {
         center.delegate = self
     }
 
-    func update(for state: RestTimerState, settings: FeedbackSettings) {
+    /// `delay` holds the notification back after the end, as a safety net for
+    /// when the app itself is supposed to play the end.
+    func update(for state: RestTimerState, settings: FeedbackSettings, delay: TimeInterval = 0) {
         switch state.phase {
         case .running:
             if settings.notificationsEnabled, let end = state.endDate {
-                schedule(at: end, settings: settings)
+                schedule(at: end.addingTimeInterval(delay), settings: settings)
             } else {
                 cancel()
             }
-        case .idle, .paused:
+        case .paused:
             cancel()
+        case .idle:
+            // The rest was ended or reset: a "rest is over" is out of date.
+            cancel()
+            clearDelivered()
         case .finished:
             // Leave a pending or delivered notification alone: it may be the
             // only signal the user gets while the app is in the background.
@@ -59,6 +68,14 @@ final class RestNotifications: NSObject {
     }
 
     private func isAuthorized() async -> Bool {
+        await Self.requestPermission()
+    }
+
+    /// Asks for permission if that hasn't happened yet, e.g. when the user
+    /// turns the notification on. Returns whether notifications may be shown.
+    @discardableResult
+    static func requestPermission() async -> Bool {
+        let center = UNUserNotificationCenter.current()
         switch await center.notificationSettings().authorizationStatus {
         case .authorized, .provisional:
             return true
@@ -67,6 +84,11 @@ final class RestNotifications: NSObject {
         default:
             return false
         }
+    }
+
+    /// Whether notifications are turned off for the app in Settings.
+    static func isDenied() async -> Bool {
+        await UNUserNotificationCenter.current().notificationSettings().authorizationStatus == .denied
     }
 
     private func sound(for settings: FeedbackSettings) -> UNNotificationSound? {
@@ -104,7 +126,15 @@ extension RestNotifications: UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
+        guard notification.request.identifier == Self.identifier else { return [.banner, .sound] }
+        #if os(watchOS)
+        // With the wrist down the app stays in front for a while but may
+        // already be suspended: only an active app plays the end itself.
+        let isActive = await MainActor.run { WKApplication.shared().applicationState == .active }
+        return isActive ? [] : [.banner, .list, .sound]
+        #else
         // In the foreground the app already shows, plays and vibrates the end.
-        notification.request.identifier == Self.identifier ? [] : [.banner, .sound]
+        return []
+        #endif
     }
 }

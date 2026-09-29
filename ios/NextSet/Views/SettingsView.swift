@@ -3,7 +3,11 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(TimerStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     @State private var editor: TimerEditorTarget?
+    /// Notifications are turned off for NextSet in the iOS settings.
+    @State private var notificationsDenied = false
 
     var body: some View {
         NavigationStack {
@@ -26,6 +30,11 @@ struct SettingsView: View {
             }
             .sheet(item: $editor) { target in
                 TimerEditorSheet(target: target)
+            }
+            // Again after a visit to the iOS settings.
+            .task(id: scenePhase) {
+                guard scenePhase == .active else { return }
+                notificationsDenied = await RestNotifications.isDenied()
             }
         }
     }
@@ -129,6 +138,20 @@ struct SettingsView: View {
             Group {
                 Toggle("Keep display on", systemImage: "sun.max", isOn: setting(\.keepScreenOn))
                 Toggle("Notify when rest is over", systemImage: "bell.badge", isOn: setting(\.notificationsEnabled))
+                    .onChange(of: store.settings.notificationsEnabled) { _, isOn in
+                        guard isOn else { return }
+                        Task {
+                            await RestNotifications.requestPermission()
+                            notificationsDenied = await RestNotifications.isDenied()
+                        }
+                    }
+                if store.settings.notificationsEnabled && notificationsDenied {
+                    Button("Allow notifications in Settings", systemImage: "exclamationmark.triangle") {
+                        if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                            openURL(url)
+                        }
+                    }
+                }
                 Toggle("Live Activity", systemImage: "lock.iphone", isOn: setting(\.liveActivityEnabled))
             }
             .tint(Theme.controlTint)

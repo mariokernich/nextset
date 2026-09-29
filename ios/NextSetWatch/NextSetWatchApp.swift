@@ -12,6 +12,10 @@ struct NextSetWatchApp: App {
                 // Coral for the title and controls: the graphite accent is
                 // white on the watch and would not stand out from the text.
                 .tint(Theme.coral)
+                // The rest ends at a time of day: plan it anew when the clock is set.
+                .onReceive(NotificationCenter.default.publisher(for: .NSSystemClockDidChange).receive(on: RunLoop.main)) { _ in
+                    model.store.refresh()
+                }
         }
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }

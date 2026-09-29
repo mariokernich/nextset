@@ -16,7 +16,7 @@ struct FeedbackSettings: Codable, Equatable, Sendable {
     var hapticsEnabled: Bool = true
     var soundEnabled: Bool = true
     var soundStyle: SoundStyle = .beep
-    /// iPhone: keep the display awake while a rest is running.
+    /// iPhone: keep the display awake while a rest is running (not while paused).
     var keepScreenOn: Bool = true
     /// Show a notification when a rest ends while the app is in the background.
     var notificationsEnabled: Bool = true

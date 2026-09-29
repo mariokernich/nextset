@@ -68,6 +68,8 @@
 		86D91E18712188B508AFF096 /* NextSetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NextSetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A83E2A1C69055209D3BA3310 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		C17254E7B8DEA97D7478D4F6 /* Widgets-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Widgets-Info.plist"; sourceTree = "<group>"; };
+		4F9F170F9E0A561340CC74EF /* NextSet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NextSet.entitlements; sourceTree = "<group>"; };
+		CC7FC33DD7BCC9C369EE7833 /* NextSetWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NextSetWatch.entitlements; sourceTree = "<group>"; };
 		F81433D2F80A63AA38D1E11B /* NextSetWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NextSetWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBDB31BAA7DB015825589E58 /* NextSet-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NextSet-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -176,6 +178,8 @@
 				FBDB31BAA7DB015825589E58 /* NextSet-Info.plist */,
 				199915A295D14B47DA1E9AC2 /* Watch-Info.plist */,
 				C17254E7B8DEA97D7478D4F6 /* Widgets-Info.plist */,
+				4F9F170F9E0A561340CC74EF /* NextSet.entitlements */,
+				CC7FC33DD7BCC9C369EE7833 /* NextSetWatch.entitlements */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -509,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/NextSetWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -538,6 +543,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/NextSetWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -567,6 +573,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/NextSet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -730,6 +737,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/NextSet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;

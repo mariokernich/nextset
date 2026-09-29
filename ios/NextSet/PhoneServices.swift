@@ -12,7 +12,8 @@ final class PhoneServices: TimerSideEffects {
     }
 
     func timerStateDidChange(_ state: RestTimerState, settings: FeedbackSettings) {
-        UIApplication.shared.isIdleTimerDisabled = settings.keepScreenOn && state.isActive
+        // Not while paused: a forgotten pause would keep the display on for good.
+        UIApplication.shared.isIdleTimerDisabled = settings.keepScreenOn && state.phase == .running
         notifications.update(for: state, settings: settings)
         liveActivity.update(for: state, enabled: settings.liveActivityEnabled)
     }
@@ -30,5 +31,7 @@ final class PhoneServices: TimerSideEffects {
 
     func appDidBecomeActive() {
         notifications.clearDelivered()
+        // The app shows "GO!" itself now.
+        liveActivity.dismissFinished()
     }
 }

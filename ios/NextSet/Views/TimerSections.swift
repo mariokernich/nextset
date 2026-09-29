@@ -25,8 +25,8 @@ struct QuickTimersSection: View {
                             editor = .quick(index)
                         }
                     }
-                    .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
-                    .accessibilityHint(preset.trimmedName)
+                    .accessibilityLabel(Text(verbatim: preset.startLabel))
+                    .accessibilityAddTraits(isCurrent ? .isSelected : [])
                 }
             }
         }
@@ -145,6 +145,7 @@ struct PresetsSection: View {
                 }
             }
         }
-        .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
+        .accessibilityLabel(Text(verbatim: preset.startLabel))
+        .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }
 }

@@ -30,7 +30,7 @@ struct WatchHomeView: View {
                     }
                     .buttonStyle(.plain)
                     .glassEffect(.regular.tint(Theme.accent.opacity(0.24)).interactive(), in: .rect(cornerRadius: 22))
-                    .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
+                    .accessibilityLabel(Text(verbatim: preset.startLabel))
                 }
 
                 if !store.library.presets.isEmpty {
@@ -48,7 +48,7 @@ struct WatchHomeView: View {
                             // Neutral glass: the glass button style would take on the coral tint.
                             .buttonStyle(.plain)
                             .glassEffect(.regular.tint(Theme.accent.opacity(0.12)).interactive(), in: .capsule)
-                            .accessibilityLabel(Text("Start \(DurationFormat.spoken(preset.seconds)) rest"))
+                            .accessibilityLabel(Text(verbatim: preset.startLabel))
                         }
                     }
                     .padding(.top, 4)

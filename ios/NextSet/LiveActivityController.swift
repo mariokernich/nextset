@@ -8,14 +8,18 @@ import Foundation
 @MainActor
 final class LiveActivityController {
     private var activity: Activity<RestActivityAttributes>?
+    /// The ended activity that still shows "Next set" for a while.
+    private var finished: Activity<RestActivityAttributes>?
 
     init() {
         // Adopt an activity from a previous launch and drop any extras.
         let existing = Activity<RestActivityAttributes>.activities
-        activity = existing.first
-        for extra in existing.dropFirst() {
+        let ongoing = existing.filter(\.isOngoing)
+        activity = ongoing.first
+        for extra in ongoing.dropFirst() {
             Task { await extra.end(nil, dismissalPolicy: .immediate) }
         }
+        finished = existing.first { $0.activityState == .ended }
     }
 
     func update(for state: RestTimerState, enabled: Bool) {
@@ -25,8 +29,9 @@ final class LiveActivityController {
         }
         switch state.phase {
         case .running, .paused:
+            dismissFinished()
             let content = Self.content(for: state)
-            if let activity, activity.activityState == .active {
+            if let activity, activity.isOngoing {
                 Task { await activity.update(content) }
             } else {
                 activity = try? Activity.request(attributes: RestActivityAttributes(), content: content)
@@ -47,10 +52,21 @@ final class LiveActivityController {
         state.pausedRemaining = nil
         let content = ActivityContent(state: state, staleDate: nil)
         let policy: ActivityUIDismissalPolicy = dismissImmediately ? .immediate : .after(.now.addingTimeInterval(120))
+        if !dismissImmediately {
+            finished = activity
+        }
         Task { await activity.end(content, dismissalPolicy: policy) }
     }
 
+    /// Removes "Next set" once the user is back in the app or has moved on.
+    func dismissFinished() {
+        guard let finished else { return }
+        self.finished = nil
+        Task { await finished.end(nil, dismissalPolicy: .immediate) }
+    }
+
     private func end() {
+        dismissFinished()
         guard let activity else { return }
         self.activity = nil
         Task { await activity.end(nil, dismissalPolicy: .immediate) }
@@ -68,5 +84,13 @@ final class LiveActivityController {
         // even if the app is suspended at that moment.
         let staleDate = state.phase == .running ? contentState.endDate : nil
         return ActivityContent(state: contentState, staleDate: staleDate, relevanceScore: 100)
+    }
+}
+
+private extension Activity {
+    /// Still on screen as a rest. "Stale" once its end passed while the app
+    /// was suspended; an update makes it current again.
+    var isOngoing: Bool {
+        activityState == .active || activityState == .stale
     }
 }
