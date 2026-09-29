@@ -108,7 +108,10 @@ class TimerStore(
         when (timer.phase) {
             Phase.IDLE, Phase.FINISHED -> {
                 val seconds = snapshot.value.idleSeconds
-                start(seconds, library.allTimers.firstOrNull { it.seconds == seconds }?.id)
+                // The timer that ran last, if it still fits: of two timers with
+                // the same duration, the repeated one stays highlighted.
+                val previous = timer.presetId?.let(library::preset)?.takeIf { it.seconds == seconds }
+                start(seconds, (previous ?: library.allTimers.firstOrNull { it.seconds == seconds })?.id)
             }
             Phase.RUNNING -> {
                 snapshot.update { it.copy(timer = it.timer.paused(clock())) }
@@ -121,7 +124,10 @@ class TimerStore(
         }
     }
 
-    /** Adds or removes time. While idle this changes the duration to start. */
+    /**
+     * Adds or removes time. While idle this changes the duration to start;
+     * after the end of a rest it returns to idle with the changed duration.
+     */
     fun adjust(seconds: Int) {
         if (timer.isActive) {
             val adjusted = timer.adjusted(seconds * 1000L, clock())
@@ -129,6 +135,11 @@ class TimerStore(
             if (adjusted.phase == Phase.FINISHED) didFinish(inTime = true) else timerChanged()
         } else {
             snapshot.update { it.copy(idleSeconds = RestPreset.clamp(it.idleSeconds + seconds)) }
+            if (timer.phase == Phase.FINISHED) {
+                // "GO!" would hide the new duration.
+                snapshot.update { it.copy(timer = it.timer.reset()) }
+                timerChanged()
+            }
         }
     }
 
@@ -146,8 +157,14 @@ class TimerStore(
             Phase.RUNNING -> {
                 val end = current.endAt
                 if (end != null && end <= now) {
-                    snapshot.update { it.copy(timer = current.finished(end)) }
-                    didFinish(inTime = now - end < LATE_FINISH_MS)
+                    if (now - end > OVERTIME_LIMIT_MS) {
+                        // Over for so long that "GO!" would already be gone again.
+                        snapshot.update { it.copy(timer = current.reset()) }
+                        timerChanged()
+                    } else {
+                        snapshot.update { it.copy(timer = current.finished(end)) }
+                        didFinish(inTime = now - end < LATE_FINISH_MS)
+                    }
                     return
                 }
             }
@@ -172,7 +189,9 @@ class TimerStore(
         val current = library
         val changed = change(current).normalized()
         if (changed == current) return
-        val stamped = changed.copy(modifiedAt = clock())
+        // Later than the timers it is based on, even if the other device's
+        // clock is ahead: otherwise the other device would ignore this edit.
+        val stamped = changed.copy(modifiedAt = maxOf(clock(), current.modifiedAt + 1))
         snapshot.update { it.copy(library = stamped) }
         storage.save(Storage.Key.LIBRARY, stamped)
         onLocalLibraryChange?.invoke(stamped)

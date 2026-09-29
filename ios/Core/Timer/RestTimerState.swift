@@ -52,16 +52,18 @@ struct RestTimerState: Codable, Equatable, Sendable {
         phase = .running
     }
 
-    /// Adds or removes time. Returns `true` when the change ended the rest.
+    /// Adds or removes time, up to the longest allowed rest. Returns `true`
+    /// when the change ended the rest.
     @discardableResult
     mutating func adjust(by delta: TimeInterval, now: Date = .now) -> Bool {
         guard isActive else { return false }
-        let newRemaining = remaining(at: now) + delta
+        let oldRemaining = remaining(at: now)
+        let newRemaining = min(oldRemaining + delta, TimeInterval(RestPreset.allowedRange.upperBound))
         guard newRemaining > 0.5 else {
             finish(at: now)
             return true
         }
-        duration = max(duration + delta, newRemaining)
+        duration = max(duration + newRemaining - oldRemaining, newRemaining)
         if phase == .running {
             endDate = now.addingTimeInterval(newRemaining)
         } else {

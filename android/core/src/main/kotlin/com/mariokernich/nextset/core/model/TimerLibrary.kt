@@ -42,7 +42,7 @@ data class TimerLibrary(
         TimerEditorTarget.NewPreset -> null
     }
 
-    /** Stores duration and name for [target]. New timers are inserted in order of duration. */
+    /** Stores duration and name for [target]. */
     fun saving(seconds: Int, name: String, target: TimerEditorTarget): TimerLibrary {
         val trimmed = name.trim()
         return when (target) {
@@ -61,7 +61,11 @@ data class TimerLibrary(
             )
             TimerEditorTarget.NewPreset -> {
                 if (presets.size >= MAX_PRESETS) return this
-                copy(presets = (presets + RestPreset.of(seconds, trimmed)).sortedBy { it.seconds })
+                // In front of the first longer timer: keeps a sorted list sorted
+                // and leaves an order the user arranged untouched.
+                val preset = RestPreset.of(seconds, trimmed)
+                val position = presets.indexOfFirst { it.seconds > preset.seconds }.takeIf { it >= 0 } ?: presets.size
+                copy(presets = presets.toMutableList().apply { add(position, preset) })
             }
         }
     }

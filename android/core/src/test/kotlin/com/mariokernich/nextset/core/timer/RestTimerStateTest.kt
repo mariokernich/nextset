@@ -66,6 +66,27 @@ class RestTimerStateTest {
     }
 
     @Test
+    fun knowsWhenTheShownSecondsChange() {
+        val running = RestTimerState().started(10, now = t0)
+        val wait = running.millisUntilNextSecond(t0 + 500)
+        assertEquals(10, running.displayedSeconds(t0 + 500 + wait - 2))
+        assertEquals(9, running.displayedSeconds(t0 + 500 + wait))
+
+        val finished = running.finished(t0 + 10_000)
+        val overtimeWait = finished.millisUntilNextSecond(t0 + 12_300)
+        assertEquals(700, overtimeWait)
+        assertEquals(3_000, finished.overtime(t0 + 12_300 + overtimeWait))
+    }
+
+    @Test
+    fun addingTimeStopsAtTheLongestRest() {
+        val state = RestTimerState().started(3600, now = t0).adjusted(15_000, t0 + 10_000)
+
+        assertEquals(3_600_000, state.remaining(t0 + 10_000))
+        assertEquals(3_610_000, state.durationMs)
+    }
+
+    @Test
     fun removingMoreTimeThanLeftFinishesTheRest() {
         val state = RestTimerState().started(60, now = t0).adjusted(-15_000, t0 + 50_000)
 

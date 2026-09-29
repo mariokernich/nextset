@@ -80,6 +80,18 @@ class TimerStoreTest {
     }
 
     @Test
+    fun adjustingAfterTheEndShowsTheNewDuration() {
+        val store = makeStore()
+        store.start(90)
+        store.refresh(now + 100_000)
+        assertEquals(Phase.FINISHED, store.timer.phase)
+
+        store.adjust(15)
+        assertEquals(Phase.IDLE, store.timer.phase)
+        assertEquals(105, store.state.value.idleSeconds)
+    }
+
+    @Test
     fun stopReturnsToIdle() {
         val store = makeStore()
         store.start(60)
@@ -102,6 +114,26 @@ class TimerStoreTest {
         store.refresh(now + 30_000)
         store.refresh(now + 30_000 + TimerStore.OVERTIME_LIMIT_MS + 1)
         assertEquals(Phase.IDLE, store.timer.phase)
+    }
+
+    @Test
+    fun refreshDropsARestThatEndedLongAgo() {
+        val store = makeStore()
+        store.start(30)
+        store.refresh(now + 30_000 + TimerStore.OVERTIME_LIMIT_MS + 1)
+        assertEquals(Phase.IDLE, store.timer.phase)
+    }
+
+    @Test
+    fun repeatKeepsTheTimerThatRan() {
+        val store = makeStore()
+        store.updateLibrary { it.saving(90, "Rows", TimerEditorTarget.NewPreset) }
+        val rows = store.library.presets.first { it.name == "Rows" }
+        store.start(rows)
+        store.stop()
+
+        store.primaryAction()
+        assertEquals(rows.id, store.timer.presetId)
     }
 
     @Test
@@ -138,6 +170,16 @@ class TimerStoreTest {
 
         assertTrue(forwarded?.presets?.any { it.seconds == 75 && it.name == "Rows" } == true)
         assertTrue(store.library.modifiedAt > 0)
+    }
+
+    @Test
+    fun editsStayNewerThanTimersFromAClockThatIsAhead() {
+        val store = makeStore()
+        val remote = TimerLibrary.standard().copy(modifiedAt = now + 3_600_000)
+        store.applyRemoteLibrary(remote)
+
+        store.updateLibrary { it.copy(quickTimerCount = 1) }
+        assertTrue(store.library.modifiedAt > remote.modifiedAt)
     }
 
     @Test

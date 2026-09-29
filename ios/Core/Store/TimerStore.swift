@@ -41,7 +41,12 @@ final class TimerStore {
     init(storage: Storage = Storage(), feedback: FeedbackCoordinator? = nil) {
         self.storage = storage
         self.feedback = feedback ?? FeedbackCoordinator()
-        let library = storage.load(TimerLibrary.self, key: .library)?.normalized() ?? .standard
+        let library = storage.load(TimerLibrary.self, key: .library)?.normalized() ?? {
+            // Stored right away, so the default timers keep their IDs across
+            // launches (a running rest remembers which quick timer started it).
+            storage.save(TimerLibrary.standard, key: .library)
+            return .standard
+        }()
         let timer = storage.load(RestTimerState.self, key: .timer) ?? RestTimerState()
         self.library = library
         self.settings = storage.load(FeedbackSettings.self, key: .settings) ?? FeedbackSettings()
@@ -66,7 +71,10 @@ final class TimerStore {
     func primaryAction() {
         switch timer.phase {
         case .idle, .finished:
-            let match = library.allTimers.first { $0.seconds == idleSeconds }
+            // The timer that ran last, if it still fits: of two timers with
+            // the same duration, the repeated one stays highlighted.
+            let previous = timer.presetID.flatMap(library.preset(withID:))
+            let match = previous?.seconds == idleSeconds ? previous : library.allTimers.first { $0.seconds == idleSeconds }
             start(seconds: idleSeconds, presetID: match?.id)
         case .running:
             timer.pause()
@@ -77,7 +85,8 @@ final class TimerStore {
         }
     }
 
-    /// Adds or removes time. While idle this changes the duration to start.
+    /// Adds or removes time. While idle this changes the duration to start;
+    /// after the end of a rest it returns to idle with the changed duration.
     func adjust(by seconds: Int) {
         if timer.isActive {
             if timer.adjust(by: TimeInterval(seconds)) {
@@ -87,6 +96,11 @@ final class TimerStore {
             }
         } else {
             idleSeconds = RestPreset.clamp(idleSeconds + seconds)
+            if timer.phase == .finished {
+                // "GO!" would hide the new duration.
+                timer.reset()
+                timerChanged()
+            }
         }
     }
 
@@ -102,8 +116,14 @@ final class TimerStore {
         switch timer.phase {
         case .running:
             if let end = timer.endDate, end <= now {
-                timer.finish(at: end)
-                didFinish(inTime: now.timeIntervalSince(end) < 3)
+                if now.timeIntervalSince(end) > Self.overtimeLimit {
+                    // Over for so long that "GO!" would already be gone again.
+                    timer.reset()
+                    timerChanged()
+                } else {
+                    timer.finish(at: end)
+                    didFinish(inTime: now.timeIntervalSince(end) < 3)
+                }
                 return
             }
         case .finished:
@@ -128,7 +148,9 @@ final class TimerStore {
         change(&copy)
         copy = copy.normalized()
         guard copy != library else { return }
-        copy.modifiedAt = .now
+        // Later than the timers it is based on, even if the other device's
+        // clock is ahead: otherwise the other device would ignore this edit.
+        copy.modifiedAt = max(.now, library.modifiedAt.addingTimeInterval(0.001))
         library = copy
         storage.save(copy, key: .library)
         libraryDidChangeLocally?(copy)

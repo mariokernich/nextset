@@ -63,6 +63,15 @@ struct RestTimerStateTests {
         #expect(state.duration == 75)
     }
 
+    @Test func addingTimeStopsAtTheLongestRest() {
+        var state = RestTimerState()
+        state.start(seconds: 3600, now: t0)
+        state.adjust(by: 15, now: t0 + 10)
+
+        #expect(state.remaining(at: t0 + 10) == 3600)
+        #expect(state.duration == 3610)
+    }
+
     @Test func removingMoreTimeThanLeftFinishesTheRest() {
         var state = RestTimerState()
         state.start(seconds: 60, now: t0)

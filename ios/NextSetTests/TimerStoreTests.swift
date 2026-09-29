@@ -72,6 +72,17 @@ struct TimerStoreTests {
         #expect(store.countdownSecondsLeft == nil)
     }
 
+    @Test func adjustingAfterTheEndShowsTheNewDuration() {
+        let store = makeStore()
+        store.start(seconds: 90)
+        store.refresh(now: .now.addingTimeInterval(100))
+        #expect(store.timer.phase == .finished)
+
+        store.adjust(by: 15)
+        #expect(store.timer.phase == .idle)
+        #expect(store.idleSeconds == 105)
+    }
+
     @Test func stopReturnsToIdle() {
         let store = makeStore()
         store.start(seconds: 60)
@@ -84,6 +95,24 @@ struct TimerStoreTests {
         store.start(seconds: 30)
         store.refresh(now: .now.addingTimeInterval(45))
         #expect(store.timer.phase == .finished)
+    }
+
+    @Test func refreshDropsARestThatEndedLongAgo() {
+        let store = makeStore()
+        store.start(seconds: 30)
+        store.refresh(now: .now.addingTimeInterval(30 + TimerStore.overtimeLimit + 1))
+        #expect(store.timer.phase == .idle)
+    }
+
+    @Test func repeatKeepsTheTimerThatRan() {
+        let store = makeStore()
+        store.updateLibrary { $0.save(seconds: 90, name: "Rows", for: .newPreset) }
+        let rows = try! #require(store.library.presets.first { $0.name == "Rows" })
+        store.start(rows)
+        store.stop()
+
+        store.primaryAction()
+        #expect(store.timer.presetID == rows.id)
     }
 
     @Test func stateSurvivesRelaunch() {
@@ -101,6 +130,21 @@ struct TimerStoreTests {
         defaults.removePersistentDomain(forName: suite)
     }
 
+    @Test func defaultTimersAreStoredRightAway() {
+        let suite = "NextSetTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let storage = Storage(defaults: defaults)
+        let first = TimerStore(storage: storage)
+        first.start(first.library.visibleQuickTimers[1])
+
+        // Without the stored copy, a relaunch would create the defaults with new IDs.
+        #expect(storage.load(TimerLibrary.self, key: .library) == first.library)
+        let second = TimerStore(storage: storage)
+        #expect(second.timer.presetID == second.library.visibleQuickTimers[1].id)
+        #expect(second.library.modifiedAt == .distantPast)
+    }
+
     @Test func localEditsAreForwardedForSync() {
         let store = makeStore()
         var forwarded: TimerLibrary?
@@ -109,6 +153,16 @@ struct TimerStoreTests {
 
         #expect(forwarded?.presets.contains { $0.seconds == 75 && $0.name == "Rows" } == true)
         #expect(store.library.modifiedAt > .distantPast)
+    }
+
+    @Test func editsStayNewerThanTimersFromAClockThatIsAhead() {
+        let store = makeStore()
+        var remote = TimerLibrary.standard
+        remote.modifiedAt = .now.addingTimeInterval(3600)
+        store.applyRemoteLibrary(remote)
+
+        store.updateLibrary { $0.quickTimerCount = 1 }
+        #expect(store.library.modifiedAt > remote.modifiedAt)
     }
 
     @Test func onlyNewerRemoteLibrariesAreApplied() {
@@ -143,6 +197,15 @@ struct TimerEditingTests {
 
         #expect(library.presets.map(\.seconds) == library.presets.map(\.seconds).sorted())
         #expect(library.presets.contains { $0.seconds == 50 })
+    }
+
+    @Test func addingKeepsAnOrderTheUserArranged() {
+        var arranged = TimerLibrary.standard
+        arranged.presets.reverse()
+        var library = arranged
+        library.save(seconds: 50, name: "", for: .newPreset)
+
+        #expect(library.presets.filter { $0.seconds != 50 } == arranged.presets)
     }
 
     @Test func deletesPresets() {

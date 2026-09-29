@@ -72,6 +72,14 @@ class TimerLibraryTest {
     }
 
     @Test
+    fun addingKeepsAnOrderTheUserArranged() {
+        val arranged = TimerLibrary.standard().let { it.copy(presets = it.presets.reversed()) }
+        val library = arranged.saving(50, "", TimerEditorTarget.NewPreset)
+
+        assertEquals(arranged.presets, library.presets.filterNot { it.seconds == 50 })
+    }
+
+    @Test
     fun deletesPresets() {
         val standard = TimerLibrary.standard()
         val preset = standard.presets[0]

@@ -61,12 +61,16 @@ data class RestTimerState(
         return copy(phase = Phase.RUNNING, endAt = now + pausedRemainingMs, pausedRemainingMs = null)
     }
 
-    /** Adds or removes time. Taking away everything that's left finishes the rest. */
+    /**
+     * Adds or removes time, up to the longest allowed rest. Taking away
+     * everything that's left finishes the rest.
+     */
     fun adjusted(deltaMs: Long, now: Long): RestTimerState {
         if (!isActive) return this
-        val newRemaining = remaining(now) + deltaMs
+        val oldRemaining = remaining(now)
+        val newRemaining = minOf(oldRemaining + deltaMs, RestPreset.ALLOWED_SECONDS.last * 1000L)
         if (newRemaining <= 500) return finished(now)
-        val newDuration = maxOf(durationMs + deltaMs, newRemaining)
+        val newDuration = maxOf(durationMs + newRemaining - oldRemaining, newRemaining)
         return if (phase == Phase.RUNNING) {
             copy(durationMs = newDuration, endAt = now + newRemaining)
         } else {
@@ -110,5 +114,15 @@ data class RestTimerState(
     fun overtime(now: Long): Long {
         if (phase != Phase.FINISHED || finishedAt == null) return 0
         return maxOf(0, now - finishedAt)
+    }
+
+    /**
+     * Milliseconds until the shown seconds change: those of the countdown while
+     * running (with the tolerance of [displayedSeconds]), of the overtime once finished.
+     */
+    fun millisUntilNextSecond(now: Long): Long = when (phase) {
+        Phase.RUNNING -> Math.floorMod(remaining(now) - 5, 1000L) + 1
+        Phase.FINISHED -> 1000 - Math.floorMod(overtime(now), 1000L)
+        Phase.IDLE, Phase.PAUSED -> 1000
     }
 }

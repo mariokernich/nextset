@@ -35,8 +35,11 @@ extension TimerLibrary {
             presets[position].name = name
         case .newPreset:
             guard presets.count < Self.maxPresets else { return }
-            presets.append(RestPreset(seconds: seconds, name: name))
-            presets.sort { $0.seconds < $1.seconds }
+            // In front of the first longer timer: keeps a sorted list sorted
+            // and leaves an order the user arranged untouched.
+            let preset = RestPreset(seconds: seconds, name: name)
+            let position = presets.firstIndex { $0.seconds > preset.seconds } ?? presets.endIndex
+            presets.insert(preset, at: position)
         }
     }
 
