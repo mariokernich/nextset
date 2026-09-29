@@ -8,6 +8,12 @@
             "state" : "translated",
             "value" : "%lld Sekunden"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld seconds"
+          }
         }
       }
     },
@@ -17,6 +23,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "15 Sekunden hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add 15 seconds"
           }
         }
       }
@@ -28,6 +40,12 @@
             "state" : "translated",
             "value" : "Timer hinzufügen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add timer"
+          }
         }
       }
     },
@@ -37,6 +55,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Füge deine üblichen Pausenzeiten mit + hinzu."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your usual rest times with +."
           }
         }
       }
@@ -48,6 +72,12 @@
             "state" : "translated",
             "value" : "Piep"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beep"
+          }
         }
       }
     },
@@ -57,6 +87,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         }
       }
@@ -68,12 +104,24 @@
             "state" : "translated",
             "value" : "Glocke"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chime"
+          }
         }
       }
     },
     "Countdown" : {
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Countdown"
+          }
+        },
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Countdown"
@@ -88,6 +136,12 @@
             "state" : "translated",
             "value" : "Löschen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
         }
       }
     },
@@ -98,12 +152,24 @@
             "state" : "translated",
             "value" : "Timer löschen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete timer"
+          }
         }
       }
     },
     "Digital" : {
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digital"
+          }
+        },
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Digital"
@@ -118,6 +184,12 @@
             "state" : "translated",
             "value" : "Fertig"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
         }
       }
     },
@@ -127,6 +199,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Während der Pause"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "During a rest"
           }
         }
       }
@@ -138,6 +216,12 @@
             "state" : "translated",
             "value" : "Bearbeiten"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
         }
       }
     },
@@ -147,6 +231,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timer bearbeiten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit timer"
           }
         }
       }
@@ -158,6 +248,12 @@
             "state" : "translated",
             "value" : "Pause beenden"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Rest"
+          }
         }
       }
     },
@@ -167,6 +263,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pause beenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End rest"
           }
         }
       }
@@ -178,6 +280,12 @@
             "state" : "translated",
             "value" : "Beendet den laufenden Pausen-Timer."
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ends the running rest timer."
+          }
         }
       }
     },
@@ -187,6 +295,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zum Beispiel die Übung, etwa „Kniebeugen“."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For example the exercise, like “Squats”."
           }
         }
       }
@@ -198,6 +312,12 @@
             "state" : "translated",
             "value" : "LOS!"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GO!"
+          }
         }
       }
     },
@@ -207,6 +327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Haptik"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptics"
           }
         }
       }
@@ -218,6 +344,12 @@
             "state" : "translated",
             "value" : "Display anlassen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep display on"
+          }
         }
       }
     },
@@ -227,6 +359,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Live-Aktivität"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live Activity"
           }
         }
       }
@@ -238,6 +376,12 @@
             "state" : "translated",
             "value" : "Minuten"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minutes"
+          }
         }
       }
     },
@@ -248,12 +392,24 @@
             "state" : "translated",
             "value" : "Weitere Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More timers"
+          }
         }
       }
     },
     "Name (optional)" : {
       "localizations" : {
         "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (optional)"
+          }
+        },
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name (optional)"
@@ -268,6 +424,12 @@
             "state" : "translated",
             "value" : "Neuer Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New timer"
+          }
         }
       }
     },
@@ -277,6 +439,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nächster Satz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next set"
           }
         }
       }
@@ -288,6 +456,12 @@
             "state" : "translated",
             "value" : "Nächster Satz um %@"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next set at %@"
+          }
         }
       }
     },
@@ -297,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mitteilung bei Pausenende"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when rest is over"
           }
         }
       }
@@ -308,6 +488,12 @@
             "state" : "translated",
             "value" : "Anzahl Schnell-Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of quick timers"
+          }
         }
       }
     },
@@ -317,6 +503,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "von %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "of %@"
           }
         }
       }
@@ -328,6 +520,12 @@
             "state" : "translated",
             "value" : "Aus"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off"
+          }
         }
       }
     },
@@ -337,6 +535,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
           }
         }
       }
@@ -348,6 +552,12 @@
             "state" : "translated",
             "value" : "Pausiert"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
+          }
         }
       }
     },
@@ -357,6 +567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Klang abspielen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play sound"
           }
         }
       }
@@ -368,6 +584,12 @@
             "state" : "translated",
             "value" : "Schnell-Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Timer"
+          }
         }
       }
     },
@@ -377,6 +599,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schnell-Timer %lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick timer %lld"
           }
         }
       }
@@ -388,6 +616,12 @@
             "state" : "translated",
             "value" : "Schnell-Timer 1"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Timer 1"
+          }
         }
       }
     },
@@ -397,6 +631,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schnell-Timer 2"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Timer 2"
           }
         }
       }
@@ -408,6 +648,12 @@
             "state" : "translated",
             "value" : "Schnell-Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick timers"
+          }
         }
       }
     },
@@ -417,6 +663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schnell-Timer sind die großen Tasten auf dem Startbildschirm."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick timers are the big buttons on the start screen."
           }
         }
       }
@@ -428,6 +680,12 @@
             "state" : "translated",
             "value" : "Bereit"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
         }
       }
     },
@@ -437,6 +695,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "15 Sekunden abziehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove 15 seconds"
           }
         }
       }
@@ -448,6 +712,12 @@
             "state" : "translated",
             "value" : "Pause wiederholen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repeat rest"
+          }
         }
       }
     },
@@ -457,6 +727,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Satzpause"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
           }
         }
       }
@@ -468,6 +744,12 @@
             "state" : "translated",
             "value" : "Pause vorbei"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest is over"
+          }
         }
       }
     },
@@ -477,6 +759,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pause vorbei – Zeit für den nächsten Satz."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest is over – time for your next set."
           }
         }
       }
@@ -488,6 +776,12 @@
             "state" : "translated",
             "value" : "Fortsetzen"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
+          }
         }
       }
     },
@@ -497,6 +791,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sichern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         }
       }
@@ -508,6 +808,12 @@
             "state" : "translated",
             "value" : "Sekunden"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seconds"
+          }
         }
       }
     },
@@ -517,6 +823,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         }
       }
@@ -528,6 +840,12 @@
             "state" : "translated",
             "value" : "Signal in den letzten"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signal during the last"
+          }
         }
       }
     },
@@ -537,6 +855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Klang"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sound"
           }
         }
       }
@@ -548,6 +872,12 @@
             "state" : "translated",
             "value" : "Töne"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sounds"
+          }
         }
       }
     },
@@ -557,6 +887,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Töne aus"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sounds off"
           }
         }
       }
@@ -568,6 +904,12 @@
             "state" : "translated",
             "value" : "Töne an"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sounds on"
+          }
         }
       }
     },
@@ -577,6 +919,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ Pause starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start %@ rest"
           }
         }
       }
@@ -588,6 +936,12 @@
             "state" : "translated",
             "value" : "Schnell-Timer starten"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Quick Timer"
+          }
         }
       }
     },
@@ -597,6 +951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pause starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start rest"
           }
         }
       }
@@ -608,6 +968,12 @@
             "state" : "translated",
             "value" : "Pausen-Timer starten"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Rest Timer"
+          }
         }
       }
     },
@@ -617,6 +983,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Startet einen Pausen-Timer mit beliebiger Dauer."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts a rest timer with any duration."
           }
         }
       }
@@ -628,6 +1000,12 @@
             "state" : "translated",
             "value" : "Startet einen deiner Schnell-Timer."
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts one of your quick rest timers."
+          }
         }
       }
     },
@@ -637,6 +1015,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timer antippen zum Starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a timer to start"
           }
         }
       }
@@ -648,6 +1032,12 @@
             "state" : "translated",
             "value" : "Die letzten Sekunden jeder Pause werden mit Vibration und Ton markiert. Die Töne sind über deiner Musik und auch im Stumm-Modus zu hören."
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The last seconds of every rest are marked with a tap and a beep. Sounds play over your music and even in silent mode."
+          }
         }
       }
     },
@@ -657,6 +1047,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zeit für deinen nächsten Satz."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time for your next set."
           }
         }
       }
@@ -668,6 +1064,12 @@
             "state" : "translated",
             "value" : "Timer"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timers"
+          }
         }
       }
     },
@@ -677,6 +1079,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timer werden mit deinem iPhone synchronisiert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timers sync with your iPhone."
           }
         }
       }
@@ -688,6 +1096,12 @@
             "state" : "translated",
             "value" : "Timer, die du hier bearbeitest, erscheinen auch auf deiner Apple Watch."
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timers you edit here also appear on your Apple Watch."
+          }
         }
       }
     },
@@ -698,6 +1112,12 @@
             "state" : "translated",
             "value" : "Schaltet die Countdown-Töne ein oder aus."
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns the countdown sounds on or off."
+          }
         }
       }
     },
@@ -707,6 +1127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bei gesperrtem iPhone zeigen Sperrbildschirm und Dynamic Island den Countdown, eine Mitteilung meldet das Ende der Pause."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With the phone locked, the Lock Screen and the Dynamic Island show the countdown and a notification signals the end of the rest."
           }
         }
       }
