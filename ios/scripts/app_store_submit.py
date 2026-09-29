@@ -7,7 +7,7 @@ missing something (agreements, screenshots, age rating, App Privacy, ...), the
 API rejects the submission and the reasons are printed.
 
     ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_P8="$(cat AuthKey_….p8)" \
-        scripts/app_store_submit.py --version 1.0 --build 2
+        ios/scripts/app_store_submit.py --version 1.0 --build 2
 
 Needs PyJWT with cryptography and requests: pip install "pyjwt[crypto]" requests
 """

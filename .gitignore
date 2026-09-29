@@ -15,12 +15,29 @@ xcuserdata/
 .build/
 .swiftpm/
 
+# Android / Gradle
+.gradle/
+.kotlin/
+local.properties
+*.iml
+.idea/
+.cxx/
+.externalNativeBuild/
+captures/
+*.apk
+*.aab
+# Release signing: keystore and passwords never go into the repository.
+*.jks
+*.keystore
+keystore.properties
+
 # macOS
 .DS_Store
 
 # CI output
-/screenshots/
-/build.log
+/ios/screenshots/
+/ios/build.log
+/android/screenshots/
 
 # Branding tooling
 Branding/fonts/

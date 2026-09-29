@@ -1,12 +1,14 @@
-name: CI
+name: iOS
+
+# Builds and tests the Xcode project in ios/ (iPhone app, Apple Watch app, widget).
 
 on:
   push:
     branches: [main]
-    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
+    paths: ["ios/**", ".github/workflows/ios.yml"]
   pull_request:
     branches: [main]
-    paths-ignore: ["**.md", "Branding/**", "website/**", ".github/workflows/website.yml"]
+    paths: ["ios/**", ".github/workflows/ios.yml"]
   workflow_dispatch:
     inputs:
       screenshots:
@@ -18,7 +20,7 @@ on:
 # One run per branch: a newer push, pull request update or manual run
 # replaces the one in progress.
 concurrency:
-  group: ci-${{ github.head_ref || github.ref_name }}
+  group: ios-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -31,6 +33,9 @@ jobs:
     name: Build & test
     runs-on: macos-26
     timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: ios
     steps:
       - uses: actions/checkout@v4
 
@@ -73,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: screenshots
+          path: ios/screenshots
           if-no-files-found: ignore
 
       - name: Upload build log
@@ -81,4 +86,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-log
-          path: build.log
+          path: ios/build.log

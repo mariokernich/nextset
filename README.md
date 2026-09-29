@@ -14,7 +14,7 @@ Das **Logo** ist eine Kettlebell, deren Körper gleichzeitig ein Timer-Zifferbla
 
 | iPhone | iPhone (dunkel) | iPhone (getönt) | Apple Watch |
 |:---:|:---:|:---:|:---:|
-| <img src="NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon.png" width="120"> | <img src="NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon-Dark.png" width="120"> | <img src="NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon-Tinted.png" width="120"> | <img src="NextSetWatch/Assets.xcassets/AppIcon.appiconset/AppIcon-Watch.png" width="120"> |
+| <img src="ios/NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon.png" width="120"> | <img src="ios/NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon-Dark.png" width="120"> | <img src="ios/NextSet/Assets.xcassets/AppIcon.appiconset/AppIcon-Tinted.png" width="120"> | <img src="ios/NextSetWatch/Assets.xcassets/AppIcon.appiconset/AppIcon-Watch.png" width="120"> |
 
 Die Icons werden aus `Branding/build-icons.mjs` erzeugt (siehe unten).
 
@@ -65,8 +65,8 @@ Die App ist auf Englisch und Deutsch lokalisiert.
 
 Voraussetzungen: **Xcode 26** oder neuer, **iOS 26** / **watchOS 26**.
 
-1. `NextSet.xcodeproj` öffnen
-2. Das Team ist im Projekt hinterlegt. Wer mit einem anderen Developer-Account baut, wählt in Xcode unter *Signing & Capabilities* sein Team. Mit `BUNDLE_ID_PREFIX` in `Config/Signing.xcconfig` passt du die Bundle-IDs an (aktuell `com.mariokernich.nextset`).
+1. `ios/NextSet.xcodeproj` öffnen
+2. Das Team ist im Projekt hinterlegt. Wer mit einem anderen Developer-Account baut, wählt in Xcode unter *Signing & Capabilities* sein Team. Mit `BUNDLE_ID_PREFIX` in `ios/Config/Signing.xcconfig` passt du die Bundle-IDs an (aktuell `com.mariokernich.nextset`).
 3. Scheme **NextSet** auf dem iPhone starten. Die Watch-App wird mitinstalliert. Für die Watch allein gibt es das Scheme **NextSetWatch**.
 
 > Hinweis: Auf der Watch nutzt die App eine Extended Runtime Session vom Typ *Physical Therapy* (`WKBackgroundModes`). So laufen die Haptik-Signale auch bei gesenktem Handgelenk. Die Session braucht einen signierten Build, also mit gesetztem Team. Unsignierte Builds, etwa im CI, lehnt watchOS ab. Dann springt die Mitteilung am Pausenende ein.
@@ -74,27 +74,28 @@ Voraussetzungen: **Xcode 26** oder neuer, **iOS 26** / **watchOS 26**.
 ## Projektstruktur
 
 ```
-NextSet/            iPhone-App (Bildschirme, Live-Aktivität, App Intents)
-NextSetWatch/       Apple-Watch-App
-NextSetWidgets/     Widget-Extension für die Live-Aktivität
-Core/               Gemeinsam für iPhone & Watch: Timer-Logik, Store, Haptik, Töne, Sync
-Shared/             Gemeinsam für alle Targets: Farben, Logo, Ring, Formatierung, Texte (de/en)
-NextSetTests/       Unit-Tests (Swift Testing)
-Config/             Info.plist-Ergänzungen, Signing.xcconfig und Export-Optionen für den App Store
-Branding/           Logo, Icons und Banner samt Generator
-scripts/            Screenshot-Skript für den Simulator, Einreichen im App Store
-website/            Support-Seite und Datenschutzerklärung (apps.kernich.de/nextset)
+ios/                    Xcode-Projekt (iPhone, Apple Watch, Widget)
+  NextSet/              iPhone-App (Bildschirme, Live-Aktivität, App Intents)
+  NextSetWatch/         Apple-Watch-App
+  NextSetWidgets/       Widget-Extension für die Live-Aktivität
+  Core/                 Gemeinsam für iPhone & Watch: Timer-Logik, Store, Haptik, Töne, Sync
+  Shared/               Gemeinsam für alle Targets: Farben, Logo, Ring, Formatierung, Texte (de/en)
+  NextSetTests/         Unit-Tests (Swift Testing)
+  Config/               Info.plist-Ergänzungen, Signing.xcconfig und Export-Optionen für den App Store
+  scripts/              Screenshot-Skript für den Simulator, Einreichen im App Store
+Branding/               Logo, Icons und Banner samt Generator
+website/                Support-Seite und Datenschutzerklärung (apps.kernich.de/nextset)
 ```
 
 Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem mitlaufenden Zähler. Dadurch stimmt er auch dann, wenn die App im Hintergrund pausiert oder neu gestartet wird. Die Countdown-Ereignisse plant `CountdownPlan`, `TimerStore` spielt sie ab.
 
 ## Entwicklung
 
-- **Tests:** `xcodebuild test -project NextSet.xcodeproj -scheme NextSet -destination 'platform=iOS Simulator,name=iPhone 17'`
-- **Screenshots:** nach dem Testlauf mit `-derivedDataPath build` einfach `scripts/screenshots.sh build screenshots` ausführen. Die Zustände lassen sich per Startargument wählen, z. B. `-demo running`.
+- **Tests:** in `ios/` `xcodebuild test -project NextSet.xcodeproj -scheme NextSet -destination 'platform=iOS Simulator,name=iPhone 17'`
+- **Screenshots:** nach dem Testlauf mit `-derivedDataPath build` in `ios/` einfach `scripts/screenshots.sh build screenshots` ausführen. Die Zustände lassen sich per Startargument wählen, z. B. `-demo running`.
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
 - **Webseite:** `website/` enthält die Support-Seite und die Datenschutzerklärung, auf Englisch und unter `de/` auf Deutsch. `.github/workflows/website.yml` lädt sie bei Pushes auf `main` per FTPS nach [apps.kernich.de/nextset](https://apps.kernich.de/nextset/) hoch, manuell geht es über *Actions → Website → Run workflow*. Nötig sind die Repository-Secrets `FTP_USERNAME` und `FTP_PASSWORD`.
-- **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Reine Doku- und Webseiten-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
+- **CI:** `.github/workflows/ios.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus, sobald sich etwas unter `ios/` ändert. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → iOS → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
 
 ## App Store
 

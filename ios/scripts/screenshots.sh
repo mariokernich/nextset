@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Takes simulator screenshots of the iPhone and Apple Watch app in a few states.
+# Run from ios/.
 #
 #   scripts/screenshots.sh --boot                       # boot the simulators early (non-blocking)
 #   scripts/screenshots.sh [derived-data-path] [output-dir]

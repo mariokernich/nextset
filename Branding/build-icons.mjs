@@ -123,8 +123,8 @@ for (const [name, content] of Object.entries(sources)) {
 // ---------------------------------------------------------------------------
 // Rendering
 
-const iosIcons = join(root, 'NextSet/Assets.xcassets/AppIcon.appiconset');
-const watchIcons = join(root, 'NextSetWatch/Assets.xcassets/AppIcon.appiconset');
+const iosIcons = join(root, 'ios/NextSet/Assets.xcassets/AppIcon.appiconset');
+const watchIcons = join(root, 'ios/NextSetWatch/Assets.xcassets/AppIcon.appiconset');
 
 const outputs = [
   { svg: 'AppIcon.svg', png: join(iosIcons, 'AppIcon.png') },

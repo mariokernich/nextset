@@ -33,10 +33,13 @@ jobs:
     env:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+    defaults:
+      run:
+        working-directory: ios
     steps:
       - uses: actions/checkout@v4
 
-      # Same choice as the CI: the newest Xcode 27 on the image, otherwise its default.
+      # Same choice as the iOS CI: the newest Xcode 27 on the image, otherwise its default.
       - name: Xcode
         run: |
           xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | grep -vi beta | sort -V | tail -n 1)
@@ -102,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-store-logs
-          path: "*.log"
+          path: "ios/*.log"
           if-no-files-found: ignore
 
   # Waiting for App Store Connect to process the build takes a while, so this
@@ -127,4 +130,4 @@ jobs:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
           pip install --quiet "pyjwt[crypto]" requests
-          python scripts/app_store_submit.py --version "${{ needs.upload.outputs.version }}" --build "${{ needs.upload.outputs.build }}"
+          python ios/scripts/app_store_submit.py --version "${{ needs.upload.outputs.version }}" --build "${{ needs.upload.outputs.build }}"
