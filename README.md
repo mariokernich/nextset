@@ -80,9 +80,9 @@ NextSetWidgets/     Widget-Extension für die Live-Aktivität
 Core/               Gemeinsam für iPhone & Watch: Timer-Logik, Store, Haptik, Töne, Sync
 Shared/             Gemeinsam für alle Targets: Farben, Logo, Ring, Formatierung, Texte (de/en)
 NextSetTests/       Unit-Tests (Swift Testing)
-Config/             Info.plist-Ergänzungen und Signing.xcconfig
+Config/             Info.plist-Ergänzungen, Signing.xcconfig und Export-Optionen für den App Store
 Branding/           Logo, Icons und Banner samt Generator
-scripts/            Screenshot-Skript für den Simulator
+scripts/            Screenshot-Skript für den Simulator, Einreichen im App Store
 website/            Support-Seite und Datenschutzerklärung (apps.kernich.de/nextset)
 ```
 
@@ -95,3 +95,14 @@ Der Timer rechnet immer mit absoluten Zeitpunkten (`endDate`), nicht mit einem m
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
 - **Webseite:** `website/` enthält die Support-Seite und die Datenschutzerklärung, auf Englisch und unter `de/` auf Deutsch. `.github/workflows/website.yml` lädt sie bei Pushes auf `main` per FTPS nach [apps.kernich.de/nextset](https://apps.kernich.de/nextset/) hoch, manuell geht es über *Actions → Website → Run workflow*. Nötig sind die Repository-Secrets `FTP_USERNAME` und `FTP_PASSWORD`.
 - **CI:** `.github/workflows/ci.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Reine Doku- und Webseiten-Änderungen werden übersprungen. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → CI → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent.
+
+## App Store
+
+`.github/workflows/app-store.yml` archiviert die App samt Watch-App und Widget, lädt den Build zu App Store Connect hoch und reicht ihn auf Wunsch zur Prüfung ein: *Actions → App Store → Run workflow*, fürs Einreichen mit Häkchen bei *Submit for App Review*. Die Build-Nummer ist die Laufnummer des Workflows plus 1, weil Build 1 aus Xcode kam.
+
+Dafür braucht der Workflow einmalig einen API-Schlüssel für App Store Connect:
+
+1. In App Store Connect unter *Benutzer und Zugriff → Integrationen → App Store Connect API → Team-Schlüssel* einen Schlüssel mit der Rolle **Admin** erzeugen, damit Xcode Zertifikate und Profile anlegen darf, und die `.p8`-Datei herunterladen. Sie lässt sich nur einmal laden.
+2. Im Repo unter *Settings → Secrets and variables → Actions* drei Secrets anlegen: `ASC_KEY_ID` (Schlüssel-ID), `ASC_ISSUER_ID` (Aussteller-ID über der Schlüsselliste) und `ASC_KEY_P8` (der komplette Inhalt der `.p8`-Datei).
+
+Einreichen klappt erst, wenn in App Store Connect alles Übrige erledigt ist: Verträge, Steuer- und Bankdaten, Händlerstatus nach dem Digital Services Act, App-Datenschutz, Altersfreigabe, Texte und Screenshots. Fehlt etwas, listet der Workflow es im Log auf.
