@@ -50,7 +50,7 @@ Die Screenshots stammen aus dem iOS-26- bzw. watchOS-26-Simulator (CI-Workflow m
 - **Live-Aktivität** auf dem Sperrbildschirm, in der Dynamic Island und im Smart Stack der Apple Watch
 - **Mitteilung** zum Pausenende, falls die App im Hintergrund ist
 - **Display bleibt an**, solange eine Pause läuft (abschaltbar)
-- **Siri, Kurzbefehle & Action-Button**: „Schnell-Timer starten“, „Pausen-Timer starten“ (beliebige Sekunden), „Pause beenden“
+- **Siri, Kurzbefehle & Action-Button**: „Schnell-Timer starten“, „Pausen-Timer starten“ (beliebige Sekunden), „Pause beenden“. Per Sprache z. B. „Siri, starte eine Pause in NextSet“, „Starte Schnell-Timer 2 in NextSet“ oder „NextSet stoppen“.
 - Timer umbenennen (z. B. „Kniebeugen“), Reihenfolge ändern, löschen. Lange drücken auf einen Timer öffnet das Kontextmenü.
 
 **Apple Watch**

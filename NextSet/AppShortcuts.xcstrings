@@ -1,76 +1,59 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "End rest in ${applicationName}" : {
+    "End my rest in ${applicationName}" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Beende die Pause in ${applicationName}"
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Beende meine Pause in ${applicationName}",
+              "Beende die Pause in ${applicationName}",
+              "Pause in ${applicationName} beenden",
+              "Stoppe ${applicationName}",
+              "${applicationName} stoppen"
+            ]
           }
         },
         "en" : {
           "stringSet" : {
             "state" : "new",
             "values" : [
-              "End rest in ${applicationName}",
+              "End my rest in ${applicationName}",
+              "End the rest in ${applicationName}",
+              "Stop the rest timer in ${applicationName}",
               "Stop ${applicationName}"
             ]
           }
         }
       }
     },
-    "Start ${slot} in ${applicationName}" : {
+    "Start a rest in ${applicationName}" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Starte ${slot} in ${applicationName}"
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Starte eine Pause in ${applicationName}",
+              "Starte meine Pause in ${applicationName}",
+              "Starte ${slot} in ${applicationName}",
+              "Starte einen Pausen-Timer in ${applicationName}",
+              "${applicationName} Pause starten",
+              "Pause mit ${applicationName} starten"
+            ]
           }
         },
         "en" : {
           "stringSet" : {
             "state" : "new",
             "values" : [
+              "Start a rest in ${applicationName}",
+              "Start my rest in ${applicationName}",
               "Start ${slot} in ${applicationName}",
-              "Start rest in ${applicationName}",
-              "Start a rest with ${applicationName}"
+              "Start a rest timer in ${applicationName}"
             ]
-          }
-        }
-      }
-    },
-    "Start a rest with ${applicationName}" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Starte eine Pause mit ${applicationName}"
-          }
-        }
-      }
-    },
-    "Start rest in ${applicationName}" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Starte die Pause in ${applicationName}"
-          }
-        }
-      }
-    },
-    "Stop ${applicationName}" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stoppe ${applicationName}"
           }
         }
       }

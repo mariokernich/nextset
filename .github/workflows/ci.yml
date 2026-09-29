@@ -34,8 +34,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The project is maintained in Xcode 27 (its string catalogs use the
+      # Xcode 27 format), so build with the newest Xcode 27 on the image.
       - name: Xcode
-        run: xcodebuild -version
+        run: |
+          ls -d /Applications/Xcode*.app
+          xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | grep -vi beta | sort -V | tail -n 1)
+          [ -n "$xcode" ] || xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
+          xcodebuild -version
 
       - name: Build & unit tests (iPhone app, Apple Watch app, widget)
         run: |

@@ -62,14 +62,17 @@ struct EndRestIntent: AppIntent {
     }
 }
 
+/// Siri phrases. The first phrase of each shortcut is the one Siri suggests;
+/// the German phrases live in AppShortcuts.xcstrings.
 struct NextSetShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: StartQuickTimerIntent(),
             phrases: [
+                "Start a rest in \(.applicationName)",
+                "Start my rest in \(.applicationName)",
                 "Start \(\.$slot) in \(.applicationName)",
-                "Start rest in \(.applicationName)",
-                "Start a rest with \(.applicationName)",
+                "Start a rest timer in \(.applicationName)",
             ],
             shortTitle: "Quick Timer",
             systemImageName: "timer"
@@ -77,7 +80,9 @@ struct NextSetShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: EndRestIntent(),
             phrases: [
-                "End rest in \(.applicationName)",
+                "End my rest in \(.applicationName)",
+                "End the rest in \(.applicationName)",
+                "Stop the rest timer in \(.applicationName)",
                 "Stop \(.applicationName)",
             ],
             shortTitle: "End Rest",
