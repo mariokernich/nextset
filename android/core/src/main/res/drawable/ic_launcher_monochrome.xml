@@ -5,20 +5,23 @@
     android:height="108dp"
     android:viewportWidth="1538"
     android:viewportHeight="1538">
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M533,833 L557,611 Q557,461 707,461 L831,461 Q981,461 981,611 L1005,833"
-        android:strokeWidth="96"
-        android:strokeColor="#FF000000"
-        android:strokeLineJoin="round" />
-    <path
-        android:fillColor="#FF000000"
-        android:fillType="evenOdd"
-        android:pathData="M621.49,1125 A292,292 0 1,1 916.51,1125 Z M565,873 A204,204 0 1,0 973,873 A204,204 0 1,0 565,873 Z" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M769,737 A136,136 0 1,1 633,873"
-        android:strokeWidth="66"
-        android:strokeColor="#FF000000"
-        android:strokeLineCap="round" />
+    <!-- Lifted by 20: the glyph spans y 413…1165 before. -->
+    <group android:translateY="-20">
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M533,833 L557,611 Q557,461 707,461 L831,461 Q981,461 981,611 L1005,833"
+            android:strokeWidth="96"
+            android:strokeColor="#FF000000"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FF000000"
+            android:fillType="evenOdd"
+            android:pathData="M477,873 A292,292 0 1,1 1061,873 A292,292 0 1,1 477,873 Z M565,873 A204,204 0 1,0 973,873 A204,204 0 1,0 565,873 Z" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M769,737 A136,136 0 1,1 633,873"
+            android:strokeWidth="66"
+            android:strokeColor="#FF000000"
+            android:strokeLineCap="round" />
+    </group>
 </vector>

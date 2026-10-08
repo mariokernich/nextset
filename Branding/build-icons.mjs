@@ -42,7 +42,7 @@ const arcPath = (cx, cy, r, start, end) => {
 
 /** The kettlebell-shaped stopwatch. `palette` decides the colours. */
 function glyph(palette, { id = 'g' } = {}) {
-  const cx = 512, cy = 632, bodyR = 292, base = 884;
+  const cx = 512, cy = 632, bodyR = 292;
   const handleTop = 172, handleWidth = 96, taper = 24, cornerR = 150, inset = 56;
   const L = cx - (bodyR - inset), R = cx + (bodyR - inset);
   const Lt = L + taper, Rt = R - taper;
@@ -63,10 +63,9 @@ function glyph(palette, { id = 'g' } = {}) {
     <radialGradient id="${id}-face" cx="0.5" cy="0.38" r="0.7">
       <stop offset="0" stop-color="${palette.faceTop}"/><stop offset="1" stop-color="${palette.faceBottom}"/>
     </radialGradient>
-    <clipPath id="${id}-base"><rect x="0" y="0" width="1024" height="${base}"/></clipPath>
   </defs>
   <path d="${handle}" fill="none" stroke="url(#${id}-bell)" stroke-width="${handleWidth}" stroke-linejoin="round"/>
-  <circle cx="${cx}" cy="${cy}" r="${bodyR}" fill="url(#${id}-bell)" clip-path="url(#${id}-base)"/>
+  <circle cx="${cx}" cy="${cy}" r="${bodyR}" fill="url(#${id}-bell)"/>
   <circle cx="${cx}" cy="${cy}" r="${faceR}" fill="url(#${id}-face)"/>
   <circle cx="${cx}" cy="${cy}" r="${ringR}" fill="none" stroke="${palette.track}" stroke-width="${ringW}"/>
   <path d="${arcPath(cx, cy, ringR, -90, 180)}" fill="none" stroke="url(#${id}-ring)" stroke-width="${ringW}" stroke-linecap="round"/>`;
@@ -104,9 +103,10 @@ const background = (top, bottom) => `
 const svg = (body) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">${body}</svg>\n`;
 
-// Optical centring: the heavy body sits low, so lift the glyph a little.
+// The glyph spans y 172…924 (centre 548). Optical centring: the heavy body
+// sits low, so lift the glyph a little.
 const placed = (palette, scale = 1) =>
-  `<g transform="translate(512 512) scale(${scale}) translate(-512 -536)">${glyph(palette)}</g>`;
+  `<g transform="translate(512 512) scale(${scale}) translate(-512 -556)">${glyph(palette)}</g>`;
 
 const sources = {
   'logo.svg': svg(placed(palettes.standard)),

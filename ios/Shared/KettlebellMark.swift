@@ -27,7 +27,7 @@ struct KettlebellMark: View {
 /// Artboard geometry shared by the logo shapes.
 enum KettlebellGeometry {
     /// Bounding box of the glyph on the artboard.
-    static let bounds = CGRect(x: 220, y: 172, width: 584, height: 712)
+    static let bounds = CGRect(x: 220, y: 172, width: 584, height: 752)
     static let center = CGPoint(x: 512, y: 632)
     static let bodyRadius: CGFloat = 292
     static let faceRadius: CGFloat = 204
@@ -48,13 +48,7 @@ struct KettlebellSilhouette: Shape {
     func path(in rect: CGRect) -> Path {
         let c = KettlebellGeometry.center
         let r = KettlebellGeometry.bodyRadius
-        let base: CGFloat = 884
-        // The body is a circle with a flat base.
-        let halfBase = sqrt(r * r - (base - c.y) * (base - c.y))
-        let baseAngle = Angle(radians: Double(atan2(base - c.y, halfBase)))
-        var body = Path()
-        body.addArc(center: c, radius: r, startAngle: baseAngle, endAngle: .degrees(180) - baseAngle, clockwise: true)
-        body.closeSubpath()
+        let body = Path(ellipseIn: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
 
         var handle = Path()
         handle.move(to: CGPoint(x: 276, y: 592))

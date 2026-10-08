@@ -16,9 +16,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
-import kotlin.math.atan2
 import kotlin.math.min
-import kotlin.math.sqrt
 
 /**
  * The NextSet logo: a kettlebell whose body is a timer dial.
@@ -64,7 +62,7 @@ private object KettlebellGeometry {
     const val LEFT = 220f
     const val TOP = 172f
     const val WIDTH = 584f
-    const val HEIGHT = 712f
+    const val HEIGHT = 752f
 
     val center = Offset(512f, 632f)
     const val BODY_RADIUS = 292f
@@ -81,18 +79,8 @@ private object KettlebellGeometry {
         lineTo(748f, 592f)
     }
 
-    /** A circle with a flat base. */
+    /** The round body. */
     val body = Path().apply {
-        val base = 884f
-        val halfBase = sqrt(BODY_RADIUS * BODY_RADIUS - (base - center.y) * (base - center.y))
-        val baseAngle = Math.toDegrees(atan2((base - center.y).toDouble(), halfBase.toDouble())).toFloat()
-        moveTo(center.x - halfBase, base)
-        arcTo(
-            rect = Rect(center, BODY_RADIUS),
-            startAngleDegrees = 180f - baseAngle,
-            sweepAngleDegrees = 180f + 2 * baseAngle,
-            forceMoveTo = false,
-        )
-        close()
+        addOval(Rect(center, BODY_RADIUS))
     }
 }
