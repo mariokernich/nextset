@@ -1,0 +1,29 @@
+NextSet is a simple rest timer for strength training. Tap one of your quick timers and your rest starts. In the last seconds you feel and hear the countdown, then it's time for your next set.
+
+QUICK TO START
+• One or two quick timers as big buttons – one tap starts your rest (default 1:30 and 3:00)
+• Up to 12 more timers in a grid below, also started with one tap
+• Switch to another timer while resting with a single tap
+• ±15 s, pause and resume, or end the rest early
+• After the rest, "GO!" shows how long you have been over time. "Repeat" starts the same rest again
+
+COUNTDOWN WITH VIBRATION AND SOUND
+• Signals in the last 3, 5 or 10 seconds, or off
+• Vibration and three sounds (beep, chime, digital) that play over your music
+• The digits and the ring turn coral in the final seconds
+
+ALWAYS IN VIEW
+• Live notification with the countdown on the lock screen and in the status bar, with pause, +15 s and end
+• A notification when the rest is over, even if the app is in the background
+• App shortcuts: long-press the app icon to start a quick timer or end the rest
+
+WEAR OS
+• Quick timers and your other timers right on your watch
+• Full-screen ring with countdown and Always On display
+• Keeps running with your arm lowered, so the vibration reaches your wrist
+• Your timers are synced between phone and watch
+
+PRIVATE BY DESIGN
+No account, no ads, no tracking. All data stays on your devices.
+
+Rename your timers (e.g. "Squats"), reorder or delete them. Light and dark mode, English and German.

@@ -1,0 +1,29 @@
+NextSet ist ein schlichter Satzpausen-Timer fürs Krafttraining. Ein Tipp auf einen deiner Schnell-Timer, und die Pause läuft. Die letzten Sekunden spürst und hörst du, danach geht's in den nächsten Satz.
+
+SCHNELL STARTEN
+• Ein oder zwei Schnell-Timer als große Tasten – ein Tipp startet die Pause (Standard: 1:30 und 3:00)
+• Bis zu 12 weitere Timer als Raster darunter, ebenfalls mit einem Tipp startbar
+• Während der Pause mit einem Tipp zu einem anderen Timer wechseln
+• ±15 s, pausieren und fortsetzen oder die Pause vorzeitig beenden
+• Nach der Pause zeigt „LOS!“, wie lange du schon drüber bist. „Wiederholen“ startet dieselbe Pause erneut
+
+COUNTDOWN MIT VIBRATION UND TON
+• Signal in den letzten 3, 5 oder 10 Sekunden oder aus
+• Vibration und drei Klänge (Piep, Glocke, Digital), die über deiner Musik spielen
+• Ziffern und Ring leuchten in den letzten Sekunden in Koralle
+
+IMMER IM BLICK
+• Live-Benachrichtigung mit Countdown auf dem Sperrbildschirm und in der Statusleiste, mit Pausieren, +15 s und Beenden
+• Mitteilung zum Pausenende, auch wenn die App im Hintergrund ist
+• App-Verknüpfungen: Langes Drücken aufs App-Icon startet einen Schnell-Timer oder beendet die Pause
+
+WEAR OS
+• Schnell-Timer und weitere Timer direkt auf der Uhr
+• Vollbild-Ring mit Countdown und Always-On-Anzeige
+• Läuft auch bei gesenktem Arm weiter, damit die Vibration am Handgelenk ankommt
+• Deine Timer werden zwischen Smartphone und Uhr synchronisiert
+
+DATENSPARSAM
+Kein Konto, keine Werbung, kein Tracking. Alle Daten bleiben auf deinen Geräten.
+
+Timer umbenennen (z. B. „Kniebeugen“), sortieren oder löschen. Hell- und Dunkelmodus, Deutsch und Englisch.
