@@ -129,10 +129,15 @@ On both platforms the timer always works with absolute points in time (`endDate`
 
 `.github/workflows/app-store.yml` archives the app with the watch app and the widget, uploads the build to App Store Connect and, if asked, submits it for review: *Actions → App Store → Run workflow*, with *Submit for App Review* ticked to submit. The build number is the workflow's run number plus 1, because build 1 came from Xcode.
 
-For this the workflow needs an App Store Connect API key once:
+The workflow signs manually with an *Apple Distribution* certificate and one App Store profile per target, so its API key only needs to upload builds. Repository secrets (*Settings → Secrets and variables → Actions*):
 
-1. In App Store Connect under *Users and Access → Integrations → App Store Connect API → Team Keys*, create a key with the **Admin** role, so Xcode may create certificates and profiles, and download the `.p8` file. It can only be downloaded once.
-2. In the repository under *Settings → Secrets and variables → Actions*, add three secrets: `ASC_KEY_ID` (key ID), `ASC_ISSUER_ID` (issuer ID above the list of keys) and `ASC_KEY_P8` (the full contents of the `.p8` file).
+| Secret | Value |
+| --- | --- |
+| `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` | App Store Connect API key (*Users and Access → Integrations → Team Keys*): key ID, issuer ID and the full contents of the `.p8` file. Role *Developer* is enough to upload; *Submit for App Review* needs *App Manager* or *Admin* |
+| `DISTRIBUTION_P12`, `DISTRIBUTION_P12_PASSWORD` | *Apple Distribution* certificate with its private key as base64-encoded `.p12` |
+| `PROFILE_APP`, `PROFILE_WATCH`, `PROFILE_WIDGETS` | App Store profiles "NextSet App Store CI", "NextSet Watch App Store CI", "NextSet Widgets App Store CI" (base64) for `com.mariokernich.nextset`, `.watchkitapp` and `.widgets`, each with that certificate |
+
+Certificate and profiles expire after a year; renew them in the developer portal and update the secrets. Local builds in Xcode keep automatic signing: the profile names are only set on CI (`NEXTSET_PROFILE_*` in `ios/Config/Signing.xcconfig`).
 
 The iPhone and watch apps use time-sensitive notifications (capability *Time Sensitive Notifications*, see `ios/Config/*.entitlements`). Automatic signing adds it to the App IDs when archiving; if the workflow rejects the profile, turn it on for both App IDs in the developer portal under *Identifiers*.
 
