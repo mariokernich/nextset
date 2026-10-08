@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -75,8 +76,16 @@ fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean, amb
                 )
             }
 
+            // After the rest a third line (the overtime) joins in: "GO!" gets
+            // smaller so all of it fits between the close and the repeat button.
+            val finished = timer.phase == Phase.FINISHED
+            val captionSize = with(density) { maxOf(10.dp, diameter * if (finished) 0.065f else 0.075f).toSp() }
             Column(
-                modifier = Modifier.align(Alignment.Center).padding(horizontal = diameter * 0.14f),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    // Centred between the close and the repeat button, which sit a little high.
+                    .offset(y = if (finished) -diameter * 0.025f else 0.dp)
+                    .padding(horizontal = diameter * 0.14f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -88,12 +97,13 @@ fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean, amb
                             Phase.FINISHED -> CoreR.string.caption_next_set
                         },
                     ).uppercase(),
-                    fontSize = with(density) { maxOf(10.dp, diameter * 0.075f).toSp() },
+                    fontSize = captionSize,
+                    lineHeight = captionSize * 1.15f,
                     fontWeight = FontWeight.Bold,
                     color = if (timer.phase == Phase.FINISHED) WearColors.accent else MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                 )
-                val timeSize = with(density) { (diameter * 0.27f).toSp() }
+                val timeSize = with(density) { (diameter * if (finished) 0.17f else 0.27f).toSp() }
                 Text(
                     text = if (timer.phase == Phase.FINISHED) stringResource(CoreR.string.go) else DurationFormat.clock(timer.displayedSeconds(now)),
                     fontSize = timeSize,
@@ -108,10 +118,12 @@ fun TimerScreen(state: TimerSnapshot, store: TimerStore, isAmbient: Boolean, amb
                     maxLines = 1,
                 )
                 // Not in Always On: once the rest's service ends, the watch sleeps and it would stand still.
-                if (timer.phase == Phase.FINISHED && !isAmbient) {
+                if (finished && !isAmbient) {
+                    val overtimeSize = with(density) { maxOf(11.dp, diameter * 0.07f).toSp() }
                     Text(
                         text = "+" + DurationFormat.clock((timer.overtime(now) / 1000).toInt()),
-                        fontSize = with(density) { maxOf(11.dp, diameter * 0.09f).toSp() },
+                        fontSize = overtimeSize,
+                        lineHeight = overtimeSize * 1.15f,
                         fontWeight = FontWeight.SemiBold,
                         style = TabularNumbers,
                         color = WearColors.coral,

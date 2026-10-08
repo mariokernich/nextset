@@ -84,6 +84,9 @@ private struct WatchDial: View {
     /// Ring position; animated linearly to zero while a rest runs.
     @State private var progress: Double = 1
 
+    /// How far the ring sits above the middle of the screen.
+    private static let lift: CGFloat = 12
+
     var body: some View {
         let inCountdown = timer.phase == .running && countdownSecondsLeft != nil
         let tint = inCountdown ? Theme.countdown : Theme.accent
@@ -125,6 +128,9 @@ private struct WatchDial: View {
                 .padding(.horizontal, diameter * 0.14)
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
+            // Clear of the bottom bar; the middle of the top bar between the
+            // close button and the clock has room for the top of the ring.
+            .offset(y: -Self.lift)
         }
         .onAppear(perform: syncRing)
         .onChange(of: timer) { syncRing() }
