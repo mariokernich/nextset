@@ -3,11 +3,21 @@ name: App Store
 # Archives NextSet (iPhone app with the watch app and widget), uploads the build
 # to App Store Connect and, if asked, submits it for App Review.
 #
-# Needs an App Store Connect API key in the repository secrets ASC_KEY_ID,
-# ASC_ISSUER_ID and ASC_KEY_P8 (the contents of the AuthKey_….p8 file). The key
-# needs the Admin role, so Xcode may create signing certificates and profiles.
-# Each run can leave an "Apple Development … (Created via API)" certificate
-# behind; old ones can be revoked in the developer account.
+# Signs manually with an Apple Distribution certificate and one App Store
+# provisioning profile per target, so the API key only needs to upload builds.
+# Repository secrets:
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8   App Store Connect API key (contents of
+#                                           AuthKey_….p8), role Developer is enough
+#                                           for uploads; submitting for review needs
+#                                           App Manager or Admin
+#   DISTRIBUTION_P12, DISTRIBUTION_P12_PASSWORD
+#                                           Apple Distribution certificate with key,
+#                                           base64-encoded .p12
+#   PROFILE_APP, PROFILE_WATCH, PROFILE_WIDGETS
+#                                           App Store profiles "NextSet App Store CI",
+#                                           "NextSet Watch App Store CI" and "NextSet
+#                                           Widgets App Store CI" (base64), all with
+#                                           that certificate
 
 on:
   workflow_dispatch:
@@ -47,17 +57,38 @@ jobs:
           if [ -n "$xcode" ]; then sudo xcode-select -s "$xcode"; fi
           xcodebuild -version
 
-      - name: API key
+      - name: API key, certificate and profiles
         env:
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          DISTRIBUTION_P12: ${{ secrets.DISTRIBUTION_P12 }}
+          DISTRIBUTION_P12_PASSWORD: ${{ secrets.DISTRIBUTION_P12_PASSWORD }}
+          PROFILE_APP: ${{ secrets.PROFILE_APP }}
+          PROFILE_WATCH: ${{ secrets.PROFILE_WATCH }}
+          PROFILE_WIDGETS: ${{ secrets.PROFILE_WIDGETS }}
         run: |
-          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_KEY_P8" ]; then
-            echo "::error::The secrets ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8 are not set"
-            exit 1
-          fi
-          key="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"
-          printf '%s\n' "$ASC_KEY_P8" > "$key"
-          echo "ASC_KEY_PATH=$key" >> "$GITHUB_ENV"
+          for name in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8 DISTRIBUTION_P12 DISTRIBUTION_P12_PASSWORD PROFILE_APP PROFILE_WATCH PROFILE_WIDGETS; do
+            if [ -z "$(printenv $name)" ]; then echo "::error::The secret $name is not set"; exit 1; fi
+          done
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s\n' "$ASC_KEY_P8" > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
+
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          keychain_password=$(openssl rand -hex 24)
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          printf '%s' "$DISTRIBUTION_P12" | base64 --decode > "$RUNNER_TEMP/distribution.p12"
+          security import "$RUNNER_TEMP/distribution.p12" -k "$keychain" -P "$DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain" > /dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/distribution.p12"
+
+          for dir in "$HOME/Library/MobileDevice/Provisioning Profiles" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"; do
+            mkdir -p "$dir"
+            printf '%s' "$PROFILE_APP" | base64 --decode > "$dir/nextset-app.mobileprovision"
+            printf '%s' "$PROFILE_WATCH" | base64 --decode > "$dir/nextset-watch.mobileprovision"
+            printf '%s' "$PROFILE_WIDGETS" | base64 --decode > "$dir/nextset-widgets.mobileprovision"
+          done
 
       # Build 1 was uploaded from Xcode, so the builds from here start at 2.
       - name: Version
@@ -77,10 +108,11 @@ jobs:
             -configuration Release \
             -destination "generic/platform=iOS" \
             -archivePath "$RUNNER_TEMP/NextSet.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_STYLE=Manual \
+            "CODE_SIGN_IDENTITY=Apple Distribution" \
+            "NEXTSET_PROFILE_APP=NextSet App Store CI" \
+            "NEXTSET_PROFILE_WATCH=NextSet Watch App Store CI" \
+            "NEXTSET_PROFILE_WIDGETS=NextSet Widgets App Store CI" \
             CURRENT_PROJECT_VERSION=${{ steps.version.outputs.build }} \
             2>&1 | tee archive.log | grep -E "(error|warning):|\*\* ARCHIVE" || true
           grep -q "\*\* ARCHIVE SUCCEEDED \*\*" archive.log
@@ -90,14 +122,12 @@ jobs:
           set -o pipefail
           xcodebuild -exportArchive \
             -archivePath "$RUNNER_TEMP/NextSet.xcarchive" \
-            -exportOptionsPlist Config/ExportOptions.plist \
+            -exportOptionsPlist Config/ExportOptions-CI.plist \
             -exportPath "$RUNNER_TEMP/export" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            2>&1 | tee upload.log | grep -E "(error|warning):|\*\* EXPORT|[Uu]pload" || true
+            2>&1 | tee upload.log | grep -E "(error|warning):|\*\* EXPORT" || true
           grep -q "\*\* EXPORT SUCCEEDED \*\*" upload.log
+          xcrun altool --upload-app --type ios --file "$RUNNER_TEMP/export/NextSet.ipa" \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee -a upload.log
           echo "Uploaded NextSet ${{ steps.version.outputs.version }} (${{ steps.version.outputs.build }}) to App Store Connect" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload logs

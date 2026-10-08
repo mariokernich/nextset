@@ -4,3 +4,10 @@
 // prefix if you want different bundle IDs.
 
 BUNDLE_ID_PREFIX = com.mariokernich
+
+// Provisioning profiles for manual signing on CI (.github/workflows/app-store.yml
+// sets them together with CODE_SIGN_STYLE=Manual). Empty for local builds,
+// which keep Xcode's automatic signing.
+NEXTSET_PROFILE_APP =
+NEXTSET_PROFILE_WATCH =
+NEXTSET_PROFILE_WIDGETS =
