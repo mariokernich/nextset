@@ -1,9 +1,8 @@
 name: Website
 
-# Publishes website/ (support page and privacy policy) to apps.kernich.de/nextset.
-# Needs the repository secrets FTP_USERNAME and FTP_PASSWORD of an FTP account
-# whose home is the document root of apps.kernich.de. If the account starts
-# elsewhere, set the repository variable FTP_SERVER_DIR (e.g. /apps.kernich.de/nextset/).
+# Publishes website/ (support page and privacy policy) with GitHub Pages to
+# https://mariokernich.github.io/nextset/ on every push to main that changes it.
+# Pages has to be set to "GitHub Actions" in the repository settings once.
 
 on:
   push:
@@ -11,28 +10,33 @@ on:
     paths: ["website/**", ".github/workflows/website.yml"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 # One deployment at a time; a newer run waits for the one in progress.
 concurrency:
-  group: website
+  group: pages
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Deploy to apps.kernich.de/nextset
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
         with:
-          server: web04.dataforest.net
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./website/
-          server-dir: ${{ vars.FTP_SERVER_DIR || '/nextset/' }}
-          dangerous-clean-slate: false
-          log-level: standard
+          path: website
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

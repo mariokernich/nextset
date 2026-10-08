@@ -109,7 +109,7 @@ android/                Gradle-Projekt (Smartphone, Wear OS)
   app/                  Smartphone-App (Bildschirme, Live-Benachrichtigung, App-Verknüpfungen)
   wear/                 Wear-OS-App (Bildschirme, Vordergrunddienst mit Ongoing Activity)
 Branding/               Logo, Icons und Banner samt Generator
-website/                Support-Seite und Datenschutzerklärung (apps.kernich.de/nextset)
+website/                Support-Seite und Datenschutzerklärung (mariokernich.github.io/nextset)
 ```
 
 Der Timer rechnet auf beiden Plattformen immer mit absoluten Zeitpunkten (`endDate` bzw. `endAt`), nicht mit einem mitlaufenden Zähler. Dadurch stimmt er auch dann, wenn die App im Hintergrund pausiert oder neu gestartet wird. Die Countdown-Ereignisse plant `CountdownPlan`, `TimerStore` spielt sie ab.
@@ -121,7 +121,7 @@ Der Timer rechnet auf beiden Plattformen immer mit absoluten Zeitpunkten (`endDa
 - **Android-Tests und -Builds:** in `android/` `./gradlew :core:testDebugUnitTest :app:assembleDebug :wear:assembleDebug`. Die Unit-Tests in `core` laufen auf der JVM, ohne Emulator.
 - **Android-Screenshots:** Debug-Builds nehmen dieselben Zustände wie iOS entgegen, z. B. `adb shell am start -n com.mariokernich.nextset/.MainActivity --es demo running` (Uhr: `…/com.mariokernich.nextset.wear.MainActivity`). Werte: `idle`, `running`, `countdown` (mit `--el demoEnd <Unix-Sekunden>`), `paused`, `finished`, `settings`.
 - **Icons neu erzeugen:** `cd Branding && npm install --no-save playwright && node build-icons.mjs`
-- **Webseite:** `website/` enthält die Support-Seite und die Datenschutzerklärung, auf Englisch und unter `de/` auf Deutsch. `.github/workflows/website.yml` lädt sie bei Pushes auf `main` per FTPS nach [apps.kernich.de/nextset](https://apps.kernich.de/nextset/) hoch, manuell geht es über *Actions → Website → Run workflow*. Nötig sind die Repository-Secrets `FTP_USERNAME` und `FTP_PASSWORD`.
+- **Webseite:** `website/` enthält die Support-Seite und die Datenschutzerklärung, auf Englisch und unter `de/` auf Deutsch. `.github/workflows/website.yml` veröffentlicht sie bei Pushes auf `main` über GitHub Pages unter [mariokernich.github.io/nextset](https://mariokernich.github.io/nextset/), manuell geht es über *Actions → Website → Run workflow*. In den Repository-Einstellungen steht *Pages → Source* dafür auf *GitHub Actions*.
 - **CI:** `.github/workflows/ios.yml` baut bei Pushes auf `main` und bei Pull Requests alle Targets auf einem macOS-26-Runner und führt die Tests aus, sobald sich etwas unter `ios/` ändert. Er nimmt das neueste Xcode 27 des Runner-Images, solange es keines gibt, dessen Standard-Xcode. Screenshots vom Simulator gibt es auf Knopfdruck: *Actions → iOS → Run workflow* (alle, nur iPhone oder nur Watch). Sie landen als Artefakt am Lauf. Hinweis: Bei privaten Repos zählen macOS-Minuten zehnfach zum Actions-Kontingent. `.github/workflows/android.yml` testet und baut die Android-Apps auf einem Linux-Runner, sobald sich etwas unter `android/` ändert.
 
 ## App Store
@@ -161,5 +161,5 @@ keyPassword=…
 In der Play Console abzugeben:
 - **Exakte Wecker:** Die App nutzt `USE_EXACT_ALARM` als Timer-App (Pausenende auf die Sekunde).
 - **Vordergrunddienst (Smartphone und Wear OS):** Typ *special use* – hält während einer Pause Countdown und Ende-Signal hörbar (Smartphone, ab Android 17 nötig) bzw. am Handgelenk spürbar (Uhr); am besten mit kurzem Video.
-- **Datensicherheit:** Es werden keine Daten erhoben oder geteilt. Datenschutzerklärung: [apps.kernich.de/nextset/privacy](https://apps.kernich.de/nextset/privacy/).
+- **Datensicherheit:** Es werden keine Daten erhoben oder geteilt. Datenschutzerklärung: [mariokernich.github.io/nextset/privacy](https://mariokernich.github.io/nextset/privacy/).
 - **Zielgruppe & Inhalt, Einstufung:** wie im App Store (keine Werbung, kein Login, Altersfreigabe für alle).
