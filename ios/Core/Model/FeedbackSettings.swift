@@ -12,7 +12,7 @@ enum SoundStyle: String, Codable, CaseIterable, Identifiable, Sendable {
 /// Device-local preferences for the countdown and the end of a rest.
 struct FeedbackSettings: Codable, Equatable, Sendable {
     /// Countdown signals during the last N seconds (0 = off).
-    var countdownSeconds: Int = 5
+    var countdownSeconds: Int = 3
     var hapticsEnabled: Bool = true
     var soundEnabled: Bool = true
     var soundStyle: SoundStyle = .beep

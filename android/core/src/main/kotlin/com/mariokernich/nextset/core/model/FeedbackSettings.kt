@@ -20,7 +20,7 @@ enum class SoundStyle {
 @Serializable
 data class FeedbackSettings(
     /** Countdown signals during the last N seconds (0 = off). */
-    val countdownSeconds: Int = 5,
+    val countdownSeconds: Int = 3,
     val hapticsEnabled: Boolean = true,
     val soundEnabled: Boolean = true,
     val soundStyle: SoundStyle = SoundStyle.BEEP,

@@ -88,7 +88,7 @@ shoot() {
 # Launch arguments for a rest that is in its last seconds when the screenshot
 # is taken, however long the app takes to start up.
 countdown() {
-  echo -demo countdown -demoEnd $(($(date +%s) + ${SETTLE:-5} + 4))
+  echo -demo countdown -demoEnd $(($(date +%s) + ${SETTLE:-5} + 3))
 }
 
 if [[ "$ONLY" != "watch" ]]; then
