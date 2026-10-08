@@ -127,7 +127,7 @@ On both platforms the timer always works with absolute points in time (`endDate`
 
 ## App Store
 
-`.github/workflows/app-store.yml` archives the app with the watch app and the widget, uploads the build to App Store Connect and, if asked, submits it for review: *Actions → App Store → Run workflow*, with *Submit for App Review* ticked to submit. The build number is the workflow's run number plus 1, because build 1 came from Xcode.
+`.github/workflows/app-store.yml` archives the app with the watch app and the widget, uploads the build to App Store Connect and, if asked, submits it for review: *Actions → App Store → Run workflow*, with *Submit for App Review* ticked to submit. The build number is the one in the Xcode project plus the workflow's run number, so it continues after builds uploaded from Xcode.
 
 The workflow signs manually with an *Apple Distribution* certificate and one App Store profile per target, so its API key only needs to upload builds. Repository secrets (*Settings → Secrets and variables → Actions*):
 
