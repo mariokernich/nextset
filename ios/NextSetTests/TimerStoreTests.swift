@@ -179,6 +179,63 @@ struct TimerStoreTests {
         store.applyRemoteLibrary(newer)
         #expect(store.library.quickTimerCount == 2)
     }
+
+    // MARK: Sync between iPhone and watch
+
+    @Test func publishesLocalChanges() {
+        let store = makeStore()
+        var published: [SharedTimer] = []
+        store.timerDidChangeLocally = { published.append($0) }
+
+        store.start(seconds: 60)
+        store.primaryAction()
+        store.adjust(by: 15)
+        store.stop()
+
+        #expect(published.map(\.timer.phase) == [.running, .paused, .paused, .idle])
+        #expect(zip(published, published.dropFirst()).allSatisfy { $0.modifiedAt < $1.modifiedAt })
+    }
+
+    @Test func mirrorsARestFromTheOtherDevice() {
+        let phone = makeStore()
+        let watch = makeStore()
+        phone.timerDidChangeLocally = { watch.applyRemoteTimer($0) }
+        watch.timerDidChangeLocally = { phone.applyRemoteTimer($0) }
+
+        phone.start(seconds: 90)
+        #expect(watch.timer == phone.timer)
+        #expect(watch.idleSeconds == 90)
+
+        watch.primaryAction()
+        #expect(phone.timer.phase == .paused)
+
+        watch.stop()
+        #expect(phone.timer.phase == .idle)
+    }
+
+    @Test func ignoresOlderRemoteChanges() {
+        let store = makeStore()
+        var remote = RestTimerState()
+        remote.start(seconds: 30)
+        let stale = SharedTimer(timer: remote, idleSeconds: 30, modifiedAt: .now.addingTimeInterval(-60))
+
+        store.start(seconds: 120)
+        store.applyRemoteTimer(stale)
+
+        #expect(store.timer.requestedSeconds == 120)
+    }
+
+    @Test func finishesARemoteRestThatRanOutOnTheWay() {
+        let store = makeStore()
+        let start = Date.now.addingTimeInterval(-40)
+        var remote = RestTimerState()
+        remote.start(seconds: 30, now: start)
+
+        store.applyRemoteTimer(SharedTimer(timer: remote, idleSeconds: 30, modifiedAt: start))
+
+        #expect(store.timer.phase == .finished)
+    }
+
 }
 
 @Suite("Timer editing")

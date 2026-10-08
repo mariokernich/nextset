@@ -6,6 +6,7 @@ struct Storage {
         case library = "library.v1"
         case settings = "settings.v1"
         case timer = "timer.v1"
+        case timerModifiedAt = "timerModifiedAt.v1"
     }
 
     let defaults: UserDefaults

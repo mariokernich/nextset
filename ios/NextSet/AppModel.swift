@@ -10,12 +10,12 @@ final class AppModel {
 
     let store: TimerStore
     let services: PhoneServices
-    private let sync: LibrarySync
+    private let sync: WatchSync
 
     private init() {
         store = TimerStore()
         services = PhoneServices()
-        sync = LibrarySync()
+        sync = WatchSync()
         store.sideEffects = services
         sync.start(with: store)
     }

@@ -24,11 +24,15 @@ final class TimerStore {
     /// Seconds left while the final countdown runs, otherwise `nil`. Driven by
     /// the same events as the countdown haptics and sounds.
     private(set) var countdownSecondsLeft: Int?
+    /// When the rest was last changed on this or the other device.
+    private(set) var timerModifiedAt: Date
 
     @ObservationIgnored let feedback: FeedbackCoordinator
     @ObservationIgnored weak var sideEffects: TimerSideEffects?
     /// Set by the sync service to forward local edits to the other device.
     @ObservationIgnored var libraryDidChangeLocally: (@MainActor (TimerLibrary) -> Void)?
+    /// Set by the sync service to mirror the rest on the other device.
+    @ObservationIgnored var timerDidChangeLocally: (@MainActor (SharedTimer) -> Void)?
 
     @ObservationIgnored private let storage: Storage
     @ObservationIgnored private var eventTask: Task<Void, Never>?
@@ -52,6 +56,11 @@ final class TimerStore {
         self.settings = storage.load(FeedbackSettings.self, key: .settings) ?? FeedbackSettings()
         self.timer = timer
         self.idleSeconds = timer.requestedSeconds > 0 ? timer.requestedSeconds : library.visibleQuickTimers[0].seconds
+        self.timerModifiedAt = storage.load(Date.self, key: .timerModifiedAt) ?? .distantPast
+    }
+
+    var sharedTimer: SharedTimer {
+        SharedTimer(timer: timer, idleSeconds: idleSeconds, modifiedAt: timerModifiedAt)
     }
 
     // MARK: - Timer
@@ -65,6 +74,7 @@ final class TimerStore {
         idleSeconds = timer.requestedSeconds
         feedback.timerStarted(settings)
         timerChanged()
+        publishTimer()
     }
 
     /// The main button: start, pause or resume.
@@ -79,9 +89,11 @@ final class TimerStore {
         case .running:
             timer.pause()
             timerChanged()
+            publishTimer()
         case .paused:
             timer.resume()
             timerChanged()
+            publishTimer()
         }
     }
 
@@ -102,6 +114,7 @@ final class TimerStore {
                 timerChanged()
             }
         }
+        publishTimer()
     }
 
     /// Ends the rest early, e.g. when ready for the next set.
@@ -109,6 +122,27 @@ final class TimerStore {
         guard timer.phase != .idle else { return }
         timer.reset()
         timerChanged()
+        publishTimer()
+    }
+
+    /// Takes over a rest started, paused or ended on the other device.
+    func applyRemoteTimer(_ remote: SharedTimer, now: Date = .now) {
+        guard remote.modifiedAt > timerModifiedAt else { return }
+        timerModifiedAt = remote.modifiedAt
+        storage.save(remote.modifiedAt, key: .timerModifiedAt)
+        let wasActive = timer.isActive
+        timer = remote.timer
+        idleSeconds = remote.idleSeconds
+        eventTask?.cancel()
+        autoResetTask?.cancel()
+        save()
+        if wasActive, timer.phase == .finished {
+            // Ended early over there, e.g. with −15 s.
+            didFinish(inTime: timer.overtime(at: now) < 3)
+        } else {
+            // Also catches a rest that has run out while the message was underway.
+            refresh(now: now)
+        }
     }
 
     /// Re-checks the timer after the app was in the background or relaunched.
@@ -204,6 +238,15 @@ final class TimerStore {
 
     private func save() {
         storage.save(timer, key: .timer)
+    }
+
+    /// Hands a change made on this device to the other one.
+    private func publishTimer() {
+        // Later than the state it is based on, even if the other device's
+        // clock is ahead: otherwise the other device would ignore this change.
+        timerModifiedAt = max(.now, timerModifiedAt.addingTimeInterval(0.001))
+        storage.save(timerModifiedAt, key: .timerModifiedAt)
+        timerDidChangeLocally?(sharedTimer)
     }
 
     /// Plays the countdown and ends the rest exactly on time while the app runs.

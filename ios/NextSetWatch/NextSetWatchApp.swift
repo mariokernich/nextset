@@ -35,12 +35,12 @@ final class WatchModel {
 
     let store: TimerStore
     let services: WatchServices
-    private let sync: LibrarySync
+    private let sync: WatchSync
 
     private init() {
         store = TimerStore()
         services = WatchServices()
-        sync = LibrarySync()
+        sync = WatchSync()
         store.sideEffects = services
         sync.start(with: store)
     }
