@@ -86,9 +86,10 @@ shoot() {
 }
 
 # Launch arguments for a rest that is in its last seconds when the screenshot
-# is taken, however long the app takes to start up.
+# is taken: about 6 s left, inside the demo's 10 s countdown even when the
+# launch or the screenshot takes a few seconds longer.
 countdown() {
-  echo -demo countdown -demoEnd $(($(date +%s) + ${SETTLE:-5} + 3))
+  echo -demo countdown -demoEnd $(($(date +%s) + ${SETTLE:-5} + 6))
 }
 
 if [[ "$ONLY" != "watch" ]]; then

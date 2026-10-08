@@ -23,8 +23,12 @@ enum DemoMode {
 
     private static func apply(to store: TimerStore) {
         guard let value else { return }
-        // Avoid the notification permission prompt in screenshots.
-        store.updateSettings { $0.notificationsEnabled = false }
+        // Avoid the notification permission prompt in screenshots. A long
+        // countdown leaves room for a slow launch in the countdown screenshot.
+        store.updateSettings {
+            $0.notificationsEnabled = false
+            $0.countdownSeconds = value == "countdown" ? 10 : FeedbackSettings().countdownSeconds
+        }
         switch value {
         case "running":
             store.start(store.library.visibleQuickTimers[0])
