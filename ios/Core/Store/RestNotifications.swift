@@ -17,13 +17,11 @@ final class RestNotifications: NSObject {
         center.delegate = self
     }
 
-    /// `delay` holds the notification back after the end, as a safety net for
-    /// when the app itself is supposed to play the end.
-    func update(for state: RestTimerState, settings: FeedbackSettings, delay: TimeInterval = 0) {
+    func update(for state: RestTimerState, settings: FeedbackSettings) {
         switch state.phase {
         case .running:
             if settings.notificationsEnabled, let end = state.endDate {
-                schedule(at: end.addingTimeInterval(delay), settings: settings)
+                schedule(at: end, settings: settings)
             } else {
                 cancel()
             }
