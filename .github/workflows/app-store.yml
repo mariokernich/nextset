@@ -90,14 +90,17 @@ jobs:
             printf '%s' "$PROFILE_WIDGETS" | base64 --decode > "$dir/nextset-widgets.mobileprovision"
           done
 
-      # Build 1 was uploaded from Xcode, so the builds from here start at 2.
+      # The build number continues after the one in the project (builds
+      # uploaded from Xcode) and grows with every run of this workflow.
       - name: Version
         id: version
         run: |
           version=$(grep -m 1 -o 'MARKETING_VERSION = [^;]*' NextSet.xcodeproj/project.pbxproj | cut -d ' ' -f 3)
+          project_build=$(grep -m 1 -o 'CURRENT_PROJECT_VERSION = [0-9]*' NextSet.xcodeproj/project.pbxproj | cut -d ' ' -f 3)
+          build=$((project_build + GITHUB_RUN_NUMBER))
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "build=$((GITHUB_RUN_NUMBER + 1))" >> "$GITHUB_OUTPUT"
-          echo "NextSet $version ($((GITHUB_RUN_NUMBER + 1)))"
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "NextSet $version ($build)"
 
       - name: Archive
         run: |
