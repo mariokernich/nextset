@@ -34,8 +34,9 @@ sys.stderr.write("%s (%s)\n" % (best[2], best[3].split(".")[-1]))
 ' "$1"
 }
 
+# The Ultra's 422 × 514 screenshots are a size App Store Connect accepts.
 find_watch() {
-  find_device "Apple Watch Series" || find_device "Apple Watch"
+  find_device "Apple Watch Ultra" || find_device "Apple Watch Series" || find_device "Apple Watch"
 }
 
 # Waits for a simulator to finish booting, giving up after the given seconds.
@@ -146,6 +147,12 @@ if WATCH=$(find_watch) && wait_for_boot "$WATCH" 420; then
   done
   # No second tries here: the last seconds would be over by then.
   SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-countdown.png" $(SETTLE=15 countdown)
+  # German, for the German App Store page.
+  GERMAN=(-AppleLanguages "(de)" -AppleLocale de_DE)
+  for state in idle running finished; do
+    watch_shoot "$OUT/watch-$state-de.png" -demo "$state" "${GERMAN[@]}"
+  done
+  SETTLE=15 shoot "$WATCH" "$WATCH_BUNDLE" "$OUT/watch-countdown-de.png" $(SETTLE=15 countdown) "${GERMAN[@]}"
 else
   echo "Skipping Apple Watch screenshots"
 fi
