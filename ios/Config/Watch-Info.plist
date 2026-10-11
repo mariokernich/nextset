@@ -2,11 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>NextSet does not read any health data. Training mode only needs a workout to keep running between your sets.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Training mode starts a strength training workout so NextSet stays on screen and keeps running between your sets. No workout is saved to Health.</string>
 	<key>WKBackgroundModes</key>
 	<array>
 		<string>physical-therapy</string>
+		<string>workout-processing</string>
 	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 </dict>
 </plist>

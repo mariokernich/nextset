@@ -1,8 +1,11 @@
+import StoreKit
 import SwiftUI
 
 /// The only screen: dial, controls, quick timers and further presets.
 struct HomeView: View {
     @Environment(TimerStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.requestReview) private var requestReview
     @State private var showsSettings = false
     @State private var editor: TimerEditorTarget?
 
@@ -53,6 +56,18 @@ struct HomeView: View {
             .sheet(item: $editor) { target in
                 TimerEditorSheet(target: target)
             }
+        }
+        // A moment after opening the app, not while a rest or an editor is open.
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            try? await Task.sleep(for: .seconds(2))
+            #if DEBUG
+            if DemoMode.value != nil { return }
+            #endif
+            guard !Task.isCancelled, !showsSettings, editor == nil,
+                  ReviewPrompt.isDue(timer: store.timer) else { return }
+            ReviewPrompt.didAsk()
+            requestReview()
         }
         #if DEBUG
         .onAppear {

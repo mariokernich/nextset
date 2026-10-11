@@ -17,6 +17,9 @@ final class AppModel {
         services = PhoneServices()
         sync = WatchSync()
         store.sideEffects = services
+        sync.alertEndDidChangeRemotely = { [services] end in
+            services.watchAlertEnd = end
+        }
         sync.start(with: store)
     }
 }

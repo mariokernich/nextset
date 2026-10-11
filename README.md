@@ -51,14 +51,17 @@ The screenshots come from the iOS 26 and watchOS 26 simulators (CI workflow with
 - Follows the system's light and dark mode; graphite as the accent, coral for the last seconds, large digits in SF Rounded
 - **Live Activity** on the Lock Screen, in the Dynamic Island and in the Apple Watch Smart Stack
 - **Notification** at the end of a rest while the app is in the background; as a time-sensitive notification it also comes through a Focus
-- **Display stays on** while a rest runs (can be turned off)
+- **Display stays on** while a rest runs and on "GO!", so the next timer is one tap away between sets (can be turned off)
+- Asks for an **App Store rating** once per version, after at least 10 finished rests over 3 days and only while no rest is running; the system shows the dialog at most three times a year
 - **Siri, Shortcuts & Action button**: "Start Quick Timer", "Start Rest Timer" (any number of seconds), "End Rest". By voice, e.g. "Siri, start a rest in NextSet", "Start Quick Timer 2 in NextSet" or "Stop NextSet".
 - Rename timers (e.g. "Squats"), reorder or delete them. A long press on a timer opens the context menu.
 
 **Apple Watch**
 - Big quick timers right on the start screen, more timers below
-- Full-screen ring with countdown, ±15 s, pause and "Repeat"; Always On display
-- Keeps running with the arm lowered thanks to an *extended runtime session*. The notification at the end of a rest is always due as well, so the end also reaches the wrist if watchOS holds back the app's own haptics in the background.
+- Full-screen ring with countdown, ±15 s, pause and "Repeat" (also by tapping "GO!"); Always On display
+- **Training mode:** "Start training" runs a strength training workout session (HealthKit) for the whole workout. Meanwhile the app stays on screen when the wrist is raised and keeps running with the arm lowered, so every countdown tap arrives. Nothing is saved to Health; a training without a rest for 30 minutes ends by itself.
+- Without training mode, each rest keeps running with the arm lowered thanks to an *extended runtime session*. The notification at the end of a rest is always due as well, so the end also reaches the wrist if watchOS holds back the app's own haptics in the background.
+- Only **one notification** per rest on the wrist: the watch tells the iPhone which rest it announces itself, and the iPhone leaves out its own (a locked iPhone would otherwise forward it to the watch as a second one).
 - Timers are **synced** with the iPhone via WatchConnectivity and can be edited on both devices. A new watch first fetches the timers from the iPhone, so its default timers don't replace them.
 - The **running rest** is synced too: starting, pausing, ±15 s and ending on the iPhone or the watch carries over to the other device, and both count down together. If the other app can't be reached at that moment, it picks up the state the next time it starts.
 
@@ -139,7 +142,7 @@ The workflow signs manually with an *Apple Distribution* certificate and one App
 
 Certificate and profiles expire after a year; renew them in the developer portal and update the secrets. Local builds in Xcode keep automatic signing: the profile names are only set on CI (`NEXTSET_PROFILE_*` in `ios/Config/Signing.xcconfig`).
 
-The iPhone and watch apps use time-sensitive notifications (capability *Time Sensitive Notifications*, see `ios/Config/*.entitlements`). Automatic signing adds it to the App IDs when archiving; if the workflow rejects the profile, turn it on for both App IDs in the developer portal under *Identifiers*.
+The iPhone and watch apps use time-sensitive notifications (capability *Time Sensitive Notifications*, see `ios/Config/*.entitlements`), the watch app also *HealthKit* for the training mode. Automatic signing adds them to the App IDs when archiving. The CI profiles only contain capabilities that were turned on when they were created: after adding one, turn it on for the App ID in the developer portal under *Identifiers*, regenerate the profile and update its secret.
 
 Submitting only works once everything else is done in App Store Connect: agreements, tax and banking, trader status under the Digital Services Act, App Privacy, age rating, texts and screenshots. If something is missing, the workflow lists it in the log.
 

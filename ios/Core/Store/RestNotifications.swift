@@ -17,10 +17,13 @@ final class RestNotifications: NSObject {
         center.delegate = self
     }
 
-    func update(for state: RestTimerState, settings: FeedbackSettings) {
+    /// `handledElsewhere`: the other device announces this rest itself, e.g.
+    /// the watch on the wrist. Otherwise a locked iPhone would forward its own
+    /// notification to the watch as a second one.
+    func update(for state: RestTimerState, settings: FeedbackSettings, handledElsewhere: Bool = false) {
         switch state.phase {
         case .running:
-            if settings.notificationsEnabled, let end = state.endDate {
+            if settings.notificationsEnabled, !handledElsewhere, let end = state.endDate {
                 schedule(at: end, settings: settings)
             } else {
                 cancel()
@@ -81,6 +84,16 @@ final class RestNotifications: NSObject {
             return (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
         default:
             return false
+        }
+    }
+
+    /// Whether notifications may be shown, without asking for permission.
+    static func isAuthorized() async -> Bool {
+        switch await UNUserNotificationCenter.current().notificationSettings().authorizationStatus {
+        case .authorized, .provisional:
+            true
+        default:
+            false
         }
     }
 

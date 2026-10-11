@@ -65,6 +65,22 @@
         }
       }
     },
+    "Allow NextSet to write workouts in the Health settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlaube NextSet in den Health-Einstellungen, Trainings zu schreiben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow NextSet to write workouts in the Health settings."
+          }
+        }
+      }
+    },
     "Allow notifications in Settings" : {
       "localizations" : {
         "de" : {
@@ -289,6 +305,22 @@
         }
       }
     },
+    "End training" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training beenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End training"
+          }
+        }
+      }
+    },
     "Ends the running rest timer." : {
       "localizations" : {
         "de" : {
@@ -365,6 +397,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keep display on"
+          }
+        }
+      }
+    },
+    "Keeps NextSet on screen and running between your sets." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hält NextSet zwischen deinen Sätzen auf dem Display und aktiv."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps NextSet on screen and running between your sets."
           }
         }
       }
@@ -993,6 +1041,22 @@
         }
       }
     },
+    "Start training" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start training"
+          }
+        }
+      }
+    },
     "Starts a rest timer with any duration." : {
       "localizations" : {
         "de" : {
@@ -1117,6 +1181,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timers you edit here also appear on your Apple Watch."
+          }
+        }
+      }
+    },
+    "Training could not be started." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Training konnte nicht gestartet werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training could not be started."
           }
         }
       }

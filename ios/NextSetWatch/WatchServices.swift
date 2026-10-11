@@ -3,11 +3,13 @@ import WatchKit
 /// Keeps the watch app running while a rest counts down, so the countdown
 /// taps and the final alert reach the wrist even with the arm lowered.
 ///
-/// Uses an extended runtime session (physical therapy). If the system ends the
-/// session, a local notification takes over the final alert.
+/// In training mode the workout session keeps the app running. Otherwise it
+/// uses an extended runtime session (physical therapy) per rest. If the system
+/// ends that session, a local notification takes over the final alert.
 @MainActor
 final class WatchServices: NSObject, TimerSideEffects {
     private let notifications = RestNotifications()
+    private let workout: WorkoutController
     private var session: WKExtendedRuntimeSession?
     /// A session can only be started from the foreground; remembered until then.
     private var wantsSession = false
@@ -16,15 +18,24 @@ final class WatchServices: NSObject, TimerSideEffects {
     private var mayRetrySession = false
     private var state = RestTimerState()
     private var settings = FeedbackSettings()
+    /// Tells the iPhone which rest end the watch announces itself, so it
+    /// leaves out its own notification (it would arrive here as a second one).
+    var alertDidChange: (@MainActor (Date?) -> Void)?
+    private var alertTask: Task<Void, Never>?
 
-    override init() {
+    init(workout: WorkoutController) {
+        self.workout = workout
         super.init()
         notifications.activate()
+        workout.activeDidChange = { [weak self] in
+            self?.workoutDidChange()
+        }
     }
 
     func timerStateDidChange(_ state: RestTimerState, settings: FeedbackSettings) {
         self.state = state
         self.settings = settings
+        workout.timerDidChange(isResting: state.phase == .running || state.phase == .paused)
         switch state.phase {
         case .running:
             wantsSession = true
@@ -69,8 +80,18 @@ final class WatchServices: NSObject, TimerSideEffects {
 
     // MARK: Session
 
+    /// The workout keeps the app running by itself; both can't run at once.
+    private func workoutDidChange() {
+        if workout.isActive {
+            stopSession()
+        } else if wantsSession, state.phase == .running {
+            mayRetrySession = true
+            startSessionIfNeeded()
+        }
+    }
+
     private func startSessionIfNeeded() {
-        guard WKApplication.shared().applicationState == .active else { return }
+        guard !workout.isActive, WKApplication.shared().applicationState == .active else { return }
         if let session, session.state == .running || session.state == .notStarted || session.state == .scheduled {
             return
         }
@@ -93,6 +114,17 @@ final class WatchServices: NSObject, TimerSideEffects {
     /// is on screen it holds it back (see `RestNotifications`).
     private func updateNotification() {
         notifications.update(for: state, settings: settings)
+        let end = state.phase == .running && settings.notificationsEnabled ? state.endDate : nil
+        alertTask?.cancel()
+        alertTask = Task {
+            // Only a notification that can be shown replaces the iPhone's.
+            var announced = end
+            if announced != nil, !(await RestNotifications.isAuthorized()) {
+                announced = nil
+            }
+            guard !Task.isCancelled else { return }
+            self.alertDidChange?(announced)
+        }
     }
 
     private func sessionDidChange(_ id: ObjectIdentifier, ended: Bool = false) {

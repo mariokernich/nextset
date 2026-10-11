@@ -1,0 +1,40 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSHealthUpdateUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Trainingsmodus startet ein Krafttraining, damit NextSet zwischen deinen Sätzen auf dem Display bleibt und weiterläuft. Es wird kein Training in Health gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Training mode starts a strength training workout so NextSet stays on screen and keeps running between your sets. No workout is saved to Health."
+          }
+        }
+      }
+    },
+    "NSHealthShareUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NextSet liest keine Gesundheitsdaten. Der Trainingsmodus braucht nur ein Training, um zwischen deinen Sätzen weiterzulaufen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NextSet does not read any health data. Training mode only needs a workout to keep running between your sets."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

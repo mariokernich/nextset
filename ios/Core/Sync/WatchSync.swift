@@ -12,13 +12,21 @@ import WatchConnectivity
 /// A device that still has the untouched default timers (e.g. a new watch)
 /// also asks the other one for its timers. Otherwise its first edit would be
 /// the newest library and replace the timers set up on the other device.
+///
+/// The watch also tells the iPhone which rest end it announces with its own
+/// notification, so the iPhone leaves that one out (see `announceAlert`).
 @MainActor
 final class WatchSync: NSObject {
     private nonisolated static let libraryKey = "library"
     private nonisolated static let timerKey = "timer"
     private nonisolated static let requestKey = "requestLibrary"
+    private nonisolated static let alertKey = "alertEnd"
 
     private weak var store: TimerStore?
+    /// The end of the rest this device announces itself (watch only).
+    private var alertEnd: Date?
+    /// Called with the end of the rest the other device announces, or `nil`.
+    var alertEndDidChangeRemotely: (@MainActor (Date?) -> Void)?
 
     func start(with store: TimerStore) {
         self.store = store
@@ -55,6 +63,9 @@ final class WatchSync: NSObject {
         if store.timerModifiedAt > .distantPast, let data = try? JSONEncoder().encode(store.sharedTimer) {
             context[Self.timerKey] = data
         }
+        #if os(watchOS)
+        context[Self.alertKey] = Self.encode(alertEnd)
+        #endif
         guard !context.isEmpty else { return }
         try? WCSession.default.updateApplicationContext(context)
     }
@@ -65,6 +76,21 @@ final class WatchSync: NSObject {
               let data = try? JSONEncoder().encode(timer) else { return }
         // Without a reply handler: the context above covers a failed delivery.
         WCSession.default.sendMessage([Self.timerKey: data], replyHandler: nil, errorHandler: nil)
+    }
+
+    /// Tells the other device that this one announces the end of the rest
+    /// ending at `end` itself, or no rest at all (`nil`).
+    func announceAlert(end: Date?) {
+        guard end != alertEnd else { return }
+        alertEnd = end
+        updateContext()
+        guard canSend, WCSession.default.isReachable else { return }
+        WCSession.default.sendMessage([Self.alertKey: Self.encode(end)], replyHandler: nil, errorHandler: nil)
+    }
+
+    /// Property lists have no optional: no rest is 0.
+    private nonisolated static func encode(_ date: Date?) -> Double {
+        date?.timeIntervalSince1970 ?? 0
     }
 
     private func sessionActivated(received context: [String: Any]) {
@@ -84,6 +110,9 @@ final class WatchSync: NSObject {
         if let data = payload[Self.timerKey] as? Data,
            let timer = try? decoder.decode(SharedTimer.self, from: data) {
             store?.applyRemoteTimer(timer)
+        }
+        if let value = payload[Self.alertKey] as? Double {
+            alertEndDidChangeRemotely?(value > 0 ? Date(timeIntervalSince1970: value) : nil)
         }
     }
 

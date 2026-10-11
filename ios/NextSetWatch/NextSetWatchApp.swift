@@ -9,6 +9,7 @@ struct NextSetWatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environment(model.store)
+                .environment(model.workout)
                 // Coral for the title and controls: the graphite accent is
                 // white on the watch and would not stand out from the text.
                 .tint(Theme.coral)
@@ -34,14 +35,19 @@ final class WatchModel {
     static let shared = WatchModel()
 
     let store: TimerStore
+    let workout: WorkoutController
     let services: WatchServices
     private let sync: WatchSync
 
     private init() {
         store = TimerStore()
-        services = WatchServices()
+        workout = WorkoutController()
+        services = WatchServices(workout: workout)
         sync = WatchSync()
         store.sideEffects = services
+        services.alertDidChange = { [sync] end in
+            sync.announceAlert(end: end)
+        }
         sync.start(with: store)
     }
 }

@@ -19,6 +19,18 @@ struct WatchTimerView: View {
             countdownSecondsLeft: store.countdownSecondsLeft,
             isDimmed: isLuminanceReduced
         )
+        // "GO!" itself repeats the rest, like the button below it.
+        .contentShape(.rect)
+        .onTapGesture {
+            if store.timer.phase == .finished {
+                store.primaryAction()
+            }
+        }
+        .accessibilityAction(named: Text("Repeat rest")) {
+            if store.timer.phase == .finished {
+                store.primaryAction()
+            }
+        }
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {

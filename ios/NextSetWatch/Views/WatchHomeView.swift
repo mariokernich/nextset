@@ -3,6 +3,7 @@ import SwiftUI
 /// Big quick timers first, further presets below.
 struct WatchHomeView: View {
     @Environment(TimerStore.self) private var store
+    @Environment(WorkoutController.self) private var workout
 
     private let columns = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
 
@@ -53,6 +54,11 @@ struct WatchHomeView: View {
                     }
                     .padding(.top, 4)
                 }
+
+                if workout.isAvailable {
+                    TrainingButton()
+                        .padding(.top, 8)
+                }
             }
         }
         .navigationTitle(Text(verbatim: "NextSet"))
@@ -66,6 +72,38 @@ struct WatchHomeView: View {
                         .accessibilityLabel(Text("Settings"))
                 }
                 .tint(Theme.accentStrong)
+            }
+        }
+    }
+}
+
+/// Starts or ends training mode (see `WorkoutController`).
+private struct TrainingButton: View {
+    @Environment(WorkoutController.self) private var workout
+
+    var body: some View {
+        VStack(spacing: 4) {
+            if workout.isActive {
+                Button("End training", systemImage: "stop.fill") {
+                    workout.end()
+                }
+                .tint(Theme.countdown)
+            } else {
+                Button("Start training", systemImage: "figure.strengthtraining.traditional") {
+                    Task { await workout.start() }
+                }
+                .disabled(workout.isStarting)
+            }
+            if let problem = workout.problem {
+                Text(problem)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            } else if !workout.isActive {
+                Text("Keeps NextSet on screen and running between your sets.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
         }
     }
