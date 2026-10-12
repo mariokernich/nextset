@@ -23,9 +23,11 @@ final class HapticPlayer {
             device.play(.directionDown)
         case .finish:
             device.play(.notification)
-            // A second, delayed pulse makes the end unmistakable on the wrist.
+            // A second pulse makes the end unmistakable on the wrist. It comes
+            // after the longest end sound: while a sound plays, watchOS holds
+            // back the app's haptics.
             Task {
-                try? await Task.sleep(for: .milliseconds(750))
+                try? await Task.sleep(for: .milliseconds(1_800))
                 device.play(.notification)
             }
         }

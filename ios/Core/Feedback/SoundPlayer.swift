@@ -18,8 +18,15 @@ final class SoundPlayer {
         player.play()
         playing.removeAll { !$0.isPlaying }
         playing.append(player)
+        #if os(iOS)
         // Keep the session (and the ducking) alive between countdown ticks.
         scheduleDeactivation(after: player.duration + 1.4)
+        #else
+        // watchOS holds back the app's haptics while its audio session is
+        // active, even with the watch muted: release it right after the sound,
+        // so the next tick's tap gets through.
+        scheduleDeactivation(after: player.duration + 0.1)
+        #endif
     }
 
     private func data(for cue: SoundCue, style: SoundStyle) -> Data {
