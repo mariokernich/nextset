@@ -48,6 +48,11 @@ final class WatchModel {
         services.alertDidChange = { [sync] end in
             sync.announceAlert(end: end)
         }
+        if DiagnosticsLog.isEnabled {
+            store.eventDidHappen = { [services] event in
+                DiagnosticsLog.shared.add("\(event) · \(services.stateSummary)")
+            }
+        }
         sync.start(with: store)
     }
 }

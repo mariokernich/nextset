@@ -59,6 +59,10 @@ struct WatchSettingsView: View {
             } footer: {
                 Text(verbatim: "NextSet \(Bundle.main.shortVersion) · Rest. Set. Go.")
             }
+
+            if DiagnosticsLog.isEnabled {
+                DiagnosticsSection()
+            }
         }
         .navigationTitle("Settings")
     }
@@ -118,5 +122,26 @@ struct WatchTimerEditor: View {
                 loaded = true
                 seconds = store.library.timer(for: target)?.seconds ?? 60
             }
+    }
+}
+
+/// TestFlight only: the countdown events of the last rests, newest first.
+private struct DiagnosticsSection: View {
+    private let log = DiagnosticsLog.shared
+
+    var body: some View {
+        Section {
+            ForEach(Array(log.entries.reversed().enumerated()), id: \.offset) { _, entry in
+                Text(verbatim: entry)
+                    .font(.system(size: 11).monospacedDigit())
+            }
+            Button(role: .destructive) {
+                log.clear()
+            } label: {
+                Text(verbatim: "Clear")
+            }
+        } header: {
+            Text(verbatim: "Diagnostics (TestFlight)")
+        }
     }
 }

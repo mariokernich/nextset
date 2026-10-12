@@ -22,6 +22,26 @@ final class WatchServices: NSObject, TimerSideEffects {
     /// leaves out its own notification (it would arrive here as a second one).
     var alertDidChange: (@MainActor (Date?) -> Void)?
     private var alertTask: Task<Void, Never>?
+    private let log = DiagnosticsLog.shared
+
+    /// Diagnostics: app state, background session and training mode.
+    var stateSummary: String {
+        let app = switch WKApplication.shared().applicationState {
+        case .active: "active"
+        case .inactive: "inactive"
+        case .background: "background"
+        @unknown default: "unknown"
+        }
+        let session = switch session?.state {
+        case .running: "running"
+        case .notStarted: "notStarted"
+        case .scheduled: "scheduled"
+        case .invalid: "invalid"
+        case nil: "none"
+        @unknown default: "unknown"
+        }
+        return "app \(app), session \(session), training \(workout.isActive ? "on" : "off"), sound \(settings.soundEnabled ? "on" : "off")"
+    }
 
     init(workout: WorkoutController) {
         self.workout = workout
@@ -33,6 +53,9 @@ final class WatchServices: NSObject, TimerSideEffects {
     }
 
     func timerStateDidChange(_ state: RestTimerState, settings: FeedbackSettings) {
+        if state.phase != self.state.phase {
+            log.add("rest \(state.phase) · \(stateSummary)")
+        }
         self.state = state
         self.settings = settings
         workout.timerDidChange(isResting: state.phase == .running || state.phase == .paused)
@@ -82,6 +105,7 @@ final class WatchServices: NSObject, TimerSideEffects {
 
     /// The workout keeps the app running by itself; both can't run at once.
     private func workoutDidChange() {
+        log.add("training \(workout.isActive ? "started" : "ended")")
         if workout.isActive {
             stopSession()
         } else if wantsSession, state.phase == .running {
@@ -99,6 +123,7 @@ final class WatchServices: NSObject, TimerSideEffects {
         session.delegate = self
         self.session = session
         session.start()
+        log.add("session start requested")
     }
 
     private func stopSession() {
@@ -150,6 +175,7 @@ extension WatchServices: WKExtendedRuntimeSessionDelegate {
     nonisolated func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
         let id = ObjectIdentifier(extendedRuntimeSession)
         Task { @MainActor in
+            self.log.add("session started")
             self.sessionDidChange(id)
         }
     }
@@ -157,6 +183,7 @@ extension WatchServices: WKExtendedRuntimeSessionDelegate {
     nonisolated func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
         let id = ObjectIdentifier(extendedRuntimeSession)
         Task { @MainActor in
+            self.log.add("session will expire")
             self.sessionDidChange(id)
         }
     }
@@ -167,7 +194,9 @@ extension WatchServices: WKExtendedRuntimeSessionDelegate {
         error: Error?
     ) {
         let id = ObjectIdentifier(extendedRuntimeSession)
+        let detail = "session ended, reason \(reason.rawValue)" + (error.map { ", \($0.localizedDescription)" } ?? "")
         Task { @MainActor in
+            self.log.add(detail)
             self.sessionDidChange(id, ended: true)
         }
     }

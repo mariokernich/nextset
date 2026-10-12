@@ -33,6 +33,8 @@ final class TimerStore {
     @ObservationIgnored var libraryDidChangeLocally: (@MainActor (TimerLibrary) -> Void)?
     /// Set by the sync service to mirror the rest on the other device.
     @ObservationIgnored var timerDidChangeLocally: (@MainActor (SharedTimer) -> Void)?
+    /// Diagnostics: each countdown event as it is handled, e.g. "tick 3 +0.02s played".
+    @ObservationIgnored var eventDidHappen: (@MainActor (String) -> Void)?
 
     @ObservationIgnored private let storage: Storage
     @ObservationIgnored private var eventTask: Task<Void, Never>?
@@ -275,10 +277,13 @@ final class TimerStore {
             countdownSecondsLeft = secondsLeft
             // Late but still within its second: better a slightly late tap
             // than none (the watch may wake the app late with the wrist down).
-            if lateness < 0.9 {
+            let plays = lateness < 0.9
+            if plays {
                 feedback.countdownTick(secondsLeft: secondsLeft, settings: settings)
             }
+            eventDidHappen?(String(format: "tick %d %+.2fs %@", secondsLeft, lateness, plays ? "played" : "skipped"))
         case .finish(let date):
+            eventDidHappen?(String(format: "finish %+.2fs", lateness))
             guard timer.phase == .running else { return }
             timer.finish(at: date)
             didFinish(inTime: lateness < 3)
