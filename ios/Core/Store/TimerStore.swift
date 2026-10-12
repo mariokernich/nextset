@@ -256,13 +256,10 @@ final class TimerStore {
         let events = CountdownPlan.events(endDate: end, countdownSeconds: settings.countdownSeconds, now: .now)
         eventTask = Task { [weak self] in
             for event in events {
-                let delay = event.date.timeIntervalSinceNow
-                if delay > 0 {
-                    do {
-                        try await Task.sleep(for: .seconds(delay), tolerance: .milliseconds(10))
-                    } catch {
-                        return
-                    }
+                do {
+                    try await PreciseSleep.until(event.date)
+                } catch {
+                    return
                 }
                 guard let self, !Task.isCancelled else { return }
                 self.handle(event)
@@ -276,7 +273,9 @@ final class TimerStore {
         switch event {
         case .tick(let secondsLeft, _):
             countdownSecondsLeft = secondsLeft
-            if lateness < 0.5 {
+            // Late but still within its second: better a slightly late tap
+            // than none (the watch may wake the app late with the wrist down).
+            if lateness < 0.9 {
                 feedback.countdownTick(secondsLeft: secondsLeft, settings: settings)
             }
         case .finish(let date):
