@@ -4,16 +4,15 @@ import WatchKit
 /// taps and the final alert reach the wrist even with the arm lowered.
 ///
 /// In training mode the workout session keeps the app running. Otherwise it
-/// uses an extended runtime session (physical therapy) per rest. Only while
-/// neither runs does a local notification take over the final alert; with
-/// both, the wrist would get the app's alert and the notification's.
+/// uses an extended runtime session (physical therapy) per rest. The end of
+/// the rest is announced by a local notification unless the app is on screen:
+/// with the wrist down watchOS holds back the app's own final haptics, while
+/// the notification always arrives.
 @MainActor
 final class WatchServices: NSObject, TimerSideEffects {
     private let notifications = RestNotifications()
     private let workout: WorkoutController
     private var session: WKExtendedRuntimeSession?
-    /// The system announced the end of the session; it may stop any moment.
-    private var sessionExpiring = false
     /// A session can only be started from the foreground; remembered until then.
     private var wantsSession = false
     /// One more try when a session fails to start, e.g. while the previous one
@@ -25,9 +24,9 @@ final class WatchServices: NSObject, TimerSideEffects {
     /// leaves out its own notification (it would arrive here as a second one).
     var alertDidChange: (@MainActor (Date?) -> Void)?
     private var alertTask: Task<Void, Never>?
+    /// Whether notifications may be shown, as of the last check.
+    private var notificationsAuthorized = false
     private let log = DiagnosticsLog.shared
-    /// Diagnostics: who announced the running rest's end at the last change.
-    private var loggedPlaysItself: Bool?
 
     /// Diagnostics: app state, background session and training mode.
     var stateSummary: String {
@@ -46,12 +45,6 @@ final class WatchServices: NSObject, TimerSideEffects {
         @unknown default: "unknown"
         }
         return "app \(app), session \(session), training \(workout.isActive ? "on" : "off"), sound \(settings.soundEnabled ? "on" : "off")"
-    }
-
-    /// Whether the app keeps running until the end of the rest and plays the
-    /// alert itself, also with the wrist down.
-    private var keepsRunning: Bool {
-        workout.isActive || (session?.state == .running && !sessionExpiring)
     }
 
     init(workout: WorkoutController) {
@@ -84,11 +77,19 @@ final class WatchServices: NSObject, TimerSideEffects {
         updateNotification()
     }
 
+    /// Only on screen is the app's own alert certain. With the wrist down the
+    /// session keeps the app running, but watchOS holds back its final
+    /// haptics; the notification announces the end then, and alone.
+    func playsFinishItself(settings: FeedbackSettings) -> Bool {
+        let notificationTakesOver = settings.notificationsEnabled && notificationsAuthorized
+        return WKApplication.shared().applicationState == .active || !notificationTakesOver
+    }
+
     func timerDidFinish(_ state: RestTimerState, settings: FeedbackSettings, inTime: Bool) {
         self.state = state
         self.settings = settings
-        log.add("finish \(inTime ? "in time" : "late") · \(stateSummary)")
-        if inTime && (keepsRunning || WKApplication.shared().applicationState == .active) {
+        log.add("finish \(inTime ? "in time" : "late"), \(playsFinishItself(settings: settings) ? "played by the app" : "left to the notification") · \(stateSummary)")
+        if inTime && WKApplication.shared().applicationState == .active {
             // The alert was just played on the wrist.
             notifications.cancel()
             notifications.clearDelivered()
@@ -121,7 +122,6 @@ final class WatchServices: NSObject, TimerSideEffects {
             mayRetrySession = true
             startSessionIfNeeded()
         }
-        updateNotification()
     }
 
     private func startSessionIfNeeded() {
@@ -132,7 +132,6 @@ final class WatchServices: NSObject, TimerSideEffects {
         let session = WKExtendedRuntimeSession()
         session.delegate = self
         self.session = session
-        sessionExpiring = false
         session.start()
         log.add("session start requested")
     }
@@ -146,26 +145,18 @@ final class WatchServices: NSObject, TimerSideEffects {
         }
     }
 
-    /// The notification is only due while nothing keeps the app running until
-    /// the end of the rest; called again whenever that changes. While the app
-    /// is on screen it holds a notification back (see `RestNotifications`).
+    /// The notification is always due at the end of the rest; while the app
+    /// is on screen it holds it back (see `RestNotifications`).
     private func updateNotification() {
-        let playsItself = keepsRunning
-        if state.phase == .running, playsItself != loggedPlaysItself {
-            log.add(playsItself ? "alert by the app" : "alert by notification")
-        }
-        loggedPlaysItself = state.phase == .running ? playsItself : nil
-        notifications.update(for: state, settings: settings, handledElsewhere: playsItself)
+        notifications.update(for: state, settings: settings)
         let end = state.phase == .running && settings.notificationsEnabled ? state.endDate : nil
         alertTask?.cancel()
         alertTask = Task {
-            // The app's own alert or a notification that can be shown
-            // replaces the iPhone's.
-            var announced = end
-            if announced != nil, !playsItself, !(await RestNotifications.isAuthorized()) {
-                announced = nil
-            }
+            let authorized = await RestNotifications.isAuthorized()
             guard !Task.isCancelled else { return }
+            notificationsAuthorized = authorized
+            // Only a notification that can be shown replaces the iPhone's.
+            let announced = authorized ? end : nil
             self.alertDidChange?(announced)
         }
     }
@@ -202,9 +193,6 @@ extension WatchServices: WKExtendedRuntimeSessionDelegate {
         let id = ObjectIdentifier(extendedRuntimeSession)
         Task { @MainActor in
             self.log.add("session will expire")
-            if let session = self.session, ObjectIdentifier(session) == id {
-                self.sessionExpiring = true
-            }
             self.sessionDidChange(id)
         }
     }
