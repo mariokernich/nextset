@@ -17,9 +17,10 @@ final class RestNotifications: NSObject {
         center.delegate = self
     }
 
-    /// `handledElsewhere`: the other device announces this rest itself, e.g.
-    /// the watch on the wrist. Otherwise a locked iPhone would forward its own
-    /// notification to the watch as a second one.
+    /// `handledElsewhere`: the end of this rest is announced without this
+    /// notification, e.g. by the watch on the wrist (a locked iPhone would
+    /// forward its own notification to the watch as a second one) or by the
+    /// watch app itself while a session keeps it running.
     func update(for state: RestTimerState, settings: FeedbackSettings, handledElsewhere: Bool = false) {
         switch state.phase {
         case .running:
