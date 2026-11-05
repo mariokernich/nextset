@@ -4,10 +4,10 @@ import WatchKit
 /// taps and the final alert reach the wrist even with the arm lowered.
 ///
 /// In training mode the workout session keeps the app running. Otherwise it
-/// uses an extended runtime session (physical therapy) per rest. The end of
-/// the rest is announced by a local notification unless the app is on screen:
-/// with the wrist down watchOS holds back the app's own final haptics, while
-/// the notification always arrives.
+/// uses an extended runtime session (physical therapy) per rest. The app plays
+/// the end itself; a local notification a few seconds later is the fallback
+/// for when the system suspended it anyway. The app cancels that notification
+/// while it is still pending, so the wrist gets one alert either way.
 @MainActor
 final class WatchServices: NSObject, TimerSideEffects {
     private let notifications = RestNotifications()
@@ -24,8 +24,6 @@ final class WatchServices: NSObject, TimerSideEffects {
     /// leaves out its own notification (it would arrive here as a second one).
     var alertDidChange: (@MainActor (Date?) -> Void)?
     private var alertTask: Task<Void, Never>?
-    /// Whether notifications may be shown, as of the last check.
-    private var notificationsAuthorized = false
     private let log = DiagnosticsLog.shared
 
     /// Diagnostics: app state, background session and training mode.
@@ -50,6 +48,10 @@ final class WatchServices: NSObject, TimerSideEffects {
     init(workout: WorkoutController) {
         self.workout = workout
         super.init()
+        notifications.delay = 3
+        notifications.eventDidHappen = { [log] event in
+            log.add(event)
+        }
         notifications.activate()
         workout.activeDidChange = { [weak self] in
             self?.workoutDidChange()
@@ -77,22 +79,15 @@ final class WatchServices: NSObject, TimerSideEffects {
         updateNotification()
     }
 
-    /// Only on screen is the app's own alert certain. With the wrist down the
-    /// session keeps the app running, but watchOS holds back its final
-    /// haptics; the notification announces the end then, and alone.
-    func playsFinishItself(settings: FeedbackSettings) -> Bool {
-        let notificationTakesOver = settings.notificationsEnabled && notificationsAuthorized
-        return WKApplication.shared().applicationState == .active || !notificationTakesOver
-    }
-
     func timerDidFinish(_ state: RestTimerState, settings: FeedbackSettings, inTime: Bool) {
         self.state = state
         self.settings = settings
-        log.add("finish \(inTime ? "in time" : "late"), \(playsFinishItself(settings: settings) ? "played by the app" : "left to the notification") · \(stateSummary)")
-        if inTime && WKApplication.shared().applicationState == .active {
-            // The alert was just played on the wrist.
+        log.add("finish \(inTime ? "in time" : "late") · \(stateSummary)")
+        if inTime {
+            // The alert was just played on the wrist; the fallback is still pending.
             notifications.cancel()
             notifications.clearDelivered()
+            log.add("notification cancelled")
         }
         // Give the final haptics a moment before the app may be suspended.
         Task {
@@ -152,11 +147,12 @@ final class WatchServices: NSObject, TimerSideEffects {
         let end = state.phase == .running && settings.notificationsEnabled ? state.endDate : nil
         alertTask?.cancel()
         alertTask = Task {
-            let authorized = await RestNotifications.isAuthorized()
-            guard !Task.isCancelled else { return }
-            notificationsAuthorized = authorized
             // Only a notification that can be shown replaces the iPhone's.
-            let announced = authorized ? end : nil
+            var announced = end
+            if announced != nil, !(await RestNotifications.isAuthorized()) {
+                announced = nil
+            }
+            guard !Task.isCancelled else { return }
             self.alertDidChange?(announced)
         }
     }

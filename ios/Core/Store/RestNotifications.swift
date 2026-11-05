@@ -12,6 +12,12 @@ final class RestNotifications: NSObject {
     private let center = UNUserNotificationCenter.current()
     /// Guards against a slow authorization check re-adding a cancelled request.
     private var generation = 0
+    /// How long after the end of the rest the notification is due. With a
+    /// delay it is only a fallback: an app that plays the end itself cancels
+    /// it while it is still pending.
+    var delay: TimeInterval = 0
+    /// Diagnostics: scheduling, cancelling and presenting, e.g. "notification due +3.0s".
+    var eventDidHappen: (@MainActor (String) -> Void)?
 
     func activate() {
         center.delegate = self
@@ -60,11 +66,20 @@ final class RestNotifications: NSObject {
         content.sound = sound(for: settings)
 
         Task {
-            guard await isAuthorized(), current == generation else { return }
-            let interval = date.timeIntervalSinceNow
+            guard await isAuthorized() else {
+                eventDidHappen?("notification not allowed")
+                return
+            }
+            guard current == generation else { return }
+            let interval = date.addingTimeInterval(delay).timeIntervalSinceNow
             guard interval > 0.5 else { return }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
-            try? await center.add(UNNotificationRequest(identifier: Self.identifier, content: content, trigger: trigger))
+            do {
+                try await center.add(UNNotificationRequest(identifier: Self.identifier, content: content, trigger: trigger))
+                eventDidHappen?(String(format: "notification due in %.0fs", interval))
+            } catch {
+                eventDidHappen?("notification failed: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -139,10 +154,13 @@ extension RestNotifications: UNUserNotificationCenterDelegate {
     ) async -> UNNotificationPresentationOptions {
         guard notification.request.identifier == Self.identifier else { return [.banner, .sound] }
         #if os(watchOS)
-        // With the wrist down the app stays in front for a while but may
-        // already be suspended: only an active app plays the end itself.
-        let isActive = await MainActor.run { WKApplication.shared().applicationState == .active }
-        return isActive ? [] : [.banner, .list, .sound]
+        // An app that played the end itself has cancelled the notification
+        // during its delay; one that arrives anyway is the only alert.
+        await MainActor.run {
+            let state = WKApplication.shared().applicationState == .active ? "active" : "not active"
+            self.eventDidHappen?("notification presented, app \(state)")
+        }
+        return [.banner, .list, .sound]
         #else
         // In the foreground the app already shows, plays and vibrates the end.
         return []

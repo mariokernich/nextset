@@ -10,13 +10,6 @@ protocol TimerSideEffects: AnyObject {
     /// Called when a rest reaches its end. `inTime` is `false` when the app
     /// only noticed the end later, e.g. after being suspended.
     func timerDidFinish(_ state: RestTimerState, settings: FeedbackSettings, inTime: Bool)
-    /// Whether the app plays the end of a rest itself. `false` when a
-    /// notification announces it instead, which would otherwise come on top.
-    func playsFinishItself(settings: FeedbackSettings) -> Bool
-}
-
-extension TimerSideEffects {
-    func playsFinishItself(settings: FeedbackSettings) -> Bool { true }
 }
 
 /// The app model shared by the iPhone and the Apple Watch app.
@@ -239,9 +232,7 @@ final class TimerStore {
     private func didFinish(inTime: Bool) {
         eventTask?.cancel()
         countdownSecondsLeft = nil
-        if inTime, sideEffects?.playsFinishItself(settings: settings) ?? true {
-            feedback.finished(settings)
-        }
+        if inTime { feedback.finished(settings) }
         save()
         sideEffects?.timerDidFinish(timer, settings: settings, inTime: inTime)
         scheduleAutoReset()
