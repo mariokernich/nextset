@@ -401,22 +401,6 @@
         }
       }
     },
-    "Keeps NextSet on screen and running between your sets." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hält NextSet zwischen deinen Sätzen auf dem Display und aktiv."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keeps NextSet on screen and running between your sets."
-          }
-        }
-      }
-    },
     "Live Activity" : {
       "localizations" : {
         "de" : {
@@ -1229,6 +1213,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "With the phone locked, the Lock Screen and the Dynamic Island show the countdown and a notification signals the end of the rest."
+          }
+        }
+      }
+    },
+    "Starts with your first rest and keeps NextSet running between your sets, so every countdown tap reaches your wrist." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startet mit deiner ersten Pause und hält NextSet zwischen deinen Sätzen aktiv, damit jeder Countdown-Tipp am Handgelenk ankommt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts with your first rest and keeps NextSet running between your sets, so every countdown tap reaches your wrist."
           }
         }
       }

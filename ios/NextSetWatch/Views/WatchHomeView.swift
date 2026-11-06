@@ -100,7 +100,7 @@ private struct TrainingButton: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             } else if !workout.isActive {
-                Text("Keeps NextSet on screen and running between your sets.")
+                Text("Starts with your first rest and keeps NextSet running between your sets, so every countdown tap reaches your wrist.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

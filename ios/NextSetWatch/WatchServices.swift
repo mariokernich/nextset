@@ -69,6 +69,7 @@ final class WatchServices: NSObject, TimerSideEffects {
         case .running:
             wantsSession = true
             mayRetrySession = true
+            startTrainingIfNeeded()
             startSessionIfNeeded()
         case .idle, .paused:
             wantsSession = false
@@ -107,6 +108,18 @@ final class WatchServices: NSObject, TimerSideEffects {
     }
 
     // MARK: Session
+
+    /// Training mode starts with a rest started on the watch. Only the workout
+    /// keeps the app running with the wrist down for longer rests, so that
+    /// the countdown taps arrive; the extended runtime session lets the app
+    /// sleep until shortly before the end. Until the workout runs (or if
+    /// Health access is denied) that session stands in.
+    private func startTrainingIfNeeded() {
+        guard !workout.isActive, !workout.isStarting, workout.isAvailable,
+              WKApplication.shared().applicationState == .active else { return }
+        log.add("training auto-start")
+        Task { await workout.start() }
+    }
 
     /// The workout keeps the app running by itself; both can't run at once.
     private func workoutDidChange() {
