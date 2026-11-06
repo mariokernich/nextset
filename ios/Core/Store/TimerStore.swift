@@ -151,7 +151,9 @@ final class TimerStore {
     func refresh(now: Date = .now) {
         switch timer.phase {
         case .running:
-            if let end = timer.endDate, end <= now {
+            // Not `end <= now`: built with the iOS 27.2 SDK, `Date.<=` is a new
+            // symbol that iOS/watchOS 27.2 betas lack, and the app crashes.
+            if let end = timer.endDate, end.timeIntervalSince(now) <= 0 {
                 if now.timeIntervalSince(end) > Self.overtimeLimit {
                     // Over for so long that "GO!" would already be gone again.
                     timer.reset()

@@ -8,6 +8,7 @@ struct HomeView: View {
     @Environment(\.requestReview) private var requestReview
     @State private var showsSettings = false
     @State private var editor: TimerEditorTarget?
+    @State private var reviewTask: Task<Void, Never>?
 
     var body: some View {
         NavigationStack {
@@ -58,16 +59,21 @@ struct HomeView: View {
             }
         }
         // A moment after opening the app, not while a rest or an editor is open.
-        .task(id: scenePhase) {
-            guard scenePhase == .active else { return }
-            try? await Task.sleep(for: .seconds(2))
-            #if DEBUG
-            if DemoMode.value != nil { return }
-            #endif
-            guard !Task.isCancelled, !showsSettings, editor == nil,
-                  ReviewPrompt.isDue(timer: store.timer) else { return }
-            ReviewPrompt.didAsk()
-            requestReview()
+        // Not `.task(id:)`: with the iOS 27.2 SDK it needs a SwiftUI symbol
+        // that iOS 27.2 betas lack.
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            reviewTask?.cancel()
+            guard phase == .active else { return }
+            reviewTask = Task {
+                try? await Task.sleep(for: .seconds(2))
+                #if DEBUG
+                if DemoMode.value != nil { return }
+                #endif
+                guard !Task.isCancelled, !showsSettings, editor == nil,
+                      ReviewPrompt.isDue(timer: store.timer) else { return }
+                ReviewPrompt.didAsk()
+                requestReview()
+            }
         }
         #if DEBUG
         .onAppear {

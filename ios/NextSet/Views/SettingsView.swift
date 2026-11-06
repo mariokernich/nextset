@@ -31,10 +31,13 @@ struct SettingsView: View {
             .sheet(item: $editor) { target in
                 TimerEditorSheet(target: target)
             }
-            // Again after a visit to the iOS settings.
-            .task(id: scenePhase) {
-                guard scenePhase == .active else { return }
-                notificationsDenied = await RestNotifications.isDenied()
+            // Again after a visit to the iOS settings. Not `.task(id:)`: with
+            // the iOS 27.2 SDK it needs a SwiftUI symbol iOS 27.2 betas lack.
+            .onChange(of: scenePhase, initial: true) { _, phase in
+                guard phase == .active else { return }
+                Task {
+                    notificationsDenied = await RestNotifications.isDenied()
+                }
             }
         }
     }
